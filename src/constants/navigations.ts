@@ -1,5 +1,4 @@
 const loggedOutNavigations = {
-  AUTH_HOME: 'AuthHome',
   LOGIN: 'Login',
 } as const;
 

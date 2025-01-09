@@ -1,18 +1,17 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
 import {loggedOutNavigations} from '@/constants/navigations';
-import AuthHomeScreen from '@/screens/auth/AuthHomeScreen';
 import LoginScreen from '@/screens/auth/LoginScreen';
 
+export type LoggedOutStackParamList = {
+  [loggedOutNavigations.LOGIN]: undefined;
+};
+
 function LoggedOutStackNavigator() {
-  const Stack = createStackNavigator();
+  const Stack = createStackNavigator<LoggedOutStackParamList>();
 
   return (
     <Stack.Navigator>
-      <Stack.Screen
-        name={loggedOutNavigations.AUTH_HOME}
-        component={AuthHomeScreen}
-      />
       <Stack.Screen name={loggedOutNavigations.LOGIN} component={LoginScreen} />
     </Stack.Navigator>
   );

@@ -1,7 +1,9 @@
 import React from 'react';
 import {NavigatorScreenParams} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import BottomTabsNavigator, {BottomTabsParamList} from './BottomTabsNavigator';
+import BottomTabsNavigator, {
+  BottomTabsParamList,
+} from '../bottom/BottomTabsNavigator';
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
 
