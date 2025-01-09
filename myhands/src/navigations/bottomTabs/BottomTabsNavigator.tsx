@@ -27,9 +27,9 @@ const renderTabIcon =
     );
   };
 
-function BottomTabsNavigator() {
-  const Tab = createBottomTabNavigator<BottomTabsParamList>();
+const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
+function BottomTabsNavigator() {
   return (
     <Tab.Navigator
       initialRouteName={loggedInNavigations.MYPAGE_HOME}

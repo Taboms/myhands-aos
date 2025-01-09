@@ -8,6 +8,8 @@ const loggedInNavigations = {
   MESSENGER_HOME: 'MessengerHome',
   MYPAGE_HOME: 'MypageHome',
   BOARD_DETAIL: 'BoardDetail',
+  CHANGE_PASSWORD: 'ChangePassword',
+  CHANGE_PROFILE: 'ChangeProfile',
 } as const;
 
 export {loggedOutNavigations, loggedInNavigations};

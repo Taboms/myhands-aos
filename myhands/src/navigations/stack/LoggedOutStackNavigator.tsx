@@ -7,9 +7,9 @@ export type LoggedOutStackParamList = {
   [loggedOutNavigations.LOGIN]: undefined;
 };
 
-function LoggedOutStackNavigator() {
-  const Stack = createStackNavigator<LoggedOutStackParamList>();
+const Stack = createStackNavigator<LoggedOutStackParamList>();
 
+function LoggedOutStackNavigator() {
   return (
     <Stack.Navigator>
       <Stack.Screen name={loggedOutNavigations.LOGIN} component={LoginScreen} />

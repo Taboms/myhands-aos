@@ -2,7 +2,7 @@ import React from 'react';
 import {Button, Text, View} from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {loggedInNavigations} from '@/constants';
-import {LoggedInStackParamList} from '@/navigation/stack/LoggedInStackNavigator';
+import {LoggedInStackParamList} from '@/navigationㄴ/stack/LoggedInStackNavigator';
 
 interface BoardHomeScreenProps {
   navigation: BottomTabNavigationProp<LoggedInStackParamList, 'BottomTabs'>;
