@@ -46,7 +46,7 @@ function LoggedInStackNavigator() {
         name="UserDrawer"
         component={UserDrawerNavigator}
         options={{
-          headerLeft: HeaderRight,
+          headerShown: false,
         }}
       />
       <Stack.Screen

@@ -9,8 +9,8 @@ function AdminDrawerNavigator() {
   return (
     <Drawer.Navigator
       screenOptions={{
-        // drawerType: 'front',
-        headerShown: false,
+        drawerType: 'front',
+        headerShown: true,
       }}
     >
       <Drawer.Screen name="AdminHome" component={AdminHomeScreen} />

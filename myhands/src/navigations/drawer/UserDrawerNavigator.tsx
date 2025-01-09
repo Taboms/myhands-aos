@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import ChangePasswordScreen from '@/screens/admin/ChangePasswordScreen';
@@ -23,13 +23,12 @@ const Drawer = createDrawerNavigator();
 
 const HeaderRight = () => {
   const navigation = useNavigation();
-
   return (
     <View style={{flexDirection: 'row', paddingRight: 15}}>
       <TouchableOpacity
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
       >
-        <Text>Open Drawer</Text>
+        <Text>Open</Text>
       </TouchableOpacity>
     </View>
   );
@@ -42,9 +41,16 @@ function UserDrawerNavigator() {
       screenOptions={{
         drawerType: 'front',
         headerShown: false,
+        // headerLeft: HeaderRight,
       }}
     >
-      <Drawer.Screen name="BottomTabs" component={BottomTabsNavigator} />
+      <Drawer.Screen
+        name="BottomTabs"
+        component={BottomTabsNavigator}
+        options={{
+          drawerItemStyle: {display: 'none'},
+        }}
+      />
       <Drawer.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Drawer.Screen name="ChangeProfile" component={ChangeProfileScreen} />
     </Drawer.Navigator>

@@ -8,6 +8,8 @@ import BoardHomeScreen from '@/screens/board/BoardHomeScreen';
 import CalendarHomeScreen from '@/screens/calendar/CalendarHomeScreen';
 import MessengerHomeScreen from '@/screens/messenger/MessengerHomeScreen';
 import MypageHomeScreen from '@/screens/mypage/MypageHomeScreen';
+import {DrawerActions, useNavigation} from '@react-navigation/native';
+import {TouchableOpacity} from 'react-native-gesture-handler';
 
 export type BottomTabsParamList = {
   [loggedInNavigations.BOARD_HOME]: undefined;
@@ -29,6 +31,17 @@ const renderTabIcon =
 
 const Tab = createBottomTabNavigator<BottomTabsParamList>();
 
+const DrawerButton = () => {
+  const navigation = useNavigation();
+  return (
+    <TouchableOpacity
+      onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+    >
+      <Ionicons name="menu" size={24} color="black" />
+    </TouchableOpacity>
+  );
+};
+
 function BottomTabsNavigator() {
   return (
     <Tab.Navigator
@@ -36,6 +49,8 @@ function BottomTabsNavigator() {
       screenOptions={{
         tabBarActiveTintColor: colors.RED_800,
         tabBarInactiveTintColor: colors.GRAY_500,
+        headerLeft: () => <DrawerButton />,
+        headerLeftContainerStyle: {paddingLeft: 15},
       }}
     >
       <Tab.Screen
