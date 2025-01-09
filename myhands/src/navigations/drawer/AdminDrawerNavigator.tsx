@@ -9,7 +9,7 @@ function AdminDrawerNavigator() {
   return (
     <Drawer.Navigator
       screenOptions={{
-        drawerType: 'front',
+        // drawerType: 'front',
         headerShown: false,
       }}
     >
