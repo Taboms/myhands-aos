@@ -1,5 +1,5 @@
 import React from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {createDrawerNavigator} from '@react-navigation/drawer';
 import ChangePasswordScreen from '@/screens/admin/ChangePasswordScreen';
 import ChangeProfileScreen from '@/screens/admin/ChangeProfileScreen';
@@ -7,7 +7,11 @@ import BottomTabsNavigator, {
   BottomTabsParamList,
 } from '../bottomTabs/BottomTabsNavigator';
 import {loggedInNavigations} from '@/constants';
-import {NavigatorScreenParams} from '@react-navigation/native';
+import {
+  DrawerActions,
+  NavigatorScreenParams,
+  useNavigation,
+} from '@react-navigation/native';
 
 export type UserDrawerParamList = {
   BottomTabs: NavigatorScreenParams<BottomTabsParamList>;
@@ -16,6 +20,20 @@ export type UserDrawerParamList = {
 };
 
 const Drawer = createDrawerNavigator();
+
+const HeaderRight = () => {
+  const navigation = useNavigation();
+
+  return (
+    <View style={{flexDirection: 'row', paddingRight: 15}}>
+      <TouchableOpacity
+        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+      >
+        <Text>Open Drawer</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 function UserDrawerNavigator() {
   return (

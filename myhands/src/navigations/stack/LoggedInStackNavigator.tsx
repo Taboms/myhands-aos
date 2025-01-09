@@ -15,7 +15,7 @@ import {Button, Text, TouchableOpacity, View} from 'react-native';
 
 export type LoggedInStackParamList = {
   UserDrawer: NavigatorScreenParams<UserDrawerParamList>;
-  BottomTabs: NavigatorScreenParams<BottomTabsParamList>;
+  // BottomTabs: NavigatorScreenParams<BottomTabsParamList>;
   [loggedInNavigations.BOARD_DETAIL]: undefined;
 };
 
