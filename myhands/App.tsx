@@ -1,15 +1,16 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
-import LoggedInStackNavigator from '@/navigation/LoggedInStackNavigator';
-import LoggedOutStackNavigator from '@/navigation/LoggedOutStackNavigator';
+import {QueryClientProvider} from '@tanstack/react-query';
+import queryClient from '@/api/queryClient';
+import RootNavigator from '@/navigations/root/RootNavigator';
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(true);
-
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <LoggedInStackNavigator /> : <LoggedOutStackNavigator />}
-    </NavigationContainer>
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer>
+        <RootNavigator />
+      </NavigationContainer>
+    </QueryClientProvider>
   );
 }
 

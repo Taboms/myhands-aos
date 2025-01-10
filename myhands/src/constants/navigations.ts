@@ -1,14 +1,24 @@
 const loggedOutNavigations = {
-  AUTH_HOME: 'AuthHome',
   LOGIN: 'Login',
 } as const;
 
 const loggedInNavigations = {
-  BOARD_HOME: 'BoardHome',
-  CALENDAR_HOME: 'CalendarHome',
-  MESSENGER_HOME: 'MessengerHome',
   MYPAGE_HOME: 'MypageHome',
+  QUEST_HOME: 'QuestHome',
+  RACE_HOME: 'RaceHome',
+  BOARD_HOME: 'BoardHome',
   BOARD_DETAIL: 'BoardDetail',
+  CHANGE_PASSWORD: 'ChangePassword',
+  CHANGE_PROFILE: 'ChangeProfile',
+  NOTIFICATIONS: 'Notifications',
 } as const;
 
-export {loggedOutNavigations, loggedInNavigations};
+const adminNavigations = {
+  ADMIN_HOME: 'AdminHome',
+  ADMIN_SIGNUP: 'AdminSignup',
+  ADMIN_USER_LIST: 'AdminUserList',
+  ADMIN_WRITE_POST: 'AdminWritePost',
+  ADMIN_POST_LIST: 'AdminPostList',
+} as const;
+
+export {loggedOutNavigations, loggedInNavigations, adminNavigations};

@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-function MessengerHomeScreen() {
+function RaceHomeScren() {
   return (
     <View>
-      <Text>Messenger Home Screen</Text>
+      <Text>Race Home Scren</Text>
     </View>
   );
 }
 
-export default MessengerHomeScreen;
+export default RaceHomeScren;

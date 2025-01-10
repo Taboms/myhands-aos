@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-function CalendarHomeScreen() {
+function AdminSignupScreen() {
   return (
     <View>
-      <Text>Calendar Home Screen</Text>
+      <Text>Admin Signup Screen</Text>
     </View>
   );
 }
 
-export default CalendarHomeScreen;
+export default AdminSignupScreen;

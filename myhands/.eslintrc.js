@@ -7,11 +7,13 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:import/recommended',
     '@react-native',
+    'plugin:import/typescript'
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: 2020,
-    project: ['tsconfig.json'],
+    tsconfigRootDir: __dirname,
+    project: './tsconfig.json',
     sourceType: 'module',
     ecmaFeatures: {
       jsx: true,
@@ -19,6 +21,8 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],
   rules: {
+    'react-native/no-inline-styles': 'off', // 인라인 스타일 허용
+    
     // React
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
@@ -69,8 +73,19 @@ module.exports = {
       '@typescript-eslint/parser': ['.ts', '.tsx'],
     },
     'import/resolver': {
-      typescript: {},
-      'babel-module': {}, // babel-module resolver 추가
+      typescript: {
+        alwaysTryTypes: true,
+        project: './tsconfig.json',
+      },
+      'babel-module': {
+        alias: {
+          '@': './src',
+        },
+      }, // babel-module resolver 추가
+      node: {
+        paths: ['src'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx'],
+      },
     },
   },
   ignorePatterns: ['.eslintrc.js'],
