@@ -1,17 +1,15 @@
-import React, {useState} from 'react';
-import {StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {createDrawerNavigator} from '@react-navigation/drawer';
-import ChangePasswordScreen from '@/screens/admin/ChangePasswordScreen';
-import ChangeProfileScreen from '@/screens/admin/ChangeProfileScreen';
+import React from 'react';
+import {
+  createDrawerNavigator,
+  DrawerNavigationProp,
+} from '@react-navigation/drawer';
+import {NavigatorScreenParams} from '@react-navigation/native';
 import BottomTabsNavigator, {
   BottomTabsParamList,
 } from '../bottomTabs/BottomTabsNavigator';
 import {loggedInNavigations} from '@/constants';
-import {
-  DrawerActions,
-  NavigatorScreenParams,
-  useNavigation,
-} from '@react-navigation/native';
+import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
+import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 
 export type UserDrawerParamList = {
   BottomTabs: NavigatorScreenParams<BottomTabsParamList>;
@@ -21,27 +19,17 @@ export type UserDrawerParamList = {
 
 const Drawer = createDrawerNavigator();
 
-const HeaderRight = () => {
-  const navigation = useNavigation();
-  return (
-    <View style={{flexDirection: 'row', paddingRight: 15}}>
-      <TouchableOpacity
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-      >
-        <Text>Open</Text>
-      </TouchableOpacity>
-    </View>
-  );
-};
+interface UserDrawerNavigatorProps {
+  navigation: DrawerNavigationProp<UserDrawerParamList>;
+}
 
-function UserDrawerNavigator() {
+function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
   return (
     <Drawer.Navigator
       initialRouteName="BottomTabs"
       screenOptions={{
         drawerType: 'front',
         headerShown: false,
-        // headerLeft: HeaderRight,
       }}
     >
       <Drawer.Screen
@@ -51,12 +39,30 @@ function UserDrawerNavigator() {
           drawerItemStyle: {display: 'none'},
         }}
       />
-      <Drawer.Screen name="ChangePassword" component={ChangePasswordScreen} />
-      <Drawer.Screen name="ChangeProfile" component={ChangeProfileScreen} />
+      <Drawer.Screen
+        name="ChangePassword"
+        component={ChangePasswordScreen}
+        options={{drawerLabel: '비밀번호 변경'}}
+        listeners={{
+          drawerItemPress: e => {
+            e.preventDefault();
+            navigation.navigate(loggedInNavigations.CHANGE_PASSWORD);
+          },
+        }}
+      />
+      <Drawer.Screen
+        name="ChangeProfile"
+        component={ChangeProfileScreen}
+        options={{drawerLabel: '프로필 수정'}}
+        listeners={{
+          drawerItemPress: e => {
+            e.preventDefault();
+            navigation.navigate(loggedInNavigations.CHANGE_PROFILE);
+          },
+        }}
+      />
     </Drawer.Navigator>
   );
 }
-
-const styles = StyleSheet.create({});
 
 export default UserDrawerNavigator;

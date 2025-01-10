@@ -1,47 +1,44 @@
 import React from 'react';
-import {
-  DrawerActions,
-  NavigatorScreenParams,
-  useNavigation,
-} from '@react-navigation/native';
+import {Pressable} from 'react-native';
+import {NavigatorScreenParams, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import {BottomTabsParamList} from '../bottomTabs/BottomTabsNavigator';
-import {loggedInNavigations} from '@/constants/navigations';
-import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserDrawerNavigator, {
   UserDrawerParamList,
 } from '../drawer/UserDrawerNavigator';
-import {Button, Text, TouchableOpacity, View} from 'react-native';
+import {loggedInNavigations} from '@/constants/navigations';
+import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
+import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
+import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
+import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 
 export type LoggedInStackParamList = {
   UserDrawer: NavigatorScreenParams<UserDrawerParamList>;
-  // BottomTabs: NavigatorScreenParams<BottomTabsParamList>;
   [loggedInNavigations.BOARD_DETAIL]: undefined;
+  [loggedInNavigations.CHANGE_PASSWORD]: undefined;
+  [loggedInNavigations.CHANGE_PROFILE]: undefined;
+  [loggedInNavigations.NOTIFICATIONS]: undefined;
 };
 
 const Stack = createStackNavigator<LoggedInStackParamList>();
 
-const HeaderRight = () => {
+const BackButton = () => {
   const navigation = useNavigation();
   return (
-    <View style={{flexDirection: 'row', paddingRight: 15}}>
-      <TouchableOpacity
-        onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-      >
-        <Text>Open</Text>
-      </TouchableOpacity>
-    </View>
+    <Pressable onPress={() => navigation.goBack()} style={{marginLeft: 25}}>
+      <Ionicons name="arrow-back" size={24} color="black" />
+    </Pressable>
   );
 };
 
 function LoggedInStackNavigator() {
   return (
-    <Stack.Navigator>
-      {/* <Stack.Screen
-        name="BottomTabs"
-        component={BottomTabsNavigator}
-        options={{headerShown: false}}
-      /> */}
+    <Stack.Navigator
+      screenOptions={{
+        headerTitleAlign: 'center',
+        headerLeft: () => BackButton(),
+      }}
+    >
       <Stack.Screen
         name="UserDrawer"
         component={UserDrawerNavigator}
@@ -52,6 +49,30 @@ function LoggedInStackNavigator() {
       <Stack.Screen
         name={loggedInNavigations.BOARD_DETAIL}
         component={BoardDetailScreen}
+        options={{
+          title: '게시글 상세',
+        }}
+      />
+      <Stack.Screen
+        name={loggedInNavigations.CHANGE_PASSWORD}
+        component={ChangePasswordScreen}
+        options={{
+          title: '비밀번호 변경',
+        }}
+      />
+      <Stack.Screen
+        name={loggedInNavigations.CHANGE_PROFILE}
+        component={ChangeProfileScreen}
+        options={{
+          title: '프로필 변경',
+        }}
+      />
+      <Stack.Screen
+        name={loggedInNavigations.NOTIFICATIONS}
+        component={NotificationsScreen}
+        options={{
+          title: '알림함',
+        }}
       />
     </Stack.Navigator>
   );

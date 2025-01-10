@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-function CalendarHomeScreen() {
+function RaceHomeScren() {
   return (
     <View>
-      <Text>Calendar Home Screen</Text>
+      <Text>Race Home Scren</Text>
     </View>
   );
 }
 
-export default CalendarHomeScreen;
+export default RaceHomeScren;

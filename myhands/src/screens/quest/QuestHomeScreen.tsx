@@ -1,12 +1,12 @@
 import React from 'react';
 import {Text, View} from 'react-native';
 
-function ChangeProfileScreen() {
+function QuestHomeScreen() {
   return (
     <View>
-      <Text>Change Profilfe Screen</Text>
+      <Text>Quest Home Screen</Text>
     </View>
   );
 }
 
-export default ChangeProfileScreen;
+export default QuestHomeScreen;
