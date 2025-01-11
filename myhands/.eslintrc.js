@@ -22,7 +22,7 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],
   rules: {
     'react-native/no-inline-styles': 'off', // 인라인 스타일 허용
-    
+    "import/no-named-as-default": "off",
     // React
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
