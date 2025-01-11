@@ -39,7 +39,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn', // any 타입 사용을 경고
     '@typescript-eslint/no-unused-vars': [
       'warn',
-      {argsIgnorePattern: '^_'}, // `_`로 시작하는 변수는 무시
+      {args: 'none', argsIgnorePattern: '^_'}, // `_`로 시작하는 변수는 무시
     ],
     '@typescript-eslint/consistent-type-definitions': 'off', // 타입 정의 시 interface 사용 강제
     '@typescript-eslint/no-non-null-assertion': 'error', // Non-null assertion을 금지

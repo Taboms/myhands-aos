@@ -1,4 +1,4 @@
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@tanstack/react-query';
 import {getAccessToken, getProfile, logout, postLogin} from '@/api/auth';
 import queryClient from '@/api/queryClient';
@@ -13,11 +13,18 @@ import {
 } from '@/utils';
 
 function useLogin(mutationOptions?: UseMutationCustomOptions) {
-  return useMutation({
+  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+
+  const mutation = useMutation({
     mutationFn: postLogin,
-    onSuccess: ({accessToken, refreshToken}) => {
+    onSuccess: ({accessToken, refreshToken, admin}) => {
+      setIsAdmin(admin);
       setEncryptStorage(storageKeys.REFRESH_TOKEN, refreshToken);
       setHeader('Authorization', `Bearer ${accessToken}`);
+
+      queryClient.setQueryData([queryKeys.AUTH, queryKeys.GET_PROFILE], {
+        isAdmin: admin,
+      });
     },
     onSettled: () => {
       queryClient.refetchQueries({
@@ -29,6 +36,7 @@ function useLogin(mutationOptions?: UseMutationCustomOptions) {
     },
     ...mutationOptions,
   });
+  return {mutation, isAdmin};
 }
 
 // 토큰 갱신
@@ -87,7 +95,7 @@ function useAuth() {
     enabled: refreshTokenQuery.isSuccess,
   });
   const isLogin = getProfileQuery.isSuccess;
-  const loginMutation = useLogin();
+  const {mutation: loginMutation, isAdmin} = useLogin();
   const logoutMutation = useLogout();
 
   return {
@@ -95,6 +103,7 @@ function useAuth() {
     isLogin,
     getProfileQuery,
     logoutMutation,
+    isAdmin,
   };
 }
 

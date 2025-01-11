@@ -11,7 +11,11 @@ const Stack = createStackNavigator<LoggedOutStackParamList>();
 
 function LoggedOutStackNavigator() {
   return (
-    <Stack.Navigator>
+    <Stack.Navigator
+      screenOptions={{
+        headerShown: false,
+      }}
+    >
       <Stack.Screen name={loggedOutNavigations.LOGIN} component={LoginScreen} />
     </Stack.Navigator>
   );

@@ -4,11 +4,7 @@ import LoggedOutStackNavigator from '../stack/LoggedOutStackNavigator';
 import useAuth from '@/hooks/queries/useAuth';
 
 function RootNavigator() {
-  // const {isLogin, isAdmin} = useAuth();
-
-  // 테스트용 코드
-  const isLogin = true;
-  const isAdmin = false;
+  const {isLogin, isAdmin} = useAuth();
 
   if (!isLogin) {
     return <LoggedOutStackNavigator />;

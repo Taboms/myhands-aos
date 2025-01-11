@@ -3,34 +3,33 @@ import {Profile} from '@/types/domain';
 import {getEncryptStorage} from '@/utils';
 
 type RequestUser = {
-  email: string;
+  id: string;
   password: string;
 };
 
 type ResponseToken = {
   accessToken: string;
   refreshToken: string;
+  admin: boolean;
 };
 
 const postLogin = async ({
-  email,
+  id,
   password,
 }: RequestUser): Promise<ResponseToken> => {
-  const {data} = await axiosInstance.post('/user/join', {
-    email,
+  const {data} = await axiosInstance.post('/user/login', {
+    id,
     password,
   });
-
-  return data;
+  return data.responseDto;
 };
 
 type ResponseProfile = Profile;
 
-// 추후 수정, api 변경 요청
 const getProfile = async (): Promise<ResponseProfile> => {
-  const {data} = await axiosInstance.get('/user/profile');
+  const {data} = await axiosInstance.get('/user/info');
 
-  return data;
+  return data.responseDto;
 };
 
 const getAccessToken = async (): Promise<ResponseToken> => {
