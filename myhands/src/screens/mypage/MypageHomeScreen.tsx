@@ -4,10 +4,14 @@ import useAuth from '@/hooks/queries/useAuth';
 
 function MypageHomeScreen() {
   const {getProfileQuery} = useAuth();
+  // const {name, id, department} = getProfileQuery || {};
 
   return (
     <View>
       <Text>Mypage Home Screen</Text>
+      {/* <Text>name: {name}</Text>
+      <Text>id: {id}</Text>
+      <Text>name: {department}</Text> */}
     </View>
   );
 }

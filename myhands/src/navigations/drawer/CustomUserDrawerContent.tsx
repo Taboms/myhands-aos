@@ -1,26 +1,25 @@
-import {StyleSheet, Text} from 'react-native';
+import {SafeAreaView, StyleSheet, Text, View} from 'react-native';
 import {
   DrawerContentComponentProps,
   DrawerContentScrollView,
   DrawerItemList,
 } from '@react-navigation/drawer';
-import * as St from './CustomUserDrawerContent.style';
 
 function CustomUserDrawerContent(props: DrawerContentComponentProps) {
   return (
-    <St.Container>
+    <SafeAreaView>
       <DrawerContentScrollView
         {...props}
         scrollEnabled={false}
         contentContainerStyle={styles.container}
       >
-        <St.UserInfoContainer>
+        <View>
           <Text>사용자 정보란</Text>
-          <St.NameText>최이서</St.NameText>
-        </St.UserInfoContainer>
+          <Text>최이서</Text>
+        </View>
         <DrawerItemList {...props} />
       </DrawerContentScrollView>
-    </St.Container>
+    </SafeAreaView>
   );
 }
 

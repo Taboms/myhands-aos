@@ -50,7 +50,7 @@ function DrawerIcons({
 function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
   return (
     <Drawer.Navigator
-      drawerContent={CustomUserDrawerContent}
+      // drawerContent={CustomUserDrawerContent}
       initialRouteName="BottomTabs"
       screenOptions={({route}) => ({
         drawerType: 'front',
