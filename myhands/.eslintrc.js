@@ -1,10 +1,6 @@
 module.exports = {
   root: true,
   extends: [
-    '@react-native-community',
-    'plugin:@typescript-eslint/recommended',
-    'plugin:react/recommended',
-    'plugin:react-hooks/recommended',
     'plugin:import/recommended',
     '@react-native',
     'plugin:import/typescript'
@@ -22,7 +18,8 @@ module.exports = {
   plugins: ['@typescript-eslint', 'react', 'react-hooks', 'prettier'],
   rules: {
     'react-native/no-inline-styles': 'off', // 인라인 스타일 허용
-    
+    "import/no-named-as-default": "off",
+    'comma-dangle': 'off',
     // React
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
@@ -39,7 +36,7 @@ module.exports = {
     '@typescript-eslint/no-explicit-any': 'warn', // any 타입 사용을 경고
     '@typescript-eslint/no-unused-vars': [
       'warn',
-      {argsIgnorePattern: '^_'}, // `_`로 시작하는 변수는 무시
+      {args: 'none', argsIgnorePattern: '^_'}, // `_`로 시작하는 변수는 무시
     ],
     '@typescript-eslint/consistent-type-definitions': 'off', // 타입 정의 시 interface 사용 강제
     '@typescript-eslint/no-non-null-assertion': 'error', // Non-null assertion을 금지
