@@ -1,10 +1,16 @@
+import {Dimensions} from 'react-native';
 import styled from 'styled-components/native';
+
+const width = Dimensions.get('screen').width;
 
 const Container = styled.SafeAreaView`
   flex: 1;
+  background-color: #fff8f8;
+  padding: 7% 7%;
 `;
 
 const UserInfoContainer = styled.View`
+  border: 1px solid red;
   align-items: center;
   margin-top: 30px;
   margin-bottom: 30px;

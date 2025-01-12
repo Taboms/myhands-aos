@@ -56,12 +56,22 @@ export const useAuthStore = create<TAuthStore>(set => ({
       await Promise.all([
         setAsyncData(storageKeys.ACCESS_TOKEN, tokens.accessToken),
         setAsyncData(storageKeys.REFRESH_TOKEN, tokens.refreshToken),
+        setAsyncData(storageKeys.IS_ADMIN, tokens.admin),
       ]);
 
-      // 2. 유저 정보 요청
-      console.log('유저 정보 요청 시작');
+      if (tokens.admin === true) {
+        set({
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          isAdmin: tokens.admin,
+          isAuthenticated: true,
+          isLoading: false,
+        });
+        return;
+      }
+
+      // 2. 일반 유저 정보 요청
       const userInfo = await getProfile();
-      console.log('받아온 유저정보: ', userInfo);
       await setAsyncData(storageKeys.USER, userInfo);
 
       set({
@@ -99,14 +109,28 @@ export const useAuthStore = create<TAuthStore>(set => ({
 
   initializeAuth: async () => {
     try {
-      const [accessToken, refreshToken, savedUser] = await Promise.all([
-        getAsyncData(storageKeys.ACCESS_TOKEN),
-        getAsyncData(storageKeys.REFRESH_TOKEN),
-        getAsyncData(storageKeys.USER),
-      ]);
+      const [accessToken, refreshToken, isAdmin, savedUser] = await Promise.all(
+        [
+          getAsyncData(storageKeys.ACCESS_TOKEN),
+          getAsyncData(storageKeys.REFRESH_TOKEN),
+          getAsyncData(storageKeys.IS_ADMIN),
+          getAsyncData(storageKeys.USER),
+        ]
+      );
 
       if (accessToken && refreshToken) {
         try {
+          if (isAdmin) {
+            set({
+              accessToken,
+              refreshToken,
+              isAuthenticated: true,
+              isAdmin: true,
+              isLoading: false,
+            });
+            return;
+          }
+
           // 저장된 유저 정보가 있으면 그걸 먼저 사용
           if (savedUser) {
             set({

@@ -35,8 +35,6 @@ function CustomUserDrawerContent(props: DrawerContentComponentProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    borderColor: 'blue',
-    borderWidth: 1,
     margin: 0,
   },
 });
