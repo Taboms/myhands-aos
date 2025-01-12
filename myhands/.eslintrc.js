@@ -19,6 +19,7 @@ module.exports = {
   rules: {
     'react-native/no-inline-styles': 'off', // 인라인 스타일 허용
     "import/no-named-as-default": "off",
+    'comma-dangle': 'off',
     // React
     'react/react-in-jsx-scope': 'off',
     'react/prop-types': 'off',
