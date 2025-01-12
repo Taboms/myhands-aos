@@ -7,6 +7,7 @@ import UserDrawerNavigator, {
   UserDrawerParamList,
 } from '../drawer/UserDrawerNavigator';
 import {loggedInNavigations} from '@/constants/navigations';
+import BoardAllScreen from '@/screens/board/BoardAllScreen';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
@@ -14,6 +15,7 @@ import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 
 export type LoggedInStackParamList = {
   UserDrawer: NavigatorScreenParams<UserDrawerParamList>;
+  [loggedInNavigations.BOARD_ALL]: undefined;
   [loggedInNavigations.BOARD_DETAIL]: undefined;
   [loggedInNavigations.CHANGE_PASSWORD]: undefined;
   [loggedInNavigations.CHANGE_PROFILE]: undefined;
@@ -44,6 +46,13 @@ function LoggedInStackNavigator() {
         component={UserDrawerNavigator}
         options={{
           headerShown: false,
+        }}
+      />
+      <Stack.Screen
+        name={loggedInNavigations.BOARD_ALL}
+        component={BoardAllScreen}
+        options={{
+          title: '게시판',
         }}
       />
       <Stack.Screen

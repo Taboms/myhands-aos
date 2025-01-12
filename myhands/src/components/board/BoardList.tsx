@@ -1,19 +1,34 @@
 import React from 'react';
 import {FlatList, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import BoardItem from './BoardItem';
 import {BoardPost} from '@/api/boardApi';
 import {colors} from '@/constants';
+import {loggedInNavigations} from '@/constants/navigations';
+import {LoggedInStackParamList} from '@/navigations/stack/LoggedInStackNavigator';
+
+type NavigationProp = StackNavigationProp<LoggedInStackParamList, 'BoardAll'>;
 
 const BoardList = ({posts}: {posts: BoardPost[]}) => {
+  const navigation = useNavigation<NavigationProp>();
+
   const renderItem = ({item, index}: {item: BoardPost; index: number}) => (
     <BoardItem item={item} isLastItem={index === posts.length - 1} />
   );
+
+  const handleViewAllPress = () => {
+    navigation.navigate(loggedInNavigations.BOARD_ALL); // 전체보기 화면으로 이동
+  };
 
   return (
     <View style={styles.boardContainer}>
       <View style={styles.boardHeader}>
         <Text style={styles.boardTitle}>최신글</Text>
-        <TouchableOpacity style={styles.viewAllContainer}>
+        <TouchableOpacity
+          style={styles.viewAllContainer}
+          onPress={handleViewAllPress}
+        >
           <Text style={styles.viewAll}>전체보기</Text>
           <Text style={styles.viewAllArrow}>{'>'}</Text>
         </TouchableOpacity>
