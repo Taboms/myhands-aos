@@ -1,16 +1,26 @@
+import {useEffect} from 'react';
 import AdminStackNavigator from '../stack/AdminStackNavigator';
 import LoggedInStackNavigator from '../stack/LoggedInStackNavigator';
 import LoggedOutStackNavigator from '../stack/LoggedOutStackNavigator';
-import useAuth from '@/hooks/queries/useAuth';
+import LoadingScreen from '@/components/LoadingScreen';
+import {useAuthStore} from '@/store/authStore';
 
 function RootNavigator() {
-  const {isLogin, isAdmin} = useAuth();
+  const {isAuthenticated, isLoading, isAdmin, initializeAuth} = useAuthStore();
 
-  if (!isLogin) {
+  useEffect(() => {
+    initializeAuth();
+  }, [initializeAuth]);
+
+  if (isLoading) {
+    return <LoadingScreen />; // 로딩 컴포넌트
+  }
+
+  if (!isAuthenticated) {
     return <LoggedOutStackNavigator />;
   }
 
-  if (isLogin && isAdmin) {
+  if (isAuthenticated && isAdmin) {
     return <AdminStackNavigator />;
   }
 

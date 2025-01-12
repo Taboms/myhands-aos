@@ -1,9 +1,8 @@
 import React from 'react';
 import {Text, View} from 'react-native';
-import useAuth from '@/hooks/queries/useAuth';
 
 function MypageHomeScreen() {
-  const {getProfileQuery} = useAuth();
+  // const {getProfileQuery} = useAuth();
   // const {name, id, department} = getProfileQuery || {};
 
   return (

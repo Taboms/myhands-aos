@@ -1,7 +1,7 @@
 import axiosInstance from '@/api/axios';
 import {storageKeys} from '@/constants';
 import {Profile} from '@/types/domain';
-import {getEncryptStorage} from '@/utils';
+import {getAsyncData} from '@/utils/asyncStorage';
 
 type RequestUser = {
   id: string;
@@ -29,7 +29,6 @@ type ResponseProfile = Profile;
 
 const getProfile = async (): Promise<ResponseProfile> => {
   const {data} = await axiosInstance.get('/user/info');
-  console.log('[Get Profile] data', data.responseDto);
   return data.responseDto;
 };
 
@@ -40,8 +39,7 @@ type ResponseToken = {
 };
 
 const getAccessToken = async (): Promise<ResponseToken> => {
-  const refreshToken = await getEncryptStorage(storageKeys.REFRESH_TOKEN);
-  console.log(`[Auth.ts] refreshToken: ${refreshToken}`);
+  const refreshToken = await getAsyncData(storageKeys.REFRESH_TOKEN);
   const {data} = await axiosInstance.post(
     '/auth/retoken',
     {}, // request body (비어있는 경우)
@@ -51,7 +49,6 @@ const getAccessToken = async (): Promise<ResponseToken> => {
       },
     }
   );
-  console.log('this is get access token data', data.responseDto);
   return data;
 };
 

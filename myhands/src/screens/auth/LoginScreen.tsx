@@ -1,15 +1,16 @@
-import React from 'react';
-import {SafeAreaView, View} from 'react-native';
+import React, {useState} from 'react';
+import {SafeAreaView, View, Alert} from 'react-native';
 import CustomButton from '@/components/CustomButton';
 import InputField from '@/components/InputField';
-import useAuth from '@/hooks/queries/useAuth';
 import useForm from '@/hooks/useForm';
+import {useAuthStore} from '@/store/authStore';
 import {validateLogin} from '@/utils/validate';
 
 function LoginScreen() {
-  const {loginMutation} = useAuth();
+  const [isLoading, setIsLoading] = useState(false);
+  const login = useAuthStore(state => state.login);
 
-  const login = useForm({
+  const form = useForm({
     initialValue: {
       id: '',
       password: '',
@@ -17,36 +18,44 @@ function LoginScreen() {
     validate: validateLogin,
   });
 
-  const handleSubmit = () => {
-    console.log('values', login.values);
-    loginMutation.mutate(login.values);
+  const handleSubmit = async () => {
+    // 폼 유효성 검사
+    setIsLoading(true);
+    try {
+      console.log('로그인 시도 with: ', form.values.id, form.values.password);
+      await login(form.values.id, form.values.password);
+      // 로그인 성공 시 RootNavigator에서 자동으로 화면 전환됨
+    } catch (error) {
+      // 에러 처리
+      console.log('로그인 실패', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
     <SafeAreaView>
-      {/* <St.Container> */}
       <View>
-        {/* // 그라데이션 */}
-        {/* <St.Background></St.Background> */}
-        {/* <St.LogoImage source={require('@/assets/logo/logo-circle.png')} /> */}
         <InputField
           placeholder="아이디"
           autoFocus={true}
-          {...login.getTextInputProps('id')}
+          {...form.getTextInputProps('id')}
+          editable={!isLoading}
         />
         <InputField
           placeholder="비밀번호"
-          {...login.getTextInputProps('password')}
+          secureTextEntry={true}
+          {...form.getTextInputProps('password')}
+          editable={!isLoading}
         />
         <CustomButton
-          label="로그인"
+          label={isLoading ? '로그인 중...' : '로그인'}
           variant="filled"
           size="large"
           onPress={handleSubmit}
+          disabled={isLoading}
         />
       </View>
-      {/* <St.BottomWrapper */}
-      {/* </St.Container> */}
     </SafeAreaView>
   );
 }

@@ -14,6 +14,7 @@ import CustomUserDrawerContent from './CustomUserDrawerContent';
 import {loggedInNavigations} from '@/constants';
 import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
 import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
+import {useAuthStore} from '@/store/authStore';
 
 export type UserDrawerParamList = {
   BottomTabs: NavigatorScreenParams<BottomTabsParamList>;
@@ -48,6 +49,16 @@ function DrawerIcons({
 }
 
 function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
+  const logout = useAuthStore(state => state.logout);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error('로그아웃 실패:', error);
+    }
+  };
+
   return (
     <Drawer.Navigator
       drawerContent={CustomUserDrawerContent}
@@ -104,7 +115,7 @@ function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
         listeners={{
           drawerItemPress: e => {
             e.preventDefault();
-            navigation.navigate(loggedInNavigations.CHANGE_PASSWORD);
+            handleLogout();
           },
         }}
       />
