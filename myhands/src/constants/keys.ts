@@ -9,6 +9,7 @@ const storageKeys = {
   ACCESS_TOKEN: 'accessToken',
   REFRESH_TOKEN: 'refreshToken',
   USER: 'user',
+  IS_ADMIN: 'isAdmin',
 } as const;
 
 export {queryKeys, storageKeys};

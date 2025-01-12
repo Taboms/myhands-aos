@@ -1,4 +1,4 @@
-import axiosInstance from '@/api/axios';
+import axiosInstance, {fetchApi} from '@/api/axios';
 import {storageKeys} from '@/constants';
 import {Profile} from '@/types/domain';
 import {getAsyncData} from '@/utils/asyncStorage';
@@ -28,7 +28,7 @@ const postLogin = async ({
 type ResponseProfile = Profile;
 
 const getProfile = async (): Promise<ResponseProfile> => {
-  const {data} = await axiosInstance.get('/user/info');
+  const {data} = await fetchApi.get('/user/info');
   return data.responseDto;
 };
 
@@ -42,7 +42,7 @@ const getAccessToken = async (): Promise<ResponseToken> => {
   const refreshToken = await getAsyncData(storageKeys.REFRESH_TOKEN);
   const {data} = await axiosInstance.post(
     '/auth/retoken',
-    {}, // request body (비어있는 경우)
+    {},
     {
       headers: {
         Authorization: `Bearer ${refreshToken}`,
@@ -53,7 +53,7 @@ const getAccessToken = async (): Promise<ResponseToken> => {
 };
 
 const logout = async () => {
-  await axiosInstance.post('/user/logout');
+  await fetchApi.post('/user/logout');
 };
 
 export {postLogin, getProfile, getAccessToken, logout};

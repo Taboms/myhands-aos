@@ -10,4 +10,13 @@ interface Profile {
   level: string;
 }
 
-export type {Profile};
+interface QuestStats {
+  challengeCount: number;
+  resultList: string[];
+  questRate: number;
+  maxCount: number;
+  historySize: number;
+  expHistory: Record<string, number>;
+}
+
+export type {Profile, QuestStats};
