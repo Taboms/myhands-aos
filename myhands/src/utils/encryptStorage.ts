@@ -1,19 +1,33 @@
-import EncryptStorage from 'react-native-encrypted-storage';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const setEncryptStorage = async <T>(key: string, data: T) => {
-  await EncryptStorage.setItem(key, JSON.stringify(data));
+  try {
+    const jsonValue = JSON.stringify(data);
+    await EncryptedStorage.setItem(key, jsonValue);
+    console.log(`[Storage] Set ${key}: success`);
+  } catch (error) {
+    console.error(`[Storage] Error setting ${key}:`, error);
+    throw error;
+  }
 };
 
 const getEncryptStorage = async (key: string) => {
-  const storedData = await EncryptStorage.getItem(key);
-  // 저장된 데이터가 있다면 파싱해서 가져오기
-  return storedData ? JSON.parse(storedData) : null;
+  try {
+    const storedData = await EncryptedStorage.getItem(key);
+    console.log(`[Storage] Getting ${key}:`, storedData ? 'exists' : 'null');
+    return storedData ? JSON.parse(storedData) : null;
+  } catch (error) {
+    console.error(`[Storage] Error getting ${key}:`, error);
+    return null;
+  }
 };
 
 const removeEncryptStorage = async (key: string) => {
-  const data = await getEncryptStorage(key);
-  if (data) {
-    await EncryptStorage.removeItem(key);
+  try {
+    await EncryptedStorage.removeItem(key);
+    console.log(`[Storage] Removed ${key}`);
+  } catch (error) {
+    console.error(`[Storage] Error removing ${key}:`, error);
   }
 };
 

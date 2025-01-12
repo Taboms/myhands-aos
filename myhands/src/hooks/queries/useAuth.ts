@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react';
 import {useMutation, useQuery} from '@tanstack/react-query';
+import axios from 'axios';
 import {getAccessToken, getProfile, logout, postLogin} from '@/api/auth';
 import queryClient from '@/api/queryClient';
 import {queryKeys, storageKeys} from '@/constants';
 import {numbers} from '@/constants/numbers';
 import {UseMutationCustomOptions, UseQueryCustomOptions} from '@/types/common';
 import {
+  getEncryptStorage,
   removeEncryptStorage,
   removeHeader,
   setEncryptStorage,
@@ -13,56 +15,115 @@ import {
 } from '@/utils';
 
 function useLogin(mutationOptions?: UseMutationCustomOptions) {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-
   const mutation = useMutation({
     mutationFn: postLogin,
-    onSuccess: ({accessToken, refreshToken, admin}) => {
-      setIsAdmin(admin);
-      setEncryptStorage(storageKeys.REFRESH_TOKEN, refreshToken);
-      setHeader('Authorization', `Bearer ${accessToken}`);
+    onSuccess: async ({accessToken, refreshToken, admin}) => {
+      try {
+        await setEncryptStorage(storageKeys.REFRESH_TOKEN, refreshToken);
+        setHeader('Authorization', `Bearer ${accessToken}`);
+        queryClient.setQueryData([queryKeys.ADMIN_STATUS], admin);
 
-      queryClient.setQueryData([queryKeys.AUTH, queryKeys.GET_PROFILE], {
-        isAdmin: admin,
-      });
+        await queryClient.fetchQuery({
+          queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
+          queryFn: getProfile,
+        });
+      } catch (error) {
+        console.error('Login success handling error:', error);
+        // 에러 발생 시 cleanup
+        // await removeEncryptStorage(storageKeys.REFRESH_TOKEN);
+        // removeHeader('Authorization');
+        throw error;
+      }
     },
     onSettled: () => {
       queryClient.refetchQueries({
         queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
       });
-      queryClient.invalidateQueries({
-        queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
-      });
+      // queryClient.invalidateQueries({
+      //   queryKey: [queryKeys.AUTH, queryKeys.GET_PROFILE],
+      // });
     },
     ...mutationOptions,
+  });
+  const {data: isAdmin} = useQuery({
+    queryKey: [queryKeys.ADMIN_STATUS],
+    queryFn: () => queryClient.getQueryData([queryKeys.ADMIN_STATUS]),
+    enabled: true,
+    initialData: null,
   });
   return {mutation, isAdmin};
 }
 
 // 토큰 갱신
 function useGetRefreshToken() {
-  const {isSuccess, data, isError} = useQuery({
+  const [refreshToken, setRefreshToken] = useState<string | null>(null);
+  const [isChecked, setIsChecked] = useState(false);
+
+  useEffect(() => {
+    const checkRefreshToken = async () => {
+      try {
+        console.log('[Auth] Checking refresh token...');
+        const token = await getEncryptStorage(storageKeys.REFRESH_TOKEN);
+        console.log('[Auth] Found token:', token);
+        setRefreshToken(token);
+      } catch (error) {
+        console.error('[Auth] Error checking refresh token:', error);
+      } finally {
+        setIsChecked(true);
+      }
+    };
+
+    checkRefreshToken();
+  }, []);
+
+  const {isSuccess, data, isError, error} = useQuery({
     queryKey: [queryKeys.AUTH, queryKeys.GET_ACCESS_TOKEN],
     queryFn: getAccessToken,
-    staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME, // 5분 전 갱신
+    enabled: !!refreshToken && isChecked,
+    staleTime: numbers.ACCESS_TOKEN_REFRESH_TIME,
     refetchInterval: numbers.ACCESS_TOKEN_REFRESH_TIME,
-    refetchOnReconnect: true,
-    refetchIntervalInBackground: true,
+    retry: 2, // 재시도 횟수 추가
+    retryDelay: 1000, // 재시도 간격
+    // refetchOnReconnect: true,
+    // refetchIntervalInBackground: true,
   });
 
-  useEffect(() => {
-    if (isSuccess) {
-      setHeader('Authorization', `Bearer ${data.accessToken}`);
-      setEncryptStorage(storageKeys.REFRESH_TOKEN, data.refreshToken);
-    }
-  }, [isSuccess, data?.accessToken, data?.refreshToken]);
+  // useEffect(() => {
+  //   if (isSuccess) {
+  //     setHeader('Authorization', `Bearer ${data.accessToken}`);
+  //     setEncryptStorage(storageKeys.REFRESH_TOKEN, data.refreshToken);
+  //   }
+  // }, [isSuccess, data?.accessToken, data?.refreshToken]);
 
   useEffect(() => {
-    if (isError) {
-      removeHeader('Authorization');
-      removeEncryptStorage(storageKeys.REFRESH_TOKEN);
+    if (isSuccess && data) {
+      const setupTokens = async () => {
+        try {
+          await setEncryptStorage(storageKeys.REFRESH_TOKEN, data.refreshToken);
+          setHeader('Authorization', `Bearer ${data.accessToken}`);
+        } catch (error) {
+          console.error('Error setting up tokens:', error);
+        }
+      };
+      setupTokens();
     }
-  }, [isError]);
+  }, [isSuccess, data]);
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     removeHeader('Authorization');
+  //     removeEncryptStorage(storageKeys.REFRESH_TOKEN);
+  //   }
+  // }, [isError]);
+
+  useEffect(() => {
+    if (isError && error && axios.isAxiosError(error)) {
+      if (error.response?.status === 401) {
+        // removeHeader('Authorization');
+        // removeEncryptStorage(storageKeys.REFRESH_TOKEN);
+      }
+    }
+  }, [isError, error]);
 
   return {isSuccess, isError};
 }
@@ -91,11 +152,13 @@ function useLogout(mutationOptions?: UseMutationCustomOptions) {
 
 function useAuth() {
   const refreshTokenQuery = useGetRefreshToken();
-  const getProfileQuery = useGetProfile({
-    enabled: refreshTokenQuery.isSuccess,
-  });
-  const isLogin = getProfileQuery.isSuccess;
   const {mutation: loginMutation, isAdmin} = useLogin();
+  const getProfileQuery = useGetProfile({
+    enabled: refreshTokenQuery.isSuccess && !isAdmin, // admin이 아닐 때만 프로필 조회
+  });
+
+  // isLogin 조건 수정
+  const isLogin = isAdmin || getProfileQuery.isSuccess;
   const logoutMutation = useLogout();
 
   return {

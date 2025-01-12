@@ -1,4 +1,5 @@
 import axiosInstance from '@/api/axios';
+import {storageKeys} from '@/constants';
 import {Profile} from '@/types/domain';
 import {getEncryptStorage} from '@/utils';
 
@@ -7,7 +8,7 @@ type RequestUser = {
   password: string;
 };
 
-type ResponseToken = {
+type ResponseUser = {
   accessToken: string;
   refreshToken: string;
   admin: boolean;
@@ -16,7 +17,7 @@ type ResponseToken = {
 const postLogin = async ({
   id,
   password,
-}: RequestUser): Promise<ResponseToken> => {
+}: RequestUser): Promise<ResponseUser> => {
   const {data} = await axiosInstance.post('/user/login', {
     id,
     password,
@@ -32,14 +33,24 @@ const getProfile = async (): Promise<ResponseProfile> => {
   return data.responseDto;
 };
 
-const getAccessToken = async (): Promise<ResponseToken> => {
-  const refreshToken = await getEncryptStorage('refreshToken');
+type ResponseToken = {
+  accessToken: string;
+  refreshToken: string;
+  admin: boolean;
+};
 
-  const {data} = await axiosInstance.get('/auth/retoken', {
-    headers: {
-      Authorization: `Bearer ${refreshToken}`,
-    },
-  });
+const getAccessToken = async (): Promise<ResponseToken> => {
+  const refreshToken = await getEncryptStorage(storageKeys.REFRESH_TOKEN);
+  console.log(`refreshToken: ${refreshToken}`);
+  const {data} = await axiosInstance.post(
+    '/auth/retoken',
+    {}, // request body (비어있는 경우)
+    {
+      headers: {
+        Authorization: `Bearer ${refreshToken}`,
+      },
+    }
+  );
 
   return data;
 };
