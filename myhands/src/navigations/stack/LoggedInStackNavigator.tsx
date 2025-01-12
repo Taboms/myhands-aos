@@ -16,7 +16,7 @@ import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 export type LoggedInStackParamList = {
   UserDrawer: NavigatorScreenParams<UserDrawerParamList>;
   [loggedInNavigations.BOARD_ALL]: undefined;
-  [loggedInNavigations.BOARD_DETAIL]: undefined;
+  [loggedInNavigations.BOARD_DETAIL]: {postId: number};
   [loggedInNavigations.CHANGE_PASSWORD]: undefined;
   [loggedInNavigations.CHANGE_PROFILE]: undefined;
   [loggedInNavigations.NOTIFICATIONS]: undefined;

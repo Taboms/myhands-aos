@@ -28,5 +28,48 @@ const getBoardPosts = async (size = 4): Promise<BoardPost[]> => {
   }
 };
 
-export {getBoardPosts};
+const getBoardPostAll = async (
+  size = 15,
+  lastId?: number
+): Promise<BoardPost[]> => {
+  try {
+    const url = lastId
+      ? `/board/list?size=${size}&lastId=${lastId}`
+      : `/board/list?size=${size}`;
+
+    const {data} = await fetchApi.get<ResponseBoardData>(url);
+
+    if (data.status === 'OK') {
+      return data.responseDto;
+    }
+    throw new Error(data.message || 'Failed to fetch board posts');
+  } catch (error) {
+    console.error('Error fetching board posts:', error);
+    throw error;
+  }
+};
+
+const getBoardSearchResults = async (
+  word: string,
+  size = 15,
+  lastId?: number
+): Promise<BoardPost[]> => {
+  try {
+    const url = lastId
+      ? `/board/search?size=${size}&word=${word}&lastId=${lastId}`
+      : `/board/search?size=${size}&word=${word}`;
+
+    const {data} = await fetchApi.get<ResponseBoardData>(url);
+
+    if (data.status === 'OK') {
+      return data.responseDto;
+    }
+    throw new Error(data.message || 'Failed to fetch search results');
+  } catch (error) {
+    console.error('Error fetching search results:', error);
+    throw error;
+  }
+};
+
+export {getBoardPosts, getBoardPostAll, getBoardSearchResults};
 export type {BoardPost};

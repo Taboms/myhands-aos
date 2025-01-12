@@ -3,19 +3,28 @@ import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {BoardPost} from '@/api/boardApi';
 import {colors} from '@/constants';
 
+type BoardItemProps = {
+  item: BoardPost;
+  isLastItem: boolean;
+  onPress: () => void;
+  showNewIndicator: boolean;
+  showArrow: boolean;
+};
+
 const BoardItem = ({
   item,
   isLastItem,
-}: {
-  item: BoardPost;
-  isLastItem: boolean;
-}) => {
-  const showNewIndicator = item.timeAgo.endsWith('전');
-
+  onPress,
+  showNewIndicator,
+  showArrow,
+}: BoardItemProps) => {
   return (
-    <TouchableOpacity style={[styles.card, isLastItem && styles.lastCard]}>
+    <TouchableOpacity
+      onPress={onPress}
+      style={[styles.card, isLastItem && styles.lastCard]}
+    >
       <View style={styles.cardContent}>
-        {showNewIndicator && (
+        {showNewIndicator && ( // 조건부로 N 표시
           <View style={styles.iconWrapper}>
             <Text style={styles.iconText}>N</Text>
           </View>
@@ -24,7 +33,7 @@ const BoardItem = ({
           <Text style={styles.title}>{item.title}</Text>
           <Text style={styles.time}>{item.timeAgo}</Text>
         </View>
-        <Text style={styles.arrow}>{'>'}</Text>
+        {showArrow && <Text style={styles.arrow}>{'>'}</Text>}
       </View>
     </TouchableOpacity>
   );

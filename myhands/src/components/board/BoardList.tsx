@@ -13,9 +13,23 @@ type NavigationProp = StackNavigationProp<LoggedInStackParamList, 'BoardAll'>;
 const BoardList = ({posts}: {posts: BoardPost[]}) => {
   const navigation = useNavigation<NavigationProp>();
 
-  const renderItem = ({item, index}: {item: BoardPost; index: number}) => (
-    <BoardItem item={item} isLastItem={index === posts.length - 1} />
-  );
+  const renderItem = ({item, index}: {item: BoardPost; index: number}) => {
+    const showNewIndicator = item.timeAgo.endsWith('전'); // N 표시 여부 결정
+
+    return (
+      <BoardItem
+        item={item}
+        isLastItem={index === posts.length - 1}
+        showNewIndicator={showNewIndicator}
+        onPress={() =>
+          navigation.navigate(loggedInNavigations.BOARD_DETAIL, {
+            postId: item.boardId,
+          })
+        }
+        showArrow={true}
+      />
+    );
+  };
 
   const handleViewAllPress = () => {
     navigation.navigate(loggedInNavigations.BOARD_ALL); // 전체보기 화면으로 이동
