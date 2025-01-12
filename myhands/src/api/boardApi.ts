@@ -71,5 +71,36 @@ const getBoardSearchResults = async (
   }
 };
 
-export {getBoardPosts, getBoardPostAll, getBoardSearchResults};
-export type {BoardPost};
+type BoardDetailResponse = {
+  status: string;
+  message: string;
+  responseDto: {
+    title: string;
+    content: string;
+    createdAt: string;
+  };
+};
+
+type BoardDetail = {
+  title: string;
+  content: string;
+  createdAt: string;
+};
+const getBoardDetail = async (boardId: number): Promise<BoardDetail> => {
+  try {
+    const {data} = await fetchApi.get<BoardDetailResponse>(
+      `/board/detail?boardId=${boardId}`
+    );
+
+    if (data.status === 'OK') {
+      return data.responseDto;
+    }
+    throw new Error(data.message || 'Failed to fetch board details');
+  } catch (error) {
+    console.error('Error fetching board details:', error);
+    throw error;
+  }
+};
+
+export {getBoardPosts, getBoardPostAll, getBoardSearchResults, getBoardDetail};
+export type {BoardPost, BoardDetail};
