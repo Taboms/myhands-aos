@@ -22,7 +22,7 @@ const deviceHeight = Dimensions.get('screen').height;
 const InputField = forwardRef(
   (
     {disabled = false, error, touched, ...props}: InputFieldProps,
-    ref?: ForwardedRef<TextInput>,
+    ref?: ForwardedRef<TextInput>
   ) => {
     const innerRef = useRef<TextInput | null>(null);
 
@@ -55,7 +55,7 @@ const InputField = forwardRef(
         </View>
       </Pressable>
     );
-  },
+  }
 );
 
 const styles = StyleSheet.create({
