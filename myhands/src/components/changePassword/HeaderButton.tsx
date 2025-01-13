@@ -6,17 +6,19 @@ interface HeaderButtonProps {
   label: string;
   onPress: () => void;
   disabled?: boolean;
+  color?: string;
 }
 
 const HeaderButton = ({
   label,
   onPress,
   disabled = false,
+  color = colors.GRAY_500,
 }: HeaderButtonProps) => {
   return (
     <Pressable
       onPress={onPress}
-      style={[styles.button, disabled && styles.disabledButton]}
+      style={[styles.button, {backgroundColor: disabled ? '#D3D3D3' : color}]}
       disabled={disabled}
     >
       <Text style={styles.buttonText}>{label}</Text>
@@ -38,7 +40,7 @@ const styles = StyleSheet.create({
   buttonText: {
     top: -1,
     color: 'white',
-    fontSize: 14,
+    fontSize: 17,
     fontWeight: 'bold',
   },
 });

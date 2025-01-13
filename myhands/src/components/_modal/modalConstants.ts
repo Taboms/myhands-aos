@@ -38,6 +38,10 @@ export const stateMap: StateMap = {
     subtitle: '모든 정보를 입력해주세요.',
     btn: [1],
   },
+  ProfileEditSuccess: {
+    title: '프로필 이미지 변경 완료',
+    btn: [3],
+  },
 };
 
 export const buttonMap: ButtonMap = {
