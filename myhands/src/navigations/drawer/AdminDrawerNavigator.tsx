@@ -29,6 +29,7 @@ function AdminDrawerNavigator() {
         drawerType: 'front',
         headerShown: true,
         headerTitleAlign: 'center',
+        title: '관리자 페이지',
       }}
     >
       <Drawer.Screen
