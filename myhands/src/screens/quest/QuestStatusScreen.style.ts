@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 
 const width = Dimensions.get('screen').width;
 
-const Container = styled.SafeAreaView`
+const Container = styled.ScrollView`
   flex: 1;
   background-color: #fff8f8;
   padding: 7% 7%;
