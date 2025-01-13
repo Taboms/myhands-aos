@@ -20,6 +20,7 @@ type TAuthStore = {
   user: User | null;
   accessToken: string | null;
   refreshToken: string | null;
+  password: string | null;
   isAdmin: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
@@ -34,6 +35,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
   user: null,
   accessToken: null,
   refreshToken: null,
+  password: null,
   isAdmin: false,
   isAuthenticated: false,
   isLoading: true,
@@ -57,6 +59,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
         setAsyncData(storageKeys.ACCESS_TOKEN, tokens.accessToken),
         setAsyncData(storageKeys.REFRESH_TOKEN, tokens.refreshToken),
         setAsyncData(storageKeys.IS_ADMIN, tokens.admin),
+        setAsyncData(storageKeys.PASSWORD, password),
       ]);
 
       if (tokens.admin === true) {
@@ -78,6 +81,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
         user: userInfo,
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
+        password: userInfo.password,
         isAdmin: tokens.admin,
         isAuthenticated: true,
         isLoading: false,
@@ -93,6 +97,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
         removeAsyncData(storageKeys.ACCESS_TOKEN),
         removeAsyncData(storageKeys.REFRESH_TOKEN),
         removeAsyncData(storageKeys.USER),
+        removeAsyncData(storageKeys.PASSWORD),
       ]);
 
       set({
@@ -109,14 +114,14 @@ export const useAuthStore = create<TAuthStore>(set => ({
 
   initializeAuth: async () => {
     try {
-      const [accessToken, refreshToken, isAdmin, savedUser] = await Promise.all(
-        [
+      const [accessToken, refreshToken, isAdmin, savedUser, savedPassword] =
+        await Promise.all([
           getAsyncData(storageKeys.ACCESS_TOKEN),
           getAsyncData(storageKeys.REFRESH_TOKEN),
           getAsyncData(storageKeys.IS_ADMIN),
           getAsyncData(storageKeys.USER),
-        ]
-      );
+          getAsyncData(storageKeys.PASSWORD),
+        ]);
 
       if (accessToken && refreshToken) {
         try {
@@ -147,6 +152,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
           set({
             user: userInfo,
             accessToken,
+            password: savedPassword || null,
             refreshToken,
             isAuthenticated: true,
             isLoading: false,

@@ -1,63 +1,132 @@
 import React, {useState} from 'react';
-import {SafeAreaView, View, Alert} from 'react-native';
-import CustomButton from '@/components/CustomButton';
-import InputField from '@/components/InputField';
-import useForm from '@/hooks/useForm';
+import {SafeAreaView, View, StyleSheet, Image, Text} from 'react-native';
+import Icon from 'react-native-vector-icons/AntDesign';
+import Header from '@/components/login/Header';
+import LoginButton from '@/components/login/LoginButton';
+import LoginInput from '@/components/login/LoginInput';
+import {colors} from '@/constants';
 import {useAuthStore} from '@/store/authStore';
-import {validateLogin} from '@/utils/validate';
 
-function LoginScreen() {
-  const [isLoading, setIsLoading] = useState(false);
+const LoginScreen = () => {
   const login = useAuthStore(state => state.login);
+  const [isLoading, setIsLoading] = useState(false);
+  const [id, setId] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const form = useForm({
-    initialValue: {
-      id: '',
-      password: '',
-    },
-    validate: validateLogin,
-  });
+  const handleLogin = async () => {
+    try {
+      setErrorMessage(null);
+      await login(id, password);
+    } catch (error) {
+      setErrorMessage('아이디 또는 비밀번호를 확인해주세요.');
+      throw new Error('로그인 실패');
+    }
+  };
 
   const handleSubmit = async () => {
-    // 폼 유효성 검사
     setIsLoading(true);
     try {
-      console.log('로그인 시도 with: ', form.values.id, form.values.password);
-      await login(form.values.id, form.values.password);
-      // 로그인 성공 시 RootNavigator에서 자동으로 화면 전환됨
+      await handleLogin();
     } catch (error) {
-      // 에러 처리
-      console.log('로그인 실패', error);
+      console.error(error);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <SafeAreaView>
-      <View>
-        <InputField
-          placeholder="아이디"
-          autoFocus={true}
-          {...form.getTextInputProps('id')}
-          editable={!isLoading}
-        />
-        <InputField
-          placeholder="비밀번호"
-          secureTextEntry={true}
-          {...form.getTextInputProps('password')}
-          editable={!isLoading}
-        />
-        <CustomButton
-          label={isLoading ? '로그인 중...' : '로그인'}
-          variant="filled"
-          size="large"
-          onPress={handleSubmit}
-          disabled={isLoading}
-        />
+    <SafeAreaView style={styles.container}>
+      <Header />
+      <Image
+        source={require('@/assets/image/board-ellipse.png')}
+        style={styles.curveImage}
+        resizeMode="stretch"
+      />
+      <View style={styles.formContainer}>
+        <View style={styles.inputContainer}>
+          <LoginInput
+            placeholder="아이디"
+            value={id}
+            onChangeText={setId}
+            editable={!isLoading}
+          />
+          <LoginInput
+            placeholder="비밀번호"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={true}
+            editable={!isLoading}
+          />
+        </View>
+        {errorMessage && (
+          <View style={styles.errorContainer}>
+            <Icon
+              name="exclamationcircleo"
+              size={18}
+              color={colors.RED_800}
+              style={styles.errorIcon}
+            />
+            <Text style={styles.errorMessage}>{errorMessage}</Text>
+          </View>
+        )}
+        <View style={styles.buttonContainer}>
+          <LoginButton isLoading={isLoading} onPress={handleSubmit} />
+        </View>
       </View>
     </SafeAreaView>
   );
-}
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.WHITE,
+  },
+  curveImage: {
+    position: 'absolute',
+    top: '40%',
+    left: 0,
+    right: 0,
+    height: 150,
+    width: '100%',
+    zIndex: 1,
+  },
+  formContainer: {
+    position: 'absolute',
+    top: '40%',
+    left: 32,
+    right: 32,
+
+    zIndex: 2,
+  },
+  inputContainer: {
+    marginBottom: 14,
+    backgroundColor: colors.WHITE,
+    borderRadius: 12,
+    paddingVertical: 16,
+    paddingHorizontal: 16,
+    elevation: 2,
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  errorIcon: {
+    top: 2,
+    marginLeft: 3,
+    marginRight: 8,
+  },
+  errorMessage: {
+    color: colors.RED_800,
+    fontSize: 14,
+    fontWeight: 'semibold',
+    textAlign: 'left',
+  },
+  buttonContainer: {
+    width: '100%',
+  },
+});
 
 export default LoginScreen;
