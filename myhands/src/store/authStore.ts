@@ -29,6 +29,7 @@ type TAuthStore = {
   initializeAuth: () => Promise<void>;
   setUser: (user: User) => void;
   setTokens: (tokens: ResponseToken) => void;
+  setAvartaId: (id: number) => void;
 };
 
 export const useAuthStore = create<TAuthStore>(set => ({
@@ -41,6 +42,11 @@ export const useAuthStore = create<TAuthStore>(set => ({
   isLoading: true,
 
   setUser: user => set({user}),
+
+  setAvartaId: (id: number) =>
+    set(state => ({
+      user: state.user ? {...state.user, avartaId: id} : null,
+    })),
 
   setTokens: async (tokens: ResponseToken) => {
     const {accessToken, refreshToken, admin} = tokens;
