@@ -4,6 +4,7 @@ const queryKeys = {
   GET_PROFILE: 'getProfile',
   ADMIN_STATUS: 'adminStatus',
   GET_PASSWORD: 'getPassword',
+  GET_ADMINID: 'getAdminId',
 } as const;
 
 const storageKeys = {
@@ -12,6 +13,7 @@ const storageKeys = {
   USER: 'user',
   PASSWORD: 'password',
   IS_ADMIN: 'isAdmin',
+  ADMINID: 'adminId',
 } as const;
 
 export {queryKeys, storageKeys};

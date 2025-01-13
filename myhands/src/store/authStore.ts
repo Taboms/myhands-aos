@@ -30,6 +30,7 @@ type TAuthStore = {
   setUser: (user: User) => void;
   setTokens: (tokens: ResponseToken) => void;
   setAvartaId: (id: number) => void;
+  adminId: string | null;
 };
 
 export const useAuthStore = create<TAuthStore>(set => ({
@@ -40,6 +41,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
   isAdmin: false,
   isAuthenticated: false,
   isLoading: true,
+  adminId: null,
 
   setUser: user => set({user}),
 
@@ -75,7 +77,9 @@ export const useAuthStore = create<TAuthStore>(set => ({
           isAdmin: tokens.admin,
           isAuthenticated: true,
           isLoading: false,
+          adminId: id,
         });
+        setAsyncData(storageKeys.ADMINID, id);
         return;
       }
 
@@ -91,6 +95,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
         isAdmin: tokens.admin,
         isAuthenticated: true,
         isLoading: false,
+        adminId: null,
       });
     } catch (error) {
       throw error;
@@ -104,6 +109,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
         removeAsyncData(storageKeys.REFRESH_TOKEN),
         removeAsyncData(storageKeys.USER),
         removeAsyncData(storageKeys.PASSWORD),
+        removeAsyncData(storageKeys.ADMINID),
       ]);
 
       set({
@@ -112,6 +118,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
         refreshToken: null,
         isAdmin: false,
         isAuthenticated: false,
+        adminId: null,
       });
     } catch (error) {
       throw error;
@@ -120,14 +127,21 @@ export const useAuthStore = create<TAuthStore>(set => ({
 
   initializeAuth: async () => {
     try {
-      const [accessToken, refreshToken, isAdmin, savedUser, savedPassword] =
-        await Promise.all([
-          getAsyncData(storageKeys.ACCESS_TOKEN),
-          getAsyncData(storageKeys.REFRESH_TOKEN),
-          getAsyncData(storageKeys.IS_ADMIN),
-          getAsyncData(storageKeys.USER),
-          getAsyncData(storageKeys.PASSWORD),
-        ]);
+      const [
+        accessToken,
+        refreshToken,
+        isAdmin,
+        savedUser,
+        savedPassword,
+        adminId,
+      ] = await Promise.all([
+        getAsyncData(storageKeys.ACCESS_TOKEN),
+        getAsyncData(storageKeys.REFRESH_TOKEN),
+        getAsyncData(storageKeys.IS_ADMIN),
+        getAsyncData(storageKeys.USER),
+        getAsyncData(storageKeys.PASSWORD),
+        getAsyncData(storageKeys.ADMINID),
+      ]);
 
       if (accessToken && refreshToken) {
         try {
@@ -138,6 +152,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
               isAuthenticated: true,
               isAdmin: true,
               isLoading: false,
+              adminId,
             });
             return;
           }
@@ -162,6 +177,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
             refreshToken,
             isAuthenticated: true,
             isLoading: false,
+            adminId: null,
           });
         } catch (error) {
           // 프로필 조회 실패 시 로그아웃 처리
@@ -174,6 +190,7 @@ export const useAuthStore = create<TAuthStore>(set => ({
             isLoading: false,
             isAuthenticated: false,
             isAdmin: false,
+            adminId: null,
           });
         }
       } else {
