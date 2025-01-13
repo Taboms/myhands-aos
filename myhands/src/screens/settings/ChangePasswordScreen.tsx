@@ -1,17 +1,23 @@
-import React, {useState} from 'react';
+import React, {useState, useLayoutEffect, useCallback} from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import {logout} from '@/api/auth';
+import {changePassword} from '@/api/setting';
+import CustomModal from '@/components/_modal/CustomModal';
 import Condition from '@/components/changePassword/Condition';
 import ErrorMessage from '@/components/changePassword/ErrorMessage';
+import HeaderButton from '@/components/changePassword/HeaderButton';
 import PasswordInput from '@/components/changePassword/PasswordInput';
 import {colors} from '@/constants';
 import {useAuthStore} from '@/store/authStore';
 
-const ChangePasswordScreen = () => {
+const ChangePasswordScreen = ({navigation}: any) => {
   const currentPasswordFromStore = useAuthStore(state => state.password);
+  const userLogout = useAuthStore(state => state.logout);
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const checkNewPasswordConditions = () => {
     const lengthCondition = newPassword.length >= 8 && newPassword.length <= 20;
@@ -36,6 +42,51 @@ const ChangePasswordScreen = () => {
   const isPasswordMatched =
     confirmPassword === newPassword && newPassword.length > 0;
 
+  const isButtonEnabled = useCallback(() => {
+    return (
+      currentPassword.length > 0 &&
+      checkNewPasswordConditions().lengthCondition &&
+      checkNewPasswordConditions().containsAll &&
+      isPasswordMatched
+    );
+  }, [currentPassword, newPassword, confirmPassword, isPasswordMatched]);
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error: any) {
+    } finally {
+      userLogout();
+    }
+  };
+
+  const handlePasswordChange = async () => {
+    if (!isPasswordMatched || !checkNewPasswordConditions().containsAll) {
+      return;
+    }
+
+    try {
+      await changePassword(newPassword);
+      setIsModalOpen(false);
+      await handleLogout();
+    } catch (error) {
+      console.error('비밀번호 변경 오류:', error);
+    }
+  };
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
+      headerRight: () => (
+        <HeaderButton
+          label="변경"
+          onPress={() => setIsModalOpen(true)}
+          disabled={!isButtonEnabled()} // 버튼 활성화/비활성화
+        />
+      ),
+    });
+  }, [navigation, isButtonEnabled]);
+
   return (
     <View style={styles.container}>
       <Text style={styles.label}>현재 비밀번호</Text>
@@ -43,7 +94,7 @@ const ChangePasswordScreen = () => {
         placeholder="현재 비밀번호를 입력하세요"
         value={currentPassword}
         onChangeText={setCurrentPassword}
-        onBlur={handleCurrentPasswordValidation} // 입력 필드가 벗어날 때 유효성 검사
+        onBlur={handleCurrentPasswordValidation}
       />
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
@@ -73,6 +124,14 @@ const ChangePasswordScreen = () => {
       <View style={styles.conditionsContainer}>
         <Condition isValid={isPasswordMatched} text="비밀번호 일치" />
       </View>
+
+      <CustomModal
+        state="PasswordChangeWarning"
+        type="warning"
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onButtonClick={handlePasswordChange}
+      />
     </View>
   );
 };

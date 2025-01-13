@@ -1,5 +1,6 @@
 import React from 'react';
 import {Pressable, Text, StyleSheet} from 'react-native';
+import {colors} from '@/constants';
 
 interface HeaderButtonProps {
   label: string;
@@ -28,13 +29,14 @@ const styles = StyleSheet.create({
     marginRight: 16,
     paddingVertical: 6,
     paddingHorizontal: 12,
-    backgroundColor: '#A9A9A9',
+    backgroundColor: colors.GRAY_500,
     borderRadius: 20,
   },
   disabledButton: {
     backgroundColor: '#D3D3D3',
   },
   buttonText: {
+    top: -1,
     color: 'white',
     fontSize: 14,
     fontWeight: 'bold',

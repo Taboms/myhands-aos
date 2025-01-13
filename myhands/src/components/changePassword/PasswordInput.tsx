@@ -58,6 +58,7 @@ const styles = StyleSheet.create({
   },
   eyeIcon: {
     marginLeft: 8,
+    marginRight: 8,
   },
 });
 

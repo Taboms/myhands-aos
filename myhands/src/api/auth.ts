@@ -53,7 +53,7 @@ const getAccessToken = async (): Promise<ResponseToken> => {
 };
 
 const logout = async () => {
-  await fetchApi.post('/user/logout');
+  await fetchApi.delete('/user/logout');
 };
 
 export {postLogin, getProfile, getAccessToken, logout};
