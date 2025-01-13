@@ -1,8 +1,8 @@
 // 연속 도전
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet} from 'react-native';
 import * as St from './QuestChallenge.style';
-import WeekRecord from './WeekRecord';
+import WeeklyTimeline from './WeeklyTimeline';
 import {colors} from '@/constants';
 
 function QuestChallenge() {
@@ -31,7 +31,7 @@ function QuestChallenge() {
           </St.Standard>
         </St.InfoStandard>
       </St.ChallengeInfo>
-      <WeekRecord />
+      <WeeklyTimeline />
     </St.Container>
   );
 }

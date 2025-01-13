@@ -47,7 +47,10 @@ function QuestHomeScreen() {
         tabBarContentContainerStyle: {
           height: 55,
         },
-        tabBarIndicatorContainerStyle: {},
+        tabBarIndicatorContainerStyle: {
+          borderColor: '#EAEAEA',
+          borderBottomWidth: 1,
+        },
       }}
     >
       <Tab.Screen

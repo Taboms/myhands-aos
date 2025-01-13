@@ -18,6 +18,7 @@ const InfoText = styled.Text`
   font-size: 14px;
   line-height: 22px;
   font-weight: 600;
+  color: black;
 `;
 
 const BottomInfoText = styled.View`
@@ -29,6 +30,7 @@ const BottomText = styled.Text`
   font-size: 14px;
   line-height: 22px;
   font-weight: 600;
+  color: black;
 `;
 
 const PointText = styled.Text`
@@ -66,6 +68,7 @@ const ColorBox = styled.View<ColorProps>`
 const StandardText = styled.Text`
   margin-left: 5px;
   font-size: 10px;
+  color: black;
 `;
 
 const ChallengeRecord = styled.View``;
