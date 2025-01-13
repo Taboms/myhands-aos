@@ -8,6 +8,7 @@ const colors = {
   MAX: '#FF5B35',
   MED: '#FFC300',
   ETC: '#57B9FF',
+  FAIL: '#EDEDED',
 };
 
 export {colors};
