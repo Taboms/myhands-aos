@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {SafeAreaView, View, Alert} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import CustomButton from '@/components/CustomButton';
 import InputField from '@/components/InputField';
 import useForm from '@/hooks/useForm';
@@ -18,12 +19,23 @@ function LoginScreen() {
     validate: validateLogin,
   });
 
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    return fcmToken;
+  };
+
   const handleSubmit = async () => {
     // 폼 유효성 검사
     setIsLoading(true);
     try {
-      console.log('로그인 시도 with: ', form.values.id, form.values.password);
-      await login(form.values.id, form.values.password);
+      const deviceToken = await getFcmToken();
+      console.log(
+        '로그인 시도 with: ',
+        form.values.id,
+        form.values.password,
+        deviceToken
+      );
+      await login(form.values.id, form.values.password, deviceToken);
       // 로그인 성공 시 RootNavigator에서 자동으로 화면 전환됨
     } catch (error) {
       // 에러 처리

@@ -9,7 +9,6 @@ import UserDrawerNavigator, {
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardAllScreen from '@/screens/board/BoardAllScreen';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
-import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
 import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 
@@ -76,13 +75,13 @@ function LoggedInStackNavigator() {
           title: '프로필 변경',
         }}
       />
-      <Stack.Screen
+      {/* <Stack.Screen
         name={loggedInNavigations.NOTIFICATIONS}
         component={NotificationsScreen}
         options={{
           title: '알림함',
         }}
-      />
+      /> */}
     </Stack.Navigator>
   );
 }
