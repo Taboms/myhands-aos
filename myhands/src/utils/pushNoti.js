@@ -9,7 +9,7 @@ const displayNotification = async message => {
       body: message.notification?.body || 'You received a new message.',
       android: {
         channelId: 'default',
-        smallIcon: 'ic_launcher',
+        smallIcon: 'ic_notification',
         showTimestamp: true,
         importance: AndroidImportance.HIGH,
         pressAction: {
