@@ -9,6 +9,7 @@ import AdminDrawerNavigator, {
 import {adminNavigations} from '@/constants/navigations';
 import AdminHomeScreen from '@/screens/admin/AdminHomeScreen';
 import AdminPostListScreen from '@/screens/admin/AdminPostListScreen';
+import AdminSignupScreen from '@/screens/admin/AdminSignupScreen';
 import AdminUserListScreen from '@/screens/admin/AdminUserListScreen';
 import AdminWritePostScreen from '@/screens/admin/AdminWritePostScreen';
 
@@ -56,7 +57,7 @@ function AdminStackNavigator() {
       />
       <Stack.Screen
         name={adminNavigations.ADMIN_SIGNUP}
-        component={AdminHomeScreen}
+        component={AdminSignupScreen}
         options={{
           title: '회원 생성',
         }}
