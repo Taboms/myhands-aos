@@ -7,6 +7,7 @@ const loggedInNavigations = {
   QUEST_HOME: 'QuestHome',
   RACE_HOME: 'RaceHome',
   BOARD_HOME: 'BoardHome',
+  BOARD_ALL: 'BoardAll',
   BOARD_DETAIL: 'BoardDetail',
   CHANGE_PASSWORD: 'ChangePassword',
   CHANGE_PROFILE: 'ChangeProfile',

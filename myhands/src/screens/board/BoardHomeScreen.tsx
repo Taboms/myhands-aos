@@ -1,23 +1,60 @@
-import React from 'react';
-import {Button, Text, View} from 'react-native';
-import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {loggedInNavigations} from '@/constants';
-import {LoggedInStackParamList} from '@/navigations/stack/LoggedInStackNavigator';
+import React, {useEffect, useState} from 'react';
+import {View, StyleSheet, Image} from 'react-native';
+import {getBoardPosts, BoardPost} from '@/api/boardApi';
+import LoadingScreen from '@/components/LoadingScreen';
+import BoardList from '@/components/board/BoardList';
+import Header from '@/components/board/Header';
 
-interface BoardHomeScreenProps {
-  navigation: BottomTabNavigationProp<LoggedInStackParamList>;
-}
+const BoardScreen = () => {
+  const [posts, setPosts] = useState<BoardPost[]>([]);
+  const [loading, setLoading] = useState(true);
 
-function BoardHomeScreen({navigation}: BoardHomeScreenProps) {
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        const data = await getBoardPosts(6);
+        setPosts(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+  }, []);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <View>
-      <Text>Board Home Screen</Text>
-      <Button
-        title="Stack Test"
-        onPress={() => navigation.navigate(loggedInNavigations.BOARD_DETAIL)}
+    <View style={styles.container}>
+      <Header />
+      <Image
+        source={require('@/assets/image/board-ellipse.png')}
+        style={styles.curveImage}
+        resizeMode="stretch"
       />
+      <BoardList posts={posts} />
     </View>
   );
-}
+};
 
-export default BoardHomeScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#FFFFFF',
+  },
+  curveImage: {
+    position: 'absolute',
+    top: '30%',
+    left: 0,
+    right: 0,
+    height: 80,
+    width: '100%',
+    zIndex: 1,
+  },
+});
+
+export default BoardScreen;
