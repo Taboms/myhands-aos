@@ -1,15 +1,78 @@
-// 최고 기록
 import React from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 
+interface QuestRecordProps {
+  questRate: number;
+  maxCount: number;
+}
+
+// function QuestRecord({questRate, maxCount}: QuestRecordProps) {
 function QuestRecord() {
+  const questRate = 91;
+  const maxCount = 13;
+
   return (
-    <View>
-      <Text>달성률, 최장 달성기간</Text>
+    <View style={styles.container}>
+      <View style={styles.section}>
+        <Text style={styles.label}>퀘스트 달성률</Text>
+        <Text style={styles.value}>{questRate}%</Text>
+      </View>
+      <View style={styles.divider} />
+      <View style={styles.section}>
+        <Text style={styles.label}>최장 달성 기간</Text>
+        <View style={styles.valueContainer}>
+          <Text style={styles.value}>{maxCount}주</Text>
+          <Text style={styles.emoji}>🔥</Text>
+        </View>
+      </View>
     </View>
   );
 }
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flexDirection: 'row',
+    backgroundColor: '#FFFFFF',
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: '#eaeaea',
+    marginTop: 25,
+  },
+  section: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 30,
+    // borderWidth: 2,
+    // borderColor: colors.MAX,
+  },
+  divider: {
+    width: 1,
+    backgroundColor: '#F0F0F0',
+  },
+  label: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#000000',
+    marginBottom: 5,
+  },
+  valueContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  value: {
+    fontSize: 36,
+    fontWeight: 'bold',
+    color: '#000000',
+    lineHeight: 50,
+    includeFontPadding: false, // 안드로이드에서 폰트 패딩 제거
+    textAlignVertical: 'center', // 안드로이드 텍스트 수직 정렬
+  },
+  emoji: {
+    fontSize: 28,
+    lineHeight: 50,
+  },
+});
 
 export default QuestRecord;
