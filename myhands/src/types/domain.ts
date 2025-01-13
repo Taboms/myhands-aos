@@ -19,4 +19,14 @@ interface QuestStats {
   expHistory: Record<string, number>;
 }
 
-export type {Profile, QuestStats};
+interface Quest {
+  questId: number;
+  questType: string;
+  name: string;
+  grade: string;
+  expAmount: number;
+  isCompleted: boolean;
+  completedAt: string;
+}
+
+export type {Profile, QuestStats, Quest};

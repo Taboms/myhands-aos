@@ -1,26 +1,107 @@
 import React from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import QuestCalendarScreen from './QuestCalendarScreen';
-import QuestStatusScreen, {QuestTabParamList} from './QuestStatusScreen';
+import QuestStatusScreen from './QuestStatusScreen';
+import {QuestResponse} from '@/api/quest';
 import {colors} from '@/constants';
-import {useQuestStore} from '@/store/questStore';
+import {Quest} from '@/types/domain';
+
+export type QuestTabParamList = {
+  QuestAchievement: {
+    challengeCount: number;
+    resultList: string[];
+  };
+  QuestHistory: {
+    questList: Quest[][];
+  };
+};
 
 const Tab = createMaterialTopTabNavigator<QuestTabParamList>();
 
 function QuestHomeScreen() {
-  // 통신 연결
-  // const {questStats} = useQuestStore();
+  // 임시 데이터
+  const mockResponse: QuestResponse = {
+    status: 'OK',
+    message: 'success',
+    responseDto: {
+      weekCount: 5,
+      questList: [
+        [
+          {
+            questId: 1,
+            questType: 'job',
+            name: '음성 1센터 직무그룹1 1주차',
+            grade: 'MED',
+            expAmount: 40,
+            isCompleted: true,
+            completedAt: '2025-01-05T00:00:00',
+          },
+        ],
+        [
+          {
+            questId: 2,
+            questType: 'job',
+            name: '음성 1센터 직무그룹1 2주차',
+            grade: 'MAX',
+            expAmount: 80,
+            isCompleted: true,
+            completedAt: '2025-01-12T00:00:00',
+          },
+        ],
+        [
+          {
+            questId: 4,
+            questType: 'job',
+            name: '음성 1센터 직무그룹1 3주차',
+            grade: 'MED',
+            expAmount: 40,
+            isCompleted: true,
+            completedAt: '2025-01-19T00:00:00',
+          },
+        ],
+        [
+          {
+            questId: 3,
+            questType: 'job',
+            name: '음성 1센터 직무그룹1 4주차',
+            grade: 'MED',
+            expAmount: 40,
+            isCompleted: true,
+            completedAt: '2025-01-26T00:00:00',
+          },
+        ],
+        [
+          {
+            questId: 14,
+            questType: 'hr',
+            name: '상반기 인사평가 | 김민수',
+            grade: 'B등급',
+            expAmount: 3000,
+            isCompleted: true,
+            completedAt: '2025-01-30T00:00:00',
+          },
+          {
+            questId: 5,
+            questType: 'leader',
+            name: '1월 월특근 | 김민수',
+            grade: 'Max',
+            expAmount: 100,
+            isCompleted: true,
+            completedAt: '2025-01-31T23:59:00',
+          },
+        ],
+      ],
+    },
+  };
+
   const questStats = {
-    challengeCount: 3,
-    resultList: ['MAX', 'MAX', 'MED'],
-    questRate: 91,
-    maxCount: 13,
-    historySize: 4,
+    challengeCount: 7,
+    resultList: ['MAX', 'MED', 'MED', 'MED', 'B등급', 'Max'],
+    questRate: 100,
+    maxCount: 2,
+    historySize: mockResponse.responseDto.weekCount,
     expHistory: {
-      2023: 12000,
-      2022: 10000,
-      2021: 7000,
-      2020: 7000,
+      2025: 3300, // 모든 expAmount의 합
     },
   };
 
@@ -40,9 +121,6 @@ function QuestHomeScreen() {
           fontSize: 14,
           fontWeight: 'bold',
           textTransform: 'none',
-        },
-        tabBarItemStyle: {
-          // width: 'auto',
         },
         tabBarContentContainerStyle: {
           height: 55,
@@ -66,6 +144,9 @@ function QuestHomeScreen() {
         name="QuestHistory"
         component={QuestCalendarScreen}
         options={{title: '월별 내역'}}
+        initialParams={{
+          questList: mockResponse.responseDto.questList,
+        }}
       />
     </Tab.Navigator>
   );
