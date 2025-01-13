@@ -1,21 +1,29 @@
-import {AppState} from 'react-native';
-import notifee, {AndroidImportance, AndroidColor} from '@notifee/react-native';
+import notifee, {AndroidImportance} from '@notifee/react-native';
 
 const displayNotification = async message => {
-  const channelAnoucement = await notifee.createChannel({
-    id: 'default',
-    name: '마이핸즈',
-    importance: AndroidImportance.HIGH,
-  });
+  try {
+    console.log('Attempting to display notification:', message);
 
-  await notifee.displayNotification({
-    title: message.data.title,
-    body: message.data.body,
-    android: {
-      channelId: channelAnoucement,
-      smallIcon: 'ic_launcher', //
-    },
-  });
+    await notifee.displayNotification({
+      title: message.notification?.title || 'New Message',
+      body: message.notification?.body || 'You received a new message.',
+      android: {
+        channelId: 'default',
+        smallIcon: 'ic_launcher',
+        showTimestamp: true,
+        importance: AndroidImportance.HIGH,
+        pressAction: {
+          id: 'default',
+          launchActivity: 'default',
+        },
+      },
+    });
+
+    console.log('Notification displayed successfully');
+  } catch (error) {
+    console.error('Failed to display notification:', error);
+    throw error;
+  }
 };
 
 export default {
