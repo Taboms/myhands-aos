@@ -1,7 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
-import CustomTextBold from '../styles/CustomTextBold';
-import CustomText from '../styles/CustomTextRegular';
+import CustomTextRegular from '../styles/CustomTextRegular';
 
 interface QuestRecordProps {
   questRate: number;
@@ -16,15 +15,19 @@ function QuestRecord() {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <CustomText style={styles.label}>퀘스트 달성률</CustomText>
-        <CustomText style={styles.value}>{questRate}%</CustomText>
+        <Text style={styles.label}>퀘스트 달성률</Text>
+        <Text style={styles.value}>{questRate}%</Text>
       </View>
       <View style={styles.divider} />
       <View style={styles.section}>
-        <CustomText style={styles.label}>최장 달성 기간</CustomText>
+        <CustomTextRegular style={styles.label}>
+          최장 달성 기간
+        </CustomTextRegular>
         <View style={styles.valueContainer}>
-          <CustomTextBold style={styles.value}>{maxCount}주</CustomTextBold>
-          <CustomText style={styles.emoji}>🔥</CustomText>
+          <CustomTextRegular style={styles.value}>
+            {maxCount}주
+          </CustomTextRegular>
+          <CustomTextRegular style={styles.emoji}>🔥</CustomTextRegular>
         </View>
       </View>
     </View>
@@ -54,7 +57,7 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 14,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#000000',
     marginBottom: 5,
   },

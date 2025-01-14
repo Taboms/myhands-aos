@@ -57,13 +57,13 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
     <>
       <Drawer.Navigator
         drawerContent={CustomAdminDrawerContent}
-        initialRouteName="BottomTabs"
+        initialRouteName={adminNavigations.ADMIN_HOME}
         screenOptions={({route}) => ({
           drawerType: 'front',
           drawerStyle: {
             width: Dimensions.get('screen').width * 0.7,
           },
-          headerShown: false,
+          headerShown: true,
           drawerIcon: ({size}) =>
             DrawerIcons({
               route: route as RouteProp<
@@ -74,13 +74,6 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
             }),
         })}
       >
-        <Drawer.Screen
-          name="BottomTabs"
-          component={BottomTabsNavigator}
-          options={{
-            drawerItemStyle: {display: 'none'},
-          }}
-        />
         <Drawer.Screen
           name={adminNavigations.ADMIN_HOME}
           component={AdminHomeScreen}
