@@ -27,13 +27,17 @@ const BoardItem = ({
       style={[styles.card, isLastItem && styles.lastCard]}
     >
       <View style={styles.cardContent}>
-        {showNewIndicator && ( // 조건부로 N 표시
+        {showNewIndicator && (
           <View style={styles.iconWrapper}>
             <CustomTextSemiBold style={styles.iconText}>N</CustomTextSemiBold>
           </View>
         )}
         <View style={styles.textContainer}>
-          <CustomTextSemiBold style={styles.title}>
+          <CustomTextSemiBold
+            style={styles.title}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
             {item.title}
           </CustomTextSemiBold>
           <CustomTextMedium style={styles.time}>
