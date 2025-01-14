@@ -42,6 +42,14 @@ export const stateMap: StateMap = {
     title: '프로필 이미지 변경 완료',
     btn: [3],
   },
+  SignUpSuccess: {
+    title: '회원생성에 성공하였습니다.',
+    btn: [3],
+  },
+  SignUpFail: {
+    title: '회원생성에 실패하였습니다.',
+    btn: [1],
+  },
 };
 
 export const buttonMap: ButtonMap = {
