@@ -50,6 +50,11 @@ export const stateMap: StateMap = {
     title: '회원생성에 실패하였습니다.',
     btn: [1],
   },
+  DuplicateCheck: {
+    title: '아이디 사용 가능',
+    subtitle: '이 아이디를 사용하시겠습니까?',
+    btn: [0, 3],
+  },
 };
 
 export const buttonMap: ButtonMap = {

@@ -8,11 +8,11 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
 import {duplicateCheck, SignupFormData, singUp} from '@/api/auth';
+import CustomDateTimePicker from '@/components/_modal/CustomDateTimePicker';
 import CustomModal from '@/components/_modal/CustomModal';
 import CustomTextBold from '@/components/styles/CustomTextBold';
 import CustomTextMedium from '@/components/styles/CustomTextMedium';
@@ -32,20 +32,7 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
     navigation.setOptions({
       // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
-        <TouchableOpacity
-          onPress={handleSave}
-          style={{
-            marginRight: 16,
-            backgroundColor: '#FF5B35',
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 16,
-            width: 63,
-            height: 35,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
           <Text style={{color: '#FFFFFF', fontSize: 14, fontWeight: '600'}}>
             완료
           </Text>
@@ -54,24 +41,24 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
     });
   }, [navigation]);
 
+  const [userId, setUserId] = useState('');
+  const [userName, setUserName] = useState('');
+  const [password, setPassword] = useState('1111');
+  const [joinedAt, setJoinedAt] = useState('');
+  const [departmentId, setDepartmentId] = useState(0);
+  const [jobGroup, setJobGroup] = useState(1);
+  const [group, setGroup] = useState<string>('');
+
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [part, setPart] = useState<string>('');
   const [selectedDepartment, setSelectedDepartment] = useState<string>('');
   const [showJobGroupOptions, setShowJobGroupOptions] = useState(false);
   const [showDepartmentOptions, setShowDepartmentOptions] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
+
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [failModalOpen, setFailModalOpen] = useState(false);
-
-  const [formData, setFormData] = useState<SignupFormData>({
-    name: '',
-    id: '',
-    password: '1111',
-    joinedAt: '',
-    departmentId: 0,
-    jobGroup: 1,
-    group: '',
-  });
+  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
+  const [disableUserId, setDisableUserId] = useState(false);
 
   const department = [
     '음성 1센터',
@@ -84,7 +71,7 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
     'CX팀',
   ];
 
-  const group = ['F 현장 직군', 'B 관리 직군', 'G 성장 전략', 'T 기술 직군'];
+  const groups = ['F 현장 직군', 'B 관리 직군', 'G 성장 전략', 'T 기술 직군'];
 
   const showDatePicker = () => {
     setDatePickerVisibility(true);
@@ -94,52 +81,50 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
     setDatePickerVisibility(false);
   };
 
-  const handleConfirm = (date: Date) => {
+  const handleJoinedAt = (date: Date) => {
     const formattedDate = date.toISOString().split('T')[0];
-    setFormData(prev => ({...prev, joinedAt: formattedDate}));
-    hideDatePicker();
-  };
-
-  const handleChange = (field: keyof SignupFormData, value: string) => {
-    setFormData(prev => ({...prev, [field]: value}));
+    setJoinedAt(formattedDate);
   };
 
   const handleDepartmentSelect = (departmentName: string) => {
-    console.log(departmentName);
-    const departmentId = departments[departmentName];
-    console.log(departmentId);
-
-    setFormData(prev => ({...prev, departmentId: departmentId}));
+    setDepartmentId(departments[departmentName as keyof typeof departments]);
     setSelectedDepartment(departmentName);
     setShowDepartmentOptions(false);
   };
 
+  const handleSave = async () => {
+    try {
+      const formData: SignupFormData = {
+        id: userId,
+        name: userName,
+        password: password,
+        joinedAt: joinedAt,
+        departmentId: departmentId,
+        jobGroup: jobGroup,
+        group: group,
+      };
+
+      console.log('Saving data:', formData);
+      await singUp(formData);
+      setSuccessModalOpen(true);
+    } catch (error) {
+      console.log(error);
+      setFailModalOpen(true);
+    }
+  };
+
   const handleGroupSelect = (selectedGroup: string) => {
-    setFormData(prev => ({...prev, group: selectedGroup.substring(0, 1)}));
-    setPart(selectedGroup);
+    setGroup(selectedGroup);
     setShowJobGroupOptions(false);
   };
 
   const handleDuplicate = async () => {
     try {
-      const response = await duplicateCheck(formData.id); // 비동기 처리 기다리기
-      console.log(response);
-
+      await duplicateCheck(userId); // 비동기 처리 기다리기
+      setDuplicateModalOpen(true);
       setDuplicateError(false);
     } catch {
       setDuplicateError(true);
-    }
-  };
-
-  const handleSave = async () => {
-    try {
-      console.log(formData);
-      await singUp(formData);
-      setSuccessModalOpen(true);
-    } catch (error) {
-      console.log(error);
-
-      setFailModalOpen(true);
     }
   };
 
@@ -161,6 +146,13 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
         onClose={() => setFailModalOpen(false)}
         onButtonClick={() => setFailModalOpen(false)}
       />
+      <CustomModal
+        state="DuplicateCheck"
+        type="success"
+        isOpen={duplicateModalOpen}
+        onClose={() => setDuplicateModalOpen(false)}
+        onButtonClick={() => setDisableUserId(true)}
+      />
       <CustomTextBold style={styles.label}>아이디</CustomTextBold>
       <View
         style={[
@@ -169,9 +161,9 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
         ]}
       >
         <TextInput
-          value={formData.id}
-          onChangeText={text => handleChange('id', text)}
-          style={styles.userName}
+          value={userId}
+          onChangeText={setUserId}
+          style={[styles.userName, disableUserId && styles.disabled]}
           autoCapitalize="none"
           placeholder="아이디를 입력하세요"
         />
@@ -195,8 +187,8 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
       )}
       <Text style={styles.label}>기본 패스워드</Text>
       <TextInput
-        value={formData.password}
-        onChangeText={text => handleChange('password', text)}
+        value={password}
+        onChangeText={setPassword}
         style={styles.input}
         placeholder="패스워드를 입력하세요"
       />
@@ -231,8 +223,8 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
         <View style={styles.jobGroupWrapper}>
           <Text style={styles.label}>직무그룹</Text>
           <TextInput
-            value={`${formData.jobGroup}`}
-            onChangeText={text => handleChange('jobGroup', text)}
+            value={String(jobGroup)}
+            onChangeText={text => setJobGroup(Number(text))}
             style={styles.input}
             placeholder="직무그룹"
           />
@@ -240,24 +232,24 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
       </View>
       <Text style={styles.label}>이름</Text>
       <TextInput
-        value={formData.name}
-        onChangeText={text => handleChange('name', text)}
+        value={userName}
+        onChangeText={setUserName}
         style={styles.input}
         placeholder="이름을 입력하세요"
       />
       <Text style={styles.label}>입사일</Text>
       <TouchableOpacity onPress={showDatePicker} style={styles.input}>
         <Text style={styles.dateText}>
-          {formData.joinedAt || '입사일을 선택하세요'}
+          {String(joinedAt) || '입사일을 선택하세요'}
         </Text>
       </TouchableOpacity>
       {isDatePickerVisible && (
-        <DateTimePickerModal
+        <CustomDateTimePicker
           isVisible={isDatePickerVisible}
           mode="date"
-          onConfirm={handleConfirm}
+          onConfirm={handleJoinedAt}
           onCancel={hideDatePicker}
-          display="default"
+          display="calendar"
           maximumDate={today}
         />
       )}
@@ -266,7 +258,7 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
         style={styles.groupWrapper}
         onPress={() => setShowJobGroupOptions(!showJobGroupOptions)}
       >
-        <Text>{part || '직군을 선택하세요'}</Text>
+        <Text>{group || '직군을 선택하세요'}</Text>
         <FontAwesomeIcon
           name={showJobGroupOptions ? 'caret-up' : 'caret-down'}
           size={24}
@@ -275,7 +267,7 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
       </TouchableOpacity>
       {showJobGroupOptions && (
         <View style={styles.jobGroupOptions}>
-          {group.map((select, index) => (
+          {groups.map((select, index) => (
             <TouchableOpacity
               key={index}
               style={styles.jobGroupOption}
@@ -304,6 +296,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 52,
     justifyContent: 'center',
+  },
+  disabled: {
+    backgroundColor: '#E0E0E0',
   },
   error: {
     color: '#FF5B35',
@@ -408,6 +403,17 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#EAEAEA',
+  },
+  saveButton: {
+    marginRight: 16,
+    backgroundColor: '#FF5B35',
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 16,
+    width: 63,
+    height: 35,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 
