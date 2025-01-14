@@ -1,9 +1,22 @@
 // 과거 경험치 획득량
-import React from 'react';
-import {Dimensions, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {useMemo} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
 import {BarChart} from 'react-native-gifted-charts';
+import {useQuestStore} from '@/store/questStore';
+
+interface ChartData {
+  value: number;
+  label: string;
+  labelTextStyle: {
+    fontSize: number;
+    fontWeight: number;
+    color: string;
+  };
+}
 
 function ExpHistory() {
+  const expHistory = useQuestStore(state => state.questStats?.expHistory ?? []);
+
   const labelTextStyle = {
     fontSize: 12,
     fontWeight: 500,
@@ -11,45 +24,52 @@ function ExpHistory() {
   };
 
   const yAxisTextStyle = {
+    fontFamily: 'Pretendard-Medium',
     fontSize: 12,
-    color: '#888',
+    color: '#7e7e7e',
+    paddingRight: 10,
   };
 
-  const data = [
-    {value: 7000, label: '2021년', labelTextStyle: labelTextStyle},
-    {value: 7000, label: '2022년', labelTextStyle: labelTextStyle},
-    {value: 10000, label: '2023년', labelTextStyle: labelTextStyle},
-    {value: 12000, label: '2024년', labelTextStyle: labelTextStyle},
-  ];
+  const xAxisTextStyle = {
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 12,
+    color: '#000000',
+  };
+
+  const data: ChartData[] = useMemo(() => {
+    return Object.entries(expHistory).map(([year, value]) => ({
+      value,
+      label: `${year}년`,
+      labelTextStyle,
+    }));
+  }, [expHistory]);
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>과거 경험치 획득 동향</Text>
       <View style={styles.chart}>
-        {/* Bar Chart */}
         <BarChart
-          // 기본
-          formatYLabel={value => String(Math.floor(Number(value) / 100) * 100)}
+          formatYLabel={(value: string) =>
+            String(Math.floor(Number(value) / 100) * 100)
+          }
           data={data}
-          disablePress={false} // 누루기 동작 비활성화
-          // bar
-          // initialSpacing={20} // 초기 간격
-          spacing={23} // bar 간격
+          disablePress={false}
+          spacing={23}
           barBorderTopLeftRadius={12}
           barBorderTopRightRadius={12}
-          barWidth={35} // bar width
-          frontColor={'#ffede9'} // bar 색상
-          // x축
-          xAxisIndicesColor={'#D9D9D9'} // x축 단계별 표시 색상
-          xAxisColor={'#d9d9d9'} // x축 색상
-          // y축
+          barWidth={35}
+          frontColor={'#ffede9'}
+          xAxisIndicesColor={'#D9D9D9'}
+          xAxisColor={'#d9d9d9'}
+          xAxisLabelTextStyle={xAxisTextStyle}
           yAxisTextStyle={yAxisTextStyle}
-          yAxisThickness={0} // 메인 y축
-          noOfSections={3} // 가로 회색줄 갯수
+          yAxisThickness={0}
+          noOfSections={3}
           isAnimated={true}
-          width={235}
+          width={240}
           showGradient={true}
           gradientColor={'#FF8B71'}
+          disableScroll={true}
         />
       </View>
     </View>
@@ -72,6 +92,8 @@ const styles = StyleSheet.create({
     lineHeight: 22,
     fontWeight: '500',
     color: '#303030',
+    fontFamily: 'Pretendard-SemiBold',
+    marginBottom: 5,
   },
   chart: {
     marginTop: 40,

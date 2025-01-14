@@ -1,11 +1,12 @@
 import React from 'react';
-import {Pressable, Text, TouchableOpacity} from 'react-native';
+import {Pressable} from 'react-native';
+import {SvgXml} from 'react-native-svg';
 import {NavigatorScreenParams, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import AdminDrawerNavigator, {
   AdminDrawerParamList,
 } from '../drawer/AdminDrawerNavigator';
+import {headerIcons} from '@/assets/icons/headerIcons';
 import {adminNavigations} from '@/constants/navigations';
 import AdminHomeScreen from '@/screens/admin/AdminHomeScreen';
 import AdminPostListScreen from '@/screens/admin/AdminPostListScreen';
@@ -28,7 +29,7 @@ const BackButton = () => {
   const navigation = useNavigation();
   return (
     <Pressable onPress={() => navigation.goBack()} style={{marginLeft: 25}}>
-      <Ionicons name="arrow-back" size={24} color="black" />
+      <SvgXml xml={headerIcons.back} />
     </Pressable>
   );
 };
@@ -38,6 +39,10 @@ function AdminStackNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: 'Pretendard-Medium',
+          fontSize: 17,
+        },
         headerLeft: () => BackButton(),
       }}
     >

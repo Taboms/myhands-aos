@@ -11,17 +11,14 @@ import type {MaterialTopTabScreenProps} from '@react-navigation/material-top-tab
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import type {QuestTabParamList} from './QuestHomeScreen';
-import CustomText from '@/components/styles/CustomTextRegular';
 import {GRADE_COLORS} from '@/constants';
-import {calculateTotalExp, getGradeColor} from '@/utils/quest';
 
 type QuestHistoryScreenProps = MaterialTopTabScreenProps<
   QuestTabParamList,
   'QuestHistory'
 >;
 
-function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
-  const {questList} = route.params;
+function QuestCalendarScreen() {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const handlePrevMonth = () => {
@@ -53,7 +50,7 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
         <View style={styles.headerRight}>
           <Text style={styles.detailText}>상세내역</Text>
           <TouchableOpacity style={styles.detailButton} onPress={onDetailPress}>
-            <FontAwesome name="angle-right" size={20} color="#626262" />
+            <FontAwesome name="angle-right" size={18} color="#626262" />
           </TouchableOpacity>
         </View>
       </View>
@@ -94,7 +91,7 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
       <View>
         <View style={styles.timeline}>
           <View style={styles.timelineLine} />
-          {questList.map((weekQuests, index) => {
+          {/* {questList.map((weekQuests, index) => {
             const gradeColor = getGradeColor(weekQuests);
             const totalExp = calculateTotalExp(weekQuests);
 
@@ -103,9 +100,6 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
                 <View style={styles.weekLeft}>
                   <View style={styles.weekLeftWrapper}>
                     <Text style={styles.weekText}>{index + 1}주차</Text>
-                    <CustomText style={styles.weekText}>
-                      {index + 1}주차
-                    </CustomText>
                     <View
                       style={[
                         styles.expCircle,
@@ -115,11 +109,9 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
                         },
                       ]}
                     >
-                      <CustomText
-                        style={[styles.expText, {color: gradeColor.main}]}
-                      >
+                      <Text style={[styles.expText, {color: gradeColor.main}]}>
                         {totalExp} D
-                      </CustomText>
+                      </Text>
                     </View>
                   </View>
                 </View>
@@ -157,7 +149,13 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
                               {backgroundColor: getGradeColor([quest]).main},
                             ]}
                           />
-                          <Text style={{color: '#000', fontSize: 12}}>
+                          <Text
+                            style={{
+                              color: '#000',
+                              fontSize: 11.5,
+                              fontFamily: 'Pretendard-Medium',
+                            }}
+                          >
                             {quest.expAmount} D
                           </Text>
                         </View>
@@ -167,7 +165,7 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
                 </View>
               </View>
             );
-          })}
+          })} */}
         </View>
       </View>
     </ScrollView>
@@ -178,7 +176,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    margin: 25,
+    paddingVertical: '7%',
+    paddingHorizontal: '7%',
   },
   header: {
     flexDirection: 'row',
@@ -187,9 +186,9 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 24,
-    fontWeight: 'bold',
     marginHorizontal: 10,
     color: '#000',
+    fontFamily: 'Pretendard-SemiBold',
   },
   headerLeft: {
     flexDirection: 'row',
@@ -201,8 +200,9 @@ const styles = StyleSheet.create({
   },
   detailText: {
     color: '#626262',
-    fontSize: 14,
-    marginRight: 8,
+    fontSize: 13,
+    marginRight: 7,
+    fontFamily: 'Pretendard-Medium',
   },
   detailButton: {
     marginLeft: 'auto',
@@ -226,12 +226,14 @@ const styles = StyleSheet.create({
     marginRight: 6,
   },
   legendText: {
-    fontSize: 12,
+    fontFamily: 'Pretendard-Regular',
+    fontSize: 11,
     color: '#000',
   },
   // 하단 타임라인
   timeline: {
     position: 'relative',
+    marginBottom: 50,
   },
   timelineLine: {
     position: 'absolute',
@@ -255,10 +257,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   weekText: {
+    fontFamily: 'Pretendard-SemiBold',
     marginBottom: 8,
     fontWeight: '500',
     color: '#555555',
-    fontSize: 20,
+    fontSize: 19,
   },
   expCircle: {
     width: 75,
@@ -269,8 +272,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   expText: {
+    fontFamily: 'Pretendard-Bold',
     fontSize: 13,
-    fontWeight: 'bold',
   },
   timelineDot: {
     position: 'absolute',
@@ -307,10 +310,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   questName: {
+    fontFamily: 'Pretendard-Medium',
     flex: 1,
     marginRight: 16,
     color: '#000',
-    fontSize: 12,
+    fontSize: 11.5,
   },
   questExp: {
     flexDirection: 'row',

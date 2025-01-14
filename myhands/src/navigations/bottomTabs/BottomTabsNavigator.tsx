@@ -1,4 +1,5 @@
 import React from 'react';
+import {Text} from 'react-native';
 import {Pressable} from 'react-native-gesture-handler';
 import {SvgXml} from 'react-native-svg';
 import {
@@ -6,9 +7,9 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import {DrawerActions} from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {LoggedInStackParamList} from '../stack/LoggedInStackNavigator';
 import {icons} from '@/assets/icons/bottomTabsIcons';
+import {headerIcons} from '@/assets/icons/headerIcons';
 import {colors} from '@/constants';
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardHomeScreen from '@/screens/board/BoardHomeScreen';
@@ -59,9 +60,9 @@ const createDrawerButton =
     (
       <Pressable
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        style={{marginLeft: 25}}
+        style={{marginLeft: 30}}
       >
-        <Ionicons name="menu" size={24} color="black" />
+        <SvgXml xml={headerIcons.drawer} />
       </Pressable>
     );
 
@@ -70,12 +71,25 @@ const createAlertButton =
   () =>
     (
       <Pressable
-        style={{marginRight: 25}}
+        style={{marginRight: 30}}
         onPress={() => navigation.navigate(loggedInNavigations.NOTIFICATIONS)}
       >
-        <Ionicons name="notifications-outline" size={24} color="black" />
+        <SvgXml xml={headerIcons.notification_off} />
       </Pressable>
     );
+
+const renderTabLabel = (focused: boolean, label: string) => (
+  <Text
+    style={{
+      fontFamily: 'Pretendard-Regular',
+      fontSize: 13,
+      color: focused ? colors.RED_800 : '#3A3A3A',
+      marginTop: 2,
+    }}
+  >
+    {label}
+  </Text>
+);
 
 function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
   return (
@@ -87,6 +101,10 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         headerLeft: () => createDrawerButton({navigation})(),
         headerRight: () => createAlertButton({navigation})(),
         headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: 'Pretendard-Medium',
+          fontSize: 17,
+        },
         tabBarStyle: {
           height: 80,
           justifyContent: 'center',
@@ -101,8 +119,11 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         },
         tabBarLabelStyle: {
           marginTop: 2, // 라벨과 아이콘 사이 간격
-          fontSize: 12, // 라벨 폰트 크기
+          fontFamily: 'Pretendard-Regular',
+          fontSize: 13,
+          // color: '#3A3A3A',
         },
+        popToTopOnBlur: true,
       }}
     >
       <Tab.Screen
@@ -110,7 +131,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={MypageHomeScreen}
         options={{
           title: '마이페이지',
-          tabBarLabel: 'MY',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, 'MY'),
           tabBarIcon: ({focused}) => renderTabIcon('my', focused),
         }}
       />
@@ -119,6 +140,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={QuestHomeScreen}
         options={{
           title: '퀘스트',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '퀘스트'),
           tabBarIcon: ({focused}) => renderTabIcon('quest', focused),
         }}
       />
@@ -127,7 +149,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={RaceHomeScren}
         options={{
           title: '팀 레이스',
-          tabBarLabel: '레이스',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '레이스'),
           tabBarIcon: ({focused}) => renderTabIcon('race', focused),
         }}
       />
@@ -136,6 +158,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={BoardHomeScreen}
         options={{
           title: '게시판',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '게시판'),
           tabBarIcon: ({focused}) => renderTabIcon('board', focused),
         }}
       />

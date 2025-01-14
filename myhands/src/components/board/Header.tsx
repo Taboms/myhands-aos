@@ -42,6 +42,7 @@ const styles = StyleSheet.create({
   headerText: {
     fontSize: 18,
     color: colors.RED_800,
+    fontFamily: 'Pretendard-SemiBold',
   },
   logo: {
     width: 150,

@@ -39,11 +39,11 @@ function DrawerIcons({
 }) {
   switch (route.name) {
     case loggedInNavigations.CHANGE_PROFILE:
-      return <FontAwesome5 name="user-edit" size={18} />;
+      return <FontAwesome5 name="user-edit" size={18} color={'#515151'} />;
     case loggedInNavigations.CHANGE_PASSWORD:
-      return <MaterialIcons name="password" size={22} />;
+      return <MaterialIcons name="password" size={22} color={'#515151'} />;
     case 'Logout':
-      return <MaterialIcons name="logout" size={size} />;
+      return <MaterialIcons name="logout" size={size} color={'#515151'} />;
     default:
       return null;
   }
@@ -92,7 +92,10 @@ function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
         <Drawer.Screen
           name="ChangeProfile"
           component={ChangeProfileScreen}
-          options={{drawerLabel: '프로필 수정'}}
+          options={{
+            drawerLabel: '프로필 수정',
+            drawerLabelStyle: {fontFamily: 'Pretendard-Medium'},
+          }}
           listeners={{
             drawerItemPress: e => {
               e.preventDefault();
@@ -103,7 +106,10 @@ function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
         <Drawer.Screen
           name="ChangePassword"
           component={ChangePasswordScreen}
-          options={{drawerLabel: '비밀번호 변경'}}
+          options={{
+            drawerLabel: '비밀번호 변경',
+            drawerLabelStyle: {fontFamily: 'Pretendard-Medium'},
+          }}
           listeners={{
             drawerItemPress: e => {
               e.preventDefault();
@@ -114,7 +120,10 @@ function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
         <Drawer.Screen
           name="Logout"
           component={ChangePasswordScreen}
-          options={{drawerLabel: '로그아웃'}}
+          options={{
+            drawerLabel: '로그아웃',
+            drawerLabelStyle: {fontFamily: 'Pretendard-Medium'},
+          }}
           listeners={{
             drawerItemPress: e => {
               e.preventDefault();

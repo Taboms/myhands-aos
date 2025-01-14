@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
 import {
   DrawerContentComponentProps,
@@ -44,12 +44,12 @@ const styles = StyleSheet.create({
   },
   name: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontFamily: 'Pretendard-Bold',
     color: colors.BLACK,
-    marginBottom: 6,
+    marginBottom: 4,
   },
   boldText: {
-    fontWeight: 'bold',
+    fontFamily: 'Pretendard-SemiBold',
     color: colors.GRAY_700,
   },
 });

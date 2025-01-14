@@ -1,13 +1,13 @@
 {
   "project_info": {
-    "project_number": "509166224112",
-    "project_id": "myhands-aos",
-    "storage_bucket": "myhands-aos.firebasestorage.app"
+    "project_number": "317033169461",
+    "project_id": "myhands-8395a",
+    "storage_bucket": "myhands-8395a.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:509166224112:android:f5645716cf7d7a50723835",
+        "mobilesdk_app_id": "1:317033169461:android:66ea39e75a609c60e8e77c",
         "android_client_info": {
           "package_name": "com.myhands"
         }
@@ -15,7 +15,7 @@
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyAKY2fpCFF8ADDWi6vBaE9qNiEJ5YnhqYw"
+          "current_key": "AIzaSyDiBw8XcUAHELulA5Pb6EKo-xowKT0ywbE"
         }
       ],
       "services": {
