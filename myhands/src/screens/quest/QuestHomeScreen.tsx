@@ -119,11 +119,11 @@ function QuestHomeScreen() {
         },
         tabBarLabelStyle: {
           fontSize: 14,
-          fontWeight: 'bold',
+          fontFamily: 'Pretendard-SemiBold',
           textTransform: 'none',
         },
         tabBarContentContainerStyle: {
-          height: 55,
+          height: 60,
         },
         tabBarIndicatorContainerStyle: {
           borderColor: '#EAEAEA',

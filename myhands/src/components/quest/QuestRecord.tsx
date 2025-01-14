@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import CustomTextRegular from '../styles/CustomTextRegular';
+import CustomTextSemiBold from '../styles/CustomTextSemoBold';
 
 interface QuestRecordProps {
   questRate: number;
@@ -24,9 +25,9 @@ function QuestRecord() {
           최장 달성 기간
         </CustomTextRegular>
         <View style={styles.valueContainer}>
-          <CustomTextRegular style={styles.value}>
+          <CustomTextSemiBold style={styles.value}>
             {maxCount}주
-          </CustomTextRegular>
+          </CustomTextSemiBold>
           <CustomTextRegular style={styles.emoji}>🔥</CustomTextRegular>
         </View>
       </View>

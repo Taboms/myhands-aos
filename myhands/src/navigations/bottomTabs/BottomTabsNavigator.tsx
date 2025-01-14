@@ -6,9 +6,9 @@ import {
   createBottomTabNavigator,
 } from '@react-navigation/bottom-tabs';
 import {DrawerActions} from '@react-navigation/native';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import {LoggedInStackParamList} from '../stack/LoggedInStackNavigator';
 import {icons} from '@/assets/icons/bottomTabsIcons';
+import {headerIcons} from '@/assets/icons/headerIcons';
 import {colors} from '@/constants';
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardHomeScreen from '@/screens/board/BoardHomeScreen';
@@ -59,9 +59,9 @@ const createDrawerButton =
     (
       <Pressable
         onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
-        style={{marginLeft: 25}}
+        style={{marginLeft: 30}}
       >
-        <Ionicons name="menu" size={24} color="black" />
+        <SvgXml xml={headerIcons.drawer} />
       </Pressable>
     );
 
@@ -70,10 +70,10 @@ const createAlertButton =
   () =>
     (
       <Pressable
-        style={{marginRight: 25}}
+        style={{marginRight: 30}}
         onPress={() => navigation.navigate(loggedInNavigations.NOTIFICATIONS)}
       >
-        <Ionicons name="notifications-outline" size={24} color="black" />
+        <SvgXml xml={headerIcons.notification_off} />
       </Pressable>
     );
 
@@ -87,6 +87,10 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         headerLeft: () => createDrawerButton({navigation})(),
         headerRight: () => createAlertButton({navigation})(),
         headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: 'Pretendard-Medium',
+          fontSize: 17,
+        },
         tabBarStyle: {
           height: 80,
           justifyContent: 'center',

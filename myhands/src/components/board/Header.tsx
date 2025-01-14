@@ -1,6 +1,8 @@
 import React from 'react';
 import {View, Text, Image, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
+import CustomTextBold from '../styles/CustomTextBold';
+// import Text from '../styles/Text';
 import {colors} from '@/constants';
 
 const Header = () => {
@@ -40,6 +42,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: colors.RED_800,
+    fontFamily: 'Pretendard-SemiBold',
   },
   logo: {
     width: 150,
