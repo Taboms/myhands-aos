@@ -66,6 +66,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingHorizontal: 8,
     color: colors.BLACK,
+    fontFamily: 'Pretendard-Medium',
   },
   eyeIcon: {
     position: 'absolute',

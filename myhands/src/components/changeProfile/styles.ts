@@ -10,10 +10,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 24,
   },
-  saveButtonText: {
-    color: colors.WHITE,
-    fontWeight: 'bold',
-  },
   profileInfo: {
     height: screenHeight * 0.3,
     alignItems: 'center',
@@ -32,13 +28,12 @@ const styles = StyleSheet.create({
   },
   nameText: {
     color: colors.RED_800,
-    fontWeight: 'bold',
+    fontSize: 18,
   },
   defaultText: {
-    fontSize: 17,
+    fontSize: 18,
     color: colors.BLACK,
     textAlign: 'center',
-    fontWeight: 'bold',
   },
   divider: {
     height: 1,

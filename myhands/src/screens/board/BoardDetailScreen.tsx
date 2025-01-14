@@ -1,8 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, StyleSheet, ScrollView} from 'react-native';
+import {View, StyleSheet, ScrollView} from 'react-native';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {getBoardDetail, BoardDetail} from '@/api/boardApi';
 import LoadingScreen from '@/components/LoadingScreen';
+import CustomTextBold from '@/components/styles/CustomTextBold';
+import CustomTextRegular from '@/components/styles/CustomTextRegular';
+import CustomTextSemiBold from '@/components/styles/CustomTextSemiBold';
 import {colors} from '@/constants';
 import {LoggedInStackParamList} from '@/navigations/stack/LoggedInStackNavigator';
 
@@ -39,17 +42,23 @@ const BoardDetailScreen = () => {
   if (!post) {
     return (
       <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>게시글을 불러오는 데 실패했습니다.</Text>
+        <CustomTextSemiBold style={styles.errorText}>
+          게시글을 불러오는 데 실패했습니다.
+        </CustomTextSemiBold>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container}>
-      <Text style={styles.title}>{post.title}</Text>
-      <Text style={styles.time}>{post.createdAt}</Text>
+      <CustomTextBold style={styles.title}>{post.title}</CustomTextBold>
+      <CustomTextRegular style={styles.time}>
+        {post.createdAt}
+      </CustomTextRegular>
       <View style={styles.separator} />
-      <Text style={styles.content}>{post.content}</Text>
+      <CustomTextRegular style={styles.content}>
+        {post.content}
+      </CustomTextRegular>
     </ScrollView>
   );
 };
@@ -92,7 +101,8 @@ const styles = StyleSheet.create({
     marginVertical: 18,
   },
   content: {
-    fontSize: 14,
+    padding: 2,
+    fontSize: 15,
     color: colors.BLACK,
     lineHeight: 24,
   },
