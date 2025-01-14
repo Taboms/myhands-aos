@@ -94,7 +94,7 @@ const styles = StyleSheet.create({
   buttonsWrapper: {
     flex: 1,
     width: '100%',
-    height: '95%',
+    height: '80%',
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center', // 전체 View의 수직 정렬
