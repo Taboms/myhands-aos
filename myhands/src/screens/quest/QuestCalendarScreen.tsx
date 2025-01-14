@@ -11,6 +11,7 @@ import type {MaterialTopTabScreenProps} from '@react-navigation/material-top-tab
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import type {QuestTabParamList} from './QuestHomeScreen';
+import CustomText from '@/components/styles/CustomTextRegular';
 import {GRADE_COLORS} from '@/constants';
 import {calculateTotalExp, getGradeColor} from '@/utils/quest';
 
@@ -102,6 +103,9 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
                 <View style={styles.weekLeft}>
                   <View style={styles.weekLeftWrapper}>
                     <Text style={styles.weekText}>{index + 1}주차</Text>
+                    <CustomText style={styles.weekText}>
+                      {index + 1}주차
+                    </CustomText>
                     <View
                       style={[
                         styles.expCircle,
@@ -111,9 +115,11 @@ function QuestCalendarScreen({navigation, route}: QuestHistoryScreenProps) {
                         },
                       ]}
                     >
-                      <Text style={[styles.expText, {color: gradeColor.main}]}>
+                      <CustomText
+                        style={[styles.expText, {color: gradeColor.main}]}
+                      >
                         {totalExp} D
-                      </Text>
+                      </CustomText>
                     </View>
                   </View>
                 </View>

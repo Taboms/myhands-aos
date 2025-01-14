@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import CustomText from '../styles/CustomTextRegular';
 
 interface QuestRecordProps {
   questRate: number;
@@ -14,15 +15,15 @@ function QuestRecord() {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.label}>퀘스트 달성률</Text>
-        <Text style={styles.value}>{questRate}%</Text>
+        <CustomText style={styles.label}>퀘스트 달성률</CustomText>
+        <CustomText style={styles.value}>{questRate}%</CustomText>
       </View>
       <View style={styles.divider} />
       <View style={styles.section}>
-        <Text style={styles.label}>최장 달성 기간</Text>
+        <CustomText style={styles.label}>최장 달성 기간</CustomText>
         <View style={styles.valueContainer}>
-          <Text style={styles.value}>{maxCount}주</Text>
-          <Text style={styles.emoji}>🔥</Text>
+          <CustomText style={styles.value}>{maxCount}주</CustomText>
+          <CustomText style={styles.emoji}>🔥</CustomText>
         </View>
       </View>
     </View>
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
   },
   value: {
     fontSize: 36,
-    fontWeight: 'bold',
+    fontWeight: '600',
     color: '#000000',
     lineHeight: 50,
     includeFontPadding: false, // 안드로이드에서 폰트 패딩 제거
