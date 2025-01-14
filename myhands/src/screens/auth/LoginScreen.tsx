@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {SafeAreaView, View, StyleSheet, Image, Text} from 'react-native';
+import messaging from '@react-native-firebase/messaging';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Header from '@/components/login/Header';
 import LoginButton from '@/components/login/LoginButton';
@@ -17,11 +18,18 @@ const LoginScreen = () => {
   const handleLogin = async () => {
     try {
       setErrorMessage(null);
-      await login(id, password);
+      const deviceToken = await getFcmToken();
+      console.log('로그인 시도 with deviceToken: ', deviceToken);
+      await login(id, password, deviceToken);
     } catch (error) {
       setErrorMessage('아이디 또는 비밀번호를 확인해주세요.');
       throw new Error('로그인 실패');
     }
+  };
+
+  const getFcmToken = async () => {
+    const fcmToken = await messaging().getToken();
+    return fcmToken;
   };
 
   const handleSubmit = async () => {
