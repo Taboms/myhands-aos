@@ -31,9 +31,9 @@ const styles = StyleSheet.create({
   button: {
     marginRight: 16,
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     backgroundColor: colors.GRAY_500,
-    borderRadius: 20,
+    borderRadius: 16,
   },
   disabledButton: {
     backgroundColor: '#D3D3D3',
