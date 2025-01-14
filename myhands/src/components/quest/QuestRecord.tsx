@@ -1,5 +1,6 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
+import CustomTextBold from '../styles/CustomTextBold';
 import CustomText from '../styles/CustomTextRegular';
 
 interface QuestRecordProps {
@@ -22,7 +23,7 @@ function QuestRecord() {
       <View style={styles.section}>
         <CustomText style={styles.label}>최장 달성 기간</CustomText>
         <View style={styles.valueContainer}>
-          <CustomText style={styles.value}>{maxCount}주</CustomText>
+          <CustomTextBold style={styles.value}>{maxCount}주</CustomTextBold>
           <CustomText style={styles.emoji}>🔥</CustomText>
         </View>
       </View>

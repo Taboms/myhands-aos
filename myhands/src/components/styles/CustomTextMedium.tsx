@@ -3,7 +3,7 @@ import {Text as RNText, TextProps} from 'react-native';
 
 interface CustomTextProps extends TextProps {}
 
-const CustomTextRegular: React.FC<CustomTextProps> = ({style, ...rest}) => {
+const CustomTextMedium: React.FC<CustomTextProps> = ({style, ...rest}) => {
   const customStyle = {
     fontFamily: 'Pretendard-Medium',
   };
@@ -11,4 +11,4 @@ const CustomTextRegular: React.FC<CustomTextProps> = ({style, ...rest}) => {
   return <RNText style={[customStyle, style]} {...rest} />;
 };
 
-export default CustomTextRegular;
+export default CustomTextMedium;
