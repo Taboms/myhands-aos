@@ -1,13 +1,19 @@
 import React, {useState} from 'react';
-import {Dimensions} from 'react-native';
+import {Dimensions, Pressable} from 'react-native';
+import {SvgXml} from 'react-native-svg';
 import {
   createDrawerNavigator,
   DrawerNavigationProp,
 } from '@react-navigation/drawer';
-import {RouteProp} from '@react-navigation/native';
+import {
+  DrawerActions,
+  ParamListBase,
+  RouteProp,
+} from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import BottomTabsNavigator from '../bottomTabs/BottomTabsNavigator';
+import {headerIcons} from '@/assets/icons/headerIcons';
 import CustomModal from '@/components/_modal/CustomModal';
 import {adminNavigations} from '@/constants';
 import CustomAdminDrawerContent from '@/navigations/drawer/CustomAdminDrawerContent';
@@ -35,11 +41,24 @@ function DrawerIcons({
 }) {
   switch (route.name) {
     case adminNavigations.ADMIN_HOME:
-      return <AntDesign name="home" size={size} />;
+      return <AntDesign name="home" size={size} color={'#515151'} />;
     default:
-      return <MaterialIcons name="logout" size={size} />;
+      return <MaterialIcons name="logout" size={size} color={'#515151'} />;
   }
 }
+
+const renderDrawerIcon = ({
+  navigation,
+}: {
+  navigation: DrawerNavigationProp<ParamListBase>;
+}) => (
+  <Pressable
+    onPress={() => navigation.dispatch(DrawerActions.openDrawer())}
+    style={{marginLeft: 30}}
+  >
+    <SvgXml xml={headerIcons.drawer} />
+  </Pressable>
+);
 
 function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
   const logout = useAuthStore(state => state.logout);
@@ -58,7 +77,8 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
       <Drawer.Navigator
         drawerContent={CustomAdminDrawerContent}
         initialRouteName={adminNavigations.ADMIN_HOME}
-        screenOptions={({route}) => ({
+        screenOptions={({navigation: nav, route}) => ({
+          headerLeft: () => renderDrawerIcon({navigation: nav}),
           drawerType: 'front',
           drawerStyle: {
             width: Dimensions.get('screen').width * 0.7,
@@ -72,12 +92,21 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
               >,
               size,
             }),
+          headerTitleAlign: 'center',
+          headerTitleStyle: {
+            fontFamily: 'Pretendard-Medium',
+            fontSize: 17,
+          },
         })}
       >
         <Drawer.Screen
           name={adminNavigations.ADMIN_HOME}
           component={AdminHomeScreen}
-          options={{drawerLabel: '메인 화면으로'}}
+          options={{
+            drawerLabel: '메인 화면으로',
+            drawerLabelStyle: {fontFamily: 'Pretendard-Medium'},
+            title: '관리자 페이지',
+          }}
           listeners={{
             drawerItemPress: e => {
               e.preventDefault();
@@ -88,7 +117,10 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
         <Drawer.Screen
           name="Logout"
           component={ChangePasswordScreen}
-          options={{drawerLabel: '로그아웃'}}
+          options={{
+            drawerLabel: '로그아웃',
+            drawerLabelStyle: {fontFamily: 'Pretendard-Medium'},
+          }}
           listeners={{
             drawerItemPress: e => {
               e.preventDefault();

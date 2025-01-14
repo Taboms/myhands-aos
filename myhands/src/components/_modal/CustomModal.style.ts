@@ -54,6 +54,7 @@ export const styles = StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     color: '#000',
+    fontFamily: 'Pretendard-Bold',
   },
   subtitle: {
     fontSize: 13,
@@ -61,6 +62,7 @@ export const styles = StyleSheet.create({
     marginTop: 5,
     fontWeight: '400',
     textAlign: 'center',
+    fontFamily: 'Pretendard-Medium',
   },
   buttonContainer: {
     marginTop: 24,
@@ -82,8 +84,8 @@ export const styles = StyleSheet.create({
     backgroundColor: '#eaeaea',
   },
   buttonText: {
-    fontSize: 15,
-    fontWeight: 'bold',
-    color: '#1a1a1a',
+    // fontSize: 15,
+    // color: '#1a1a1a',
+    // fontFamily: 'Pretendard-Light',
   },
 });

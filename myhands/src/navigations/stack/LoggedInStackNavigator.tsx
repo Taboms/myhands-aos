@@ -1,14 +1,17 @@
 import React from 'react';
 import {Pressable} from 'react-native';
+import {SvgXml} from 'react-native-svg';
 import {NavigatorScreenParams, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserDrawerNavigator, {
   UserDrawerParamList,
 } from '../drawer/UserDrawerNavigator';
+import {headerIcons} from '@/assets/icons/headerIcons';
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardAllScreen from '@/screens/board/BoardAllScreen';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
+import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
 import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 
@@ -27,7 +30,7 @@ const BackButton = () => {
   const navigation = useNavigation();
   return (
     <Pressable onPress={() => navigation.goBack()} style={{marginLeft: 25}}>
-      <Ionicons name="arrow-back" size={24} color="black" />
+      <SvgXml xml={headerIcons.back} />
     </Pressable>
   );
 };
@@ -37,6 +40,10 @@ function LoggedInStackNavigator() {
     <Stack.Navigator
       screenOptions={{
         headerTitleAlign: 'center',
+        headerTitleStyle: {
+          fontFamily: 'Pretendard-Medium',
+          fontSize: 17,
+        },
         headerLeft: () => BackButton(),
       }}
     >
@@ -75,13 +82,13 @@ function LoggedInStackNavigator() {
           title: '프로필 변경',
         }}
       />
-      {/* <Stack.Screen
+      <Stack.Screen
         name={loggedInNavigations.NOTIFICATIONS}
         component={NotificationsScreen}
         options={{
           title: '알림함',
         }}
-      /> */}
+      />
     </Stack.Navigator>
   );
 }

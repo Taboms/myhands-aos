@@ -68,7 +68,18 @@ const CustomModal = ({
             style={[styles.button, {backgroundColor: color}]}
             onPress={() => handleBtnClick(index)}
           >
-            <Text style={(styles.buttonText, {color: '#1a1a1a'})}>{label}</Text>
+            <Text
+              style={
+                (styles.buttonText,
+                {
+                  color: '#1a1a1a',
+                  fontSize: 15,
+                  fontFamily: 'Pretendard-SemiBold',
+                })
+              }
+            >
+              {label}
+            </Text>
           </TouchableOpacity>
         );
       } else {
@@ -78,7 +89,18 @@ const CustomModal = ({
             style={[styles.button, {backgroundColor: color}]}
             onPress={() => handleBtnClick(index)}
           >
-            <Text style={(styles.buttonText, {color: '#fff'})}>{label}</Text>
+            <Text
+              style={
+                (styles.buttonText,
+                {
+                  color: '#fff',
+                  fontSize: 15,
+                  fontFamily: 'Pretendard-SemiBold',
+                })
+              }
+            >
+              {label}
+            </Text>
           </TouchableOpacity>
         );
       }

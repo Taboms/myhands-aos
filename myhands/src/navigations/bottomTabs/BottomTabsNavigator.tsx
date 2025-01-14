@@ -1,4 +1,5 @@
 import React from 'react';
+import {Text} from 'react-native';
 import {Pressable} from 'react-native-gesture-handler';
 import {SvgXml} from 'react-native-svg';
 import {
@@ -77,6 +78,19 @@ const createAlertButton =
       </Pressable>
     );
 
+const renderTabLabel = (focused: boolean, label: string) => (
+  <Text
+    style={{
+      fontFamily: 'Pretendard-Regular',
+      fontSize: 13,
+      color: focused ? colors.RED_800 : '#3A3A3A',
+      marginTop: 2,
+    }}
+  >
+    {label}
+  </Text>
+);
+
 function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
   return (
     <Tab.Navigator
@@ -105,8 +119,11 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         },
         tabBarLabelStyle: {
           marginTop: 2, // 라벨과 아이콘 사이 간격
-          fontSize: 12, // 라벨 폰트 크기
+          fontFamily: 'Pretendard-Regular',
+          fontSize: 13,
+          // color: '#3A3A3A',
         },
+        popToTopOnBlur: true,
       }}
     >
       <Tab.Screen
@@ -114,7 +131,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={MypageHomeScreen}
         options={{
           title: '마이페이지',
-          tabBarLabel: 'MY',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, 'MY'),
           tabBarIcon: ({focused}) => renderTabIcon('my', focused),
         }}
       />
@@ -123,6 +140,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={QuestHomeScreen}
         options={{
           title: '퀘스트',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '퀘스트'),
           tabBarIcon: ({focused}) => renderTabIcon('quest', focused),
         }}
       />
@@ -131,7 +149,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={RaceHomeScren}
         options={{
           title: '팀 레이스',
-          tabBarLabel: '레이스',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '레이스'),
           tabBarIcon: ({focused}) => renderTabIcon('race', focused),
         }}
       />
@@ -140,6 +158,7 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         component={BoardHomeScreen}
         options={{
           title: '게시판',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '게시판'),
           tabBarIcon: ({focused}) => renderTabIcon('board', focused),
         }}
       />
