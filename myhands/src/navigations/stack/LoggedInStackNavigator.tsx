@@ -9,6 +9,7 @@ import UserDrawerNavigator, {
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardAllScreen from '@/screens/board/BoardAllScreen';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
+import ExpAllScreen from '@/screens/mypage/ExpAllScreen';
 import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
 import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
 
@@ -19,6 +20,7 @@ export type LoggedInStackParamList = {
   [loggedInNavigations.CHANGE_PASSWORD]: undefined;
   [loggedInNavigations.CHANGE_PROFILE]: undefined;
   [loggedInNavigations.NOTIFICATIONS]: undefined;
+  [loggedInNavigations.EXP_ALL]: undefined;
 };
 
 const Stack = createStackNavigator<LoggedInStackParamList>();
@@ -73,6 +75,13 @@ function LoggedInStackNavigator() {
         component={ChangeProfileScreen}
         options={{
           title: '프로필 변경',
+        }}
+      />
+      <Stack.Screen
+        name={loggedInNavigations.EXP_ALL}
+        component={ExpAllScreen}
+        options={{
+          title: '경험치 목록',
         }}
       />
       {/* <Stack.Screen

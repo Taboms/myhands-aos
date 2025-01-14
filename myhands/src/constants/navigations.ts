@@ -12,6 +12,7 @@ const loggedInNavigations = {
   CHANGE_PASSWORD: 'ChangePassword',
   CHANGE_PROFILE: 'ChangeProfile',
   NOTIFICATIONS: 'Notifications',
+  EXP_ALL: 'ExpAll',
 } as const;
 
 const adminNavigations = {
