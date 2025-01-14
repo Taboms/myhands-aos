@@ -3,12 +3,12 @@ import {Text as RNText, TextProps} from 'react-native';
 
 interface CustomTextProps extends TextProps {}
 
-const CustomTextSemoBold: React.FC<CustomTextProps> = ({style, ...rest}) => {
+const CustomTextSemiBold: React.FC<CustomTextProps> = ({style, ...rest}) => {
   const customStyle = {
-    fontFamily: 'Pretendard-SemiBold.ttf',
+    fontFamily: 'Pretendard-SemiBold',
   };
 
   return <RNText style={[customStyle, style]} {...rest} />;
 };
 
-export default CustomTextSemoBold;
+export default CustomTextSemiBold;

@@ -1,12 +1,7 @@
 import React from 'react';
-import {
-  View,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-  Text,
-} from 'react-native';
+import {View, TextInput, StyleSheet, TouchableOpacity} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CustomTextBold from '../styles/CustomTextBold';
 import {colors} from '@/constants';
 
 type SearchBarProps = {
@@ -29,7 +24,7 @@ const SearchBar = ({value, onChangeText, onSearch}: SearchBarProps) => {
         />
       </View>
       <TouchableOpacity style={styles.button} onPress={onSearch}>
-        <Text style={styles.buttonText}>검색</Text>
+        <CustomTextBold style={styles.buttonText}>검색</CustomTextBold>
       </TouchableOpacity>
     </View>
   );
@@ -46,7 +41,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#F4F4F4',
     borderRadius: 8,
     paddingHorizontal: 12,
     height: 40,
@@ -56,20 +51,20 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     fontSize: 14,
     color: colors.BLACK,
+    fontFamily: 'Pretendard-Regular',
   },
   button: {
     marginLeft: 8,
     backgroundColor: colors.RED_800,
     borderRadius: 8,
     paddingHorizontal: 16,
-    paddingVertical: 10,
+    paddingVertical: 8,
     justifyContent: 'center',
     alignItems: 'center',
   },
   buttonText: {
-    fontSize: 14,
+    fontSize: 15,
     color: colors.WHITE,
-    fontWeight: 'bold',
   },
 });
 
