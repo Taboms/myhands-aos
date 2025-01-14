@@ -1,6 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
+import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import {colors} from '@/constants';
 import calculateWeeks from '@/utils/calculateWeeks';
 
@@ -66,14 +67,14 @@ function WeeklyTimeline({
         return (
           <View key={index} style={styles.weekItem}>
             <View style={styles.monthContainer}>
-              <Text
+              <CustomTextSemiBold
                 style={[
                   styles.monthText,
                   index === 3 && showMonth && {color: colors.MAX},
                 ]}
               >
                 {showMonth ? `${info.month}월` : ''}
-              </Text>
+              </CustomTextSemiBold>
             </View>
             <View style={[styles.circle, getCircleStyle(index)]}>
               {shouldShowCheck(index) && (
@@ -103,7 +104,7 @@ const styles = StyleSheet.create({
   monthContainer: {
     height: 24,
     justifyContent: 'center',
-    marginBottom: 8,
+    marginBottom: 5,
   },
   monthText: {
     fontSize: 12,

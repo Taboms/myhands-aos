@@ -1,34 +1,31 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
-import CustomTextRegular from '../styles/CustomTextRegular';
-import CustomTextSemiBold from '../styles/CustomTextSemoBold';
+import {View, StyleSheet} from 'react-native';
+import CustomTextBold from '../styles/CustomTextBold';
+import CustomTextSemiBold from '../styles/CustomTextSemiBold';
+import {useQuestStore} from '@/store/questStore';
 
-interface QuestRecordProps {
-  questRate: number;
-  maxCount: number;
-}
-
-// function QuestRecord({questRate, maxCount}: QuestRecordProps) {
 function QuestRecord() {
-  const questRate = 91;
-  const maxCount = 13;
+  const questRate = useQuestStore(state => state.questStats?.questRate ?? 0);
+  const maxCount = useQuestStore(state => state.questStats?.maxCount ?? 0);
 
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.label}>퀘스트 달성률</Text>
-        <Text style={styles.value}>{questRate}%</Text>
+        <CustomTextSemiBold style={styles.label}>
+          퀘스트 달성률
+        </CustomTextSemiBold>
+        <CustomTextBold style={styles.value}>{questRate}%</CustomTextBold>
       </View>
       <View style={styles.divider} />
       <View style={styles.section}>
-        <CustomTextRegular style={styles.label}>
+        <CustomTextSemiBold style={styles.label}>
           최장 달성 기간
-        </CustomTextRegular>
+        </CustomTextSemiBold>
         <View style={styles.valueContainer}>
           <CustomTextSemiBold style={styles.value}>
             {maxCount}주
           </CustomTextSemiBold>
-          <CustomTextRegular style={styles.emoji}>🔥</CustomTextRegular>
+          <CustomTextSemiBold style={styles.emoji}>🔥</CustomTextSemiBold>
         </View>
       </View>
     </View>
@@ -49,8 +46,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: 30,
-    // borderWidth: 2,
-    // borderColor: colors.MAX,
   },
   divider: {
     width: 1,
@@ -72,8 +67,8 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#000000',
     lineHeight: 50,
-    includeFontPadding: false, // 안드로이드에서 폰트 패딩 제거
-    textAlignVertical: 'center', // 안드로이드 텍스트 수직 정렬
+    includeFontPadding: false,
+    textAlignVertical: 'center',
   },
   emoji: {
     fontSize: 28,

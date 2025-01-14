@@ -1,109 +1,32 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
+import {addHours, format} from 'date-fns';
 import QuestCalendarScreen from './QuestCalendarScreen';
 import QuestStatusScreen from './QuestStatusScreen';
-import {QuestResponse} from '@/api/quest';
+import {getQuestCalendar, getQuestStats, QuestResponse} from '@/api/quest';
 import {colors} from '@/constants';
-import {Quest} from '@/types/domain';
+import {useQuestStore} from '@/store/questStore';
+import {Quest, QuestCalendar, QuestStats} from '@/types/domain';
 
 export type QuestTabParamList = {
-  QuestAchievement: {
-    challengeCount: number;
-    resultList: string[];
-  };
-  QuestHistory: {
-    questList: Quest[][];
-  };
+  QuestAchievement: undefined;
+  QuestHistory: undefined;
 };
 
 const Tab = createMaterialTopTabNavigator<QuestTabParamList>();
 
 function QuestHomeScreen() {
-  // 임시 데이터
-  const mockResponse: QuestResponse = {
-    status: 'OK',
-    message: 'success',
-    responseDto: {
-      weekCount: 5,
-      questList: [
-        [
-          {
-            questId: 1,
-            questType: 'job',
-            name: '음성 1센터 직무그룹1 1주차',
-            grade: 'MED',
-            expAmount: 40,
-            isCompleted: true,
-            completedAt: '2025-01-05T00:00:00',
-          },
-        ],
-        [
-          {
-            questId: 2,
-            questType: 'job',
-            name: '음성 1센터 직무그룹1 2주차',
-            grade: 'MAX',
-            expAmount: 80,
-            isCompleted: true,
-            completedAt: '2025-01-12T00:00:00',
-          },
-        ],
-        [
-          {
-            questId: 4,
-            questType: 'job',
-            name: '음성 1센터 직무그룹1 3주차',
-            grade: 'MED',
-            expAmount: 40,
-            isCompleted: true,
-            completedAt: '2025-01-19T00:00:00',
-          },
-        ],
-        [
-          {
-            questId: 3,
-            questType: 'job',
-            name: '음성 1센터 직무그룹1 4주차',
-            grade: 'MED',
-            expAmount: 40,
-            isCompleted: true,
-            completedAt: '2025-01-26T00:00:00',
-          },
-        ],
-        [
-          {
-            questId: 14,
-            questType: 'hr',
-            name: '상반기 인사평가 | 김민수',
-            grade: 'B등급',
-            expAmount: 3000,
-            isCompleted: true,
-            completedAt: '2025-01-30T00:00:00',
-          },
-          {
-            questId: 5,
-            questType: 'leader',
-            name: '1월 월특근 | 김민수',
-            grade: 'Max',
-            expAmount: 100,
-            isCompleted: true,
-            completedAt: '2025-01-31T23:59:00',
-          },
-        ],
-      ],
-    },
-  };
+  const [loading, setLoading] = useState<boolean>(true);
+  const {fetchQuestData, isLoading} = useQuestStore();
+  const [questCalendar, setQuestCalendar] = useState<QuestCalendar>();
 
-  const questStats = {
-    challengeCount: 7,
-    resultList: ['MAX', 'MED', 'MED', 'MED', 'B등급', 'Max'],
-    questRate: 100,
-    maxCount: 2,
-    historySize: mockResponse.responseDto.weekCount,
-    expHistory: {
-      2025: 3300, // 모든 expAmount의 합
-    },
-  };
+  useEffect(() => {
+    fetchQuestData();
+  }, []);
+
+  if (isLoading) {
+    return null;
+  }
 
   return (
     <Tab.Navigator
@@ -135,18 +58,11 @@ function QuestHomeScreen() {
         name="QuestAchievement"
         component={QuestStatusScreen}
         options={{title: '달성 통계'}}
-        initialParams={{
-          challengeCount: questStats.challengeCount,
-          resultList: questStats.resultList,
-        }}
       />
       <Tab.Screen
         name="QuestHistory"
         component={QuestCalendarScreen}
         options={{title: '월별 내역'}}
-        initialParams={{
-          questList: mockResponse.responseDto.questList,
-        }}
       />
     </Tab.Navigator>
   );

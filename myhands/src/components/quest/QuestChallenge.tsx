@@ -1,37 +1,49 @@
-import React from 'react';
-import {StyleSheet, SafeAreaView, View, Text} from 'react-native';
+import {StyleSheet, SafeAreaView, View} from 'react-native';
 import CustomTextBold from '../styles/CustomTextBold';
 import CustomTextMedium from '../styles/CustomTextMedium';
+import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import WeeklyTimeline from './WeeklyTimeline';
 import {colors} from '@/constants';
+import {useAuthStore} from '@/store/authStore';
+import {useQuestStore} from '@/store/questStore';
 
 function QuestChallenge() {
+  const challengeCount = useQuestStore(
+    state => state.questStats?.challengeCount ?? 0
+  );
+
+  const userName = useAuthStore(state => state.user?.name ?? '두핸즈');
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.challengeInfo}>
         <View style={styles.info}>
-          <CustomTextMedium style={styles.infoText}>
-            현재 이서님은
-          </CustomTextMedium>
+          <CustomTextSemiBold style={styles.infoText}>
+            현재 {userName}님은
+          </CustomTextSemiBold>
           <View style={styles.bottomInfoText}>
-            <CustomTextBold style={styles.pointText}>3주</CustomTextBold>
-            <CustomTextMedium style={styles.bottomText}>
+            <CustomTextBold style={styles.pointText}>
+              {challengeCount}주
+            </CustomTextBold>
+            <CustomTextSemiBold style={styles.bottomText}>
               연속 도전 중 💪
-            </CustomTextMedium>
+            </CustomTextSemiBold>
           </View>
         </View>
         <View style={styles.infoStandard}>
           <View style={styles.standard}>
             <View style={[styles.colorBox, {backgroundColor: colors.MAX}]} />
-            <Text style={styles.standardText}>MAX</Text>
+            <CustomTextMedium style={styles.standardText}>MAX</CustomTextMedium>
           </View>
           <View style={styles.standard}>
             <View style={[styles.colorBox, {backgroundColor: colors.MED}]} />
-            <Text style={styles.standardText}>MED</Text>
+            <CustomTextMedium style={styles.standardText}>MED</CustomTextMedium>
           </View>
           <View style={styles.standard}>
             <View style={[styles.colorBox, {backgroundColor: colors.ETC}]} />
-            <Text style={styles.standardText}>기타</Text>
+            <CustomTextMedium style={styles.standardText}>
+              기타
+            </CustomTextMedium>
           </View>
         </View>
       </View>
@@ -43,8 +55,8 @@ function QuestChallenge() {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: 'white',
-    paddingHorizontal: '7%',
-    paddingVertical: '6%',
+    paddingHorizontal: '8%',
+    paddingVertical: '7%',
     borderWidth: 1,
     borderColor: '#eaeaea',
     borderRadius: 20,
@@ -54,17 +66,17 @@ const styles = StyleSheet.create({
   },
   info: {},
   infoText: {
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 22,
     fontWeight: '600',
     color: 'black',
   },
   bottomInfoText: {
     flexDirection: 'row',
-    marginTop: 8,
+    marginTop: 4,
   },
   bottomText: {
-    fontSize: 14,
+    fontSize: 15,
     lineHeight: 22,
     fontWeight: '600',
     color: 'black',
@@ -85,7 +97,7 @@ const styles = StyleSheet.create({
   standard: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: 16,
+    height: 17.5,
   },
   colorBox: {
     width: 8,
