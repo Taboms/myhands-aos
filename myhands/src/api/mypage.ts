@@ -1,5 +1,15 @@
 import fetchApi from './axios';
 
+export type Exp = {
+  questId: number;
+  questType: string;
+  name: string;
+  grade: string;
+  expAmount: number;
+  isCompleted: boolean;
+  completedAt: string;
+};
+
 type Fortune = {
   date: string;
   contents: string;
@@ -18,23 +28,13 @@ type YearExp = {
   percent: number;
 };
 
-type RecentExp = {
-  questId: number;
-  questType: string;
-  name: string;
-  grade: string;
-  expAmount: number;
-  isCompleted: boolean;
-  completedAt: string;
-};
-
 type ResponseMypageData = {
   status: string;
   message: string;
   responseDto: {
     fortune: Fortune;
     levelRate: LevelRate;
-    recentExp: RecentExp;
+    recentExp: Exp;
     thisYearExp: YearExp;
     lastYearExp: YearExp;
   };
@@ -44,7 +44,6 @@ const getMypageData = async (): Promise<ResponseMypageData['responseDto']> => {
   try {
     const {data} = await fetchApi.get<ResponseMypageData>('user/mypage');
     if (data.status === 'OK') {
-      console.log(data.responseDto);
       return data.responseDto;
     }
     throw new Error(data.message || 'Failed to fetch mypage data');
@@ -55,4 +54,4 @@ const getMypageData = async (): Promise<ResponseMypageData['responseDto']> => {
 };
 
 export {getMypageData};
-export type {ResponseMypageData, Fortune, LevelRate, RecentExp, YearExp};
+export type {ResponseMypageData, Fortune, LevelRate, YearExp};

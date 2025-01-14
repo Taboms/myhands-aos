@@ -6,9 +6,10 @@ import CustomTextBold from '../styles/CustomTextBold';
 type ProgressBarProps = {
   percentage: number; // 0과 100 사이의 값을 받음
   height: number;
+  fontSize: number;
 };
 
-const ProgressBar = ({percentage, height}: ProgressBarProps) => {
+const ProgressBar = ({percentage, height, fontSize}: ProgressBarProps) => {
   const progress = percentage / 100; // percentage 값을 0과 1 사이로 변환
 
   return (
@@ -24,7 +25,9 @@ const ProgressBar = ({percentage, height}: ProgressBarProps) => {
           borderWidth={0}
           style={styles.progressBar}
         />
-        <CustomTextBold style={styles.percentage}>{percentage}%</CustomTextBold>
+        <CustomTextBold style={[styles.percentage, {fontSize}]}>
+          {percentage}%
+        </CustomTextBold>
       </View>
     </View>
   );

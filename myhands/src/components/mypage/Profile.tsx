@@ -60,7 +60,7 @@ const Profile = ({fortune, levelRate}: ProfileProps) => {
             {levelRate.nextLevel} 승급까지 {levelRate.leftExp}
           </CustomTextBold>
         </View>
-        <ProgressBar percentage={levelRate.percent} height={26} />
+        <ProgressBar percentage={levelRate.percent} height={26} fontSize={19} />
       </View>
     </View>
   );
