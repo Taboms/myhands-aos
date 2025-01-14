@@ -11,9 +11,7 @@ import type {MaterialTopTabScreenProps} from '@react-navigation/material-top-tab
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import type {QuestTabParamList} from './QuestHomeScreen';
-import CustomText from '@/components/styles/CustomTextRegular';
 import {GRADE_COLORS} from '@/constants';
-import {calculateTotalExp, getGradeColor} from '@/utils/quest';
 
 type QuestHistoryScreenProps = MaterialTopTabScreenProps<
   QuestTabParamList,

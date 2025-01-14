@@ -12,7 +12,6 @@ import {
 } from '@react-navigation/native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
-import BottomTabsNavigator from '../bottomTabs/BottomTabsNavigator';
 import {headerIcons} from '@/assets/icons/headerIcons';
 import CustomModal from '@/components/_modal/CustomModal';
 import {adminNavigations} from '@/constants';

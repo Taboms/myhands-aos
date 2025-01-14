@@ -16,12 +16,6 @@ type ResponseToken = {
   admin: boolean;
 };
 
-type RequestLogin = {
-  id: string;
-  password: string;
-  deviceToken: string;
-};
-
 type TAuthStore = {
   user: User | null;
   accessToken: string | null;

@@ -35,7 +35,7 @@ const BoardAllScreen = () => {
   const fetchPosts = async () => {
     try {
       setLoading(true);
-      const data = await getBoardPostAll(5, lastId || undefined);
+      const data = await getBoardPostAll(15, lastId || undefined);
       setPosts(prevPosts => [...prevPosts, ...data]);
       if (data.length > 0) {
         setLastId(data[data.length - 1].boardId);

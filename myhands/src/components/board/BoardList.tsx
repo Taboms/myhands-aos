@@ -1,7 +1,10 @@
 import React from 'react';
-import {FlatList, StyleSheet, View, Text, TouchableOpacity} from 'react-native';
+import {FlatList, StyleSheet, View, TouchableOpacity} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
+import Feather from 'react-native-vector-icons/Feather';
+import CustomTextMedium from '../styles/CustomTextMedium';
+import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import BoardItem from './BoardItem';
 import {BoardPost} from '@/api/boardApi';
 import {colors} from '@/constants';
@@ -38,13 +41,15 @@ const BoardList = ({posts}: {posts: BoardPost[]}) => {
   return (
     <View style={styles.boardContainer}>
       <View style={styles.boardHeader}>
-        <Text style={styles.boardTitle}>최신글</Text>
+        <CustomTextSemiBold style={styles.boardTitle}>
+          최신글
+        </CustomTextSemiBold>
         <TouchableOpacity
           style={styles.viewAllContainer}
           onPress={handleViewAllPress}
         >
-          <Text style={styles.viewAll}>전체보기</Text>
-          <Text style={styles.viewAllArrow}>{'>'}</Text>
+          <CustomTextMedium style={styles.viewAll}>전체보기</CustomTextMedium>
+          <Feather name="chevron-right" size={16} color={colors.GRAY_700} />
         </TouchableOpacity>
       </View>
       <FlatList
@@ -77,7 +82,6 @@ const styles = StyleSheet.create({
   },
   boardTitle: {
     fontSize: 18,
-    fontWeight: 'bold',
     color: colors.BLACK,
   },
   viewAllContainer: {
@@ -85,9 +89,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   viewAll: {
+    top: -1,
     fontSize: 13,
     color: colors.GRAY_700,
-    marginRight: 4,
+    marginRight: 2,
   },
   viewAllArrow: {
     fontSize: 13,

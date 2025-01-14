@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.WHITE,
-    fontSize: 18,
-    fontWeight: 'bold',
+    fontSize: 19,
+    fontFamily: 'Pretendard-Bold',
   },
 });
 

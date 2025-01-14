@@ -1,5 +1,8 @@
 import React from 'react';
-import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
+import {View, TouchableOpacity, StyleSheet} from 'react-native';
+import Feather from 'react-native-vector-icons/Feather';
+import CustomTextMedium from '../styles/CustomTextMedium';
+import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import {BoardPost} from '@/api/boardApi';
 import {colors} from '@/constants';
 
@@ -24,16 +27,31 @@ const BoardItem = ({
       style={[styles.card, isLastItem && styles.lastCard]}
     >
       <View style={styles.cardContent}>
-        {showNewIndicator && ( // 조건부로 N 표시
+        {showNewIndicator && (
           <View style={styles.iconWrapper}>
-            <Text style={styles.iconText}>N</Text>
+            <CustomTextSemiBold style={styles.iconText}>N</CustomTextSemiBold>
           </View>
         )}
         <View style={styles.textContainer}>
-          <Text style={styles.title}>{item.title}</Text>
-          <Text style={styles.time}>{item.timeAgo}</Text>
+          <CustomTextSemiBold
+            style={styles.title}
+            numberOfLines={1}
+            ellipsizeMode="tail"
+          >
+            {item.title}
+          </CustomTextSemiBold>
+          <CustomTextMedium style={styles.time}>
+            {item.timeAgo}
+          </CustomTextMedium>
         </View>
-        {showArrow && <Text style={styles.arrow}>{'>'}</Text>}
+        {showArrow && (
+          <Feather
+            name="chevron-right"
+            size={20}
+            color={colors.GRAY_700}
+            style={styles.arrow}
+          />
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -56,7 +74,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconWrapper: {
-    marginTop: -15,
+    marginTop: -20,
     width: 16,
     height: 16,
     borderRadius: 18,
@@ -75,17 +93,14 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 14,
-    fontWeight: 'bold',
     color: colors.BLACK,
   },
   time: {
-    fontSize: 12,
+    fontSize: 12.5,
     color: '#FF5B35',
     marginTop: 4,
   },
   arrow: {
-    fontSize: 16,
-    color: '#6E6E6E',
     marginTop: -20,
     alignSelf: 'center',
   },

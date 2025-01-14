@@ -6,7 +6,7 @@ import ExperienceStatus from '@/components/mypage/ExperienceStatus';
 import Profile from '@/components/mypage/Profile';
 import {colors} from '@/constants';
 
-function MypageHomeScreen() {
+function ExpAllScreen() {
   const [mypageData, setMypageData] = useState<
     ResponseMypageData['responseDto'] | null
   >(null);
@@ -33,44 +33,31 @@ function MypageHomeScreen() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.profileContainer}>
-        {mypageData && (
-          <Profile
-            fortune={mypageData.fortune}
-            levelRate={mypageData.levelRate}
-          />
-        )}
-      </View>
+      {/* 상단 프로필 영역 */}
+      <View style={styles.profileContainer}></View>
 
-      <View style={styles.expContainer}>
-        {mypageData && (
-          <ExperienceStatus
-            recentExp={mypageData.recentExp}
-            thisYearExp={mypageData.thisYearExp}
-            lastYearExp={mypageData.lastYearExp}
-          />
-        )}
-      </View>
+      {/* 하단 경험치 및 기타 정보 */}
+      <View style={styles.expContainer}></View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 1, // 전체 화면을 차지
   },
   profileContainer: {
-    flex: 0.45,
+    flex: 0.45, // 상단이 화면의 45% 차지
     padding: 20,
     backgroundColor: '#FFF4F4',
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: 'center', // 수직 중앙 정렬
+    alignItems: 'center', // 수평 중앙 정렬
   },
   expContainer: {
-    flex: 0.55,
+    flex: 0.55, // 하단이 화면의 55% 차지
     padding: 20,
     backgroundColor: colors.WHITE,
   },
 });
 
-export default MypageHomeScreen;
+export default ExpAllScreen;

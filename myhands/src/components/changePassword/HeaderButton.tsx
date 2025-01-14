@@ -1,5 +1,6 @@
 import React from 'react';
-import {Pressable, Text, StyleSheet} from 'react-native';
+import {Pressable, StyleSheet} from 'react-native';
+import CustomTextSemiBold from '@/components/styles/CustomTextSemiBold';
 import {colors} from '@/constants';
 
 interface HeaderButtonProps {
@@ -21,7 +22,7 @@ const HeaderButton = ({
       style={[styles.button, {backgroundColor: disabled ? '#D3D3D3' : color}]}
       disabled={disabled}
     >
-      <Text style={styles.buttonText}>{label}</Text>
+      <CustomTextSemiBold style={styles.buttonText}>{label}</CustomTextSemiBold>
     </Pressable>
   );
 };
@@ -30,18 +31,17 @@ const styles = StyleSheet.create({
   button: {
     marginRight: 16,
     paddingVertical: 6,
-    paddingHorizontal: 12,
+    paddingHorizontal: 14,
     backgroundColor: colors.GRAY_500,
-    borderRadius: 20,
+    borderRadius: 16,
   },
   disabledButton: {
     backgroundColor: '#D3D3D3',
   },
   buttonText: {
-    top: -1,
+    top: -0.5,
     color: 'white',
     fontSize: 17,
-    fontWeight: 'bold',
   },
 });
 

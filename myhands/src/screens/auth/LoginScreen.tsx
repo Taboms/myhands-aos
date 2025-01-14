@@ -5,6 +5,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import Header from '@/components/login/Header';
 import LoginButton from '@/components/login/LoginButton';
 import LoginInput from '@/components/login/LoginInput';
+import CustomTextMedium from '@/components/styles/CustomTextMedium';
 import {colors} from '@/constants';
 import {useAuthStore} from '@/store/authStore';
 
@@ -71,11 +72,13 @@ const LoginScreen = () => {
           <View style={styles.errorContainer}>
             <Icon
               name="exclamationcircleo"
-              size={18}
+              size={17}
               color={colors.RED_800}
               style={styles.errorIcon}
             />
-            <Text style={styles.errorMessage}>{errorMessage}</Text>
+            <CustomTextMedium style={styles.errorMessage}>
+              {errorMessage}
+            </CustomTextMedium>
           </View>
         )}
         <View style={styles.buttonContainer}>
@@ -122,14 +125,13 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   errorIcon: {
-    top: 2,
+    top: 1,
     marginLeft: 3,
     marginRight: 8,
   },
   errorMessage: {
     color: colors.RED_800,
     fontSize: 14,
-    fontWeight: 'semibold',
     textAlign: 'left',
   },
   buttonContainer: {

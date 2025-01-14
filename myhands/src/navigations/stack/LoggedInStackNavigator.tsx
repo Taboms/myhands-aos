@@ -3,7 +3,6 @@ import {Pressable} from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import {NavigatorScreenParams, useNavigation} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Ionicons from 'react-native-vector-icons/Ionicons';
 import UserDrawerNavigator, {
   UserDrawerParamList,
 } from '../drawer/UserDrawerNavigator';
@@ -11,6 +10,7 @@ import {headerIcons} from '@/assets/icons/headerIcons';
 import {loggedInNavigations} from '@/constants/navigations';
 import BoardAllScreen from '@/screens/board/BoardAllScreen';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
+import ExpAllScreen from '@/screens/mypage/ExpAllScreen';
 import NotificationsScreen from '@/screens/notifications/NotificationsScreen';
 import ChangePasswordScreen from '@/screens/settings/ChangePasswordScreen';
 import ChangeProfileScreen from '@/screens/settings/ChangeProfileScreen';
@@ -22,6 +22,7 @@ export type LoggedInStackParamList = {
   [loggedInNavigations.CHANGE_PASSWORD]: undefined;
   [loggedInNavigations.CHANGE_PROFILE]: undefined;
   [loggedInNavigations.NOTIFICATIONS]: undefined;
+  [loggedInNavigations.EXP_ALL]: undefined;
 };
 
 const Stack = createStackNavigator<LoggedInStackParamList>();
@@ -80,6 +81,13 @@ function LoggedInStackNavigator() {
         component={ChangeProfileScreen}
         options={{
           title: '프로필 변경',
+        }}
+      />
+      <Stack.Screen
+        name={loggedInNavigations.EXP_ALL}
+        component={ExpAllScreen}
+        options={{
+          title: '경험치 목록',
         }}
       />
       <Stack.Screen

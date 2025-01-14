@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#E0E0E0',
     borderRadius: 8,
     paddingHorizontal: 8,
@@ -55,6 +55,7 @@ const styles = StyleSheet.create({
     flex: 1,
     height: 40,
     fontSize: 16,
+    fontFamily: 'Pretendard-Regular',
   },
   eyeIcon: {
     marginLeft: 8,

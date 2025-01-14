@@ -1,12 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect} from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
-import {addHours, format} from 'date-fns';
 import QuestCalendarScreen from './QuestCalendarScreen';
 import QuestStatusScreen from './QuestStatusScreen';
-import {getQuestCalendar, getQuestStats, QuestResponse} from '@/api/quest';
 import {colors} from '@/constants';
 import {useQuestStore} from '@/store/questStore';
-import {Quest, QuestCalendar, QuestStats} from '@/types/domain';
 
 export type QuestTabParamList = {
   QuestAchievement: undefined;
@@ -16,13 +13,11 @@ export type QuestTabParamList = {
 const Tab = createMaterialTopTabNavigator<QuestTabParamList>();
 
 function QuestHomeScreen() {
-  const [loading, setLoading] = useState<boolean>(true);
   const {fetchQuestData, isLoading} = useQuestStore();
-  const [questCalendar, setQuestCalendar] = useState<QuestCalendar>();
 
   useEffect(() => {
     fetchQuestData();
-  }, []);
+  }, [fetchQuestData]);
 
   if (isLoading) {
     return null;

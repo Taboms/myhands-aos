@@ -1,8 +1,7 @@
 import React from 'react';
-import {View, Text, Image, StyleSheet} from 'react-native';
+import {View, Image, StyleSheet} from 'react-native';
 import LinearGradient from 'react-native-linear-gradient';
-import CustomTextBold from '../styles/CustomTextBold';
-// import Text from '../styles/Text';
+import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import {colors} from '@/constants';
 
 const Header = () => {
@@ -13,7 +12,9 @@ const Header = () => {
     >
       <View style={styles.header}>
         <View style={styles.logoContainer}>
-          <Text style={styles.headerText}>멈추지 않는 도전,</Text>
+          <CustomTextSemiBold style={styles.headerText}>
+            멈추지 않는 도전,
+          </CustomTextSemiBold>
           <Image
             source={require('@/assets/logo/logo-row.png')}
             style={styles.logo}
@@ -39,8 +40,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerText: {
-    fontSize: 16,
-    fontWeight: '600',
+    fontSize: 18,
     color: colors.RED_800,
     fontFamily: 'Pretendard-SemiBold',
   },

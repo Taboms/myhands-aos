@@ -1,7 +1,4 @@
-import {Dimensions} from 'react-native';
 import styled from 'styled-components/native';
-
-const width = Dimensions.get('screen').width;
 
 const Container = styled.ScrollView`
   flex: 1;

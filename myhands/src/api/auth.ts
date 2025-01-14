@@ -59,5 +59,40 @@ const logout = async () => {
   await fetchApi.delete('/user/logout');
 };
 
-export {postLogin, getProfile, getAccessToken, logout};
+type ResponseAdmin = {
+  status: string;
+  message: string;
+  code?: string;
+};
+
+const duplicateCheck = async (id: string) => {
+  const response = await fetchApi.get<ResponseAdmin>(
+    `/user/duplicate?id=${id}`
+  );
+  return response.data;
+};
+
+export interface SignupFormData {
+  name: string;
+  id: string;
+  password: string;
+  joinedAt: string;
+  departmentId: number;
+  jobGroup: number;
+  group: string;
+}
+
+const singUp = async (data: SignupFormData): Promise<ResponseAdmin> => {
+  const response = await fetchApi.post<ResponseAdmin>('user/join', {
+    name: data.name,
+    id: data.id,
+    password: data.password,
+    joinedAt: data.joinedAt,
+    departmentId: data.departmentId,
+    jobGroup: data.jobGroup,
+    group: data.group,
+  });
+  return response.data;
+};
+export {postLogin, getProfile, getAccessToken, logout, duplicateCheck, singUp};
 export type {RequestUser, ResponseToken, ResponseProfile};
