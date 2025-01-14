@@ -73,68 +73,6 @@ function AdminHomeScreen({navigation}: AdminHomeScreenProps) {
           </TouchableOpacity>
         </View>
       </View>
-    <View style={styles.container}>
-      <Header />
-      <Image
-        source={require('@/assets/image/board-ellipse.png')}
-        style={styles.curveImage}
-        resizeMode="stretch"
-      />
-      <View style={styles.buttonsWrapper}>
-        <View style={styles.buttons}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate(adminNavigations.ADMIN_SIGNUP)}
-          >
-            <Image
-              source={require('@/assets/image/sing-up.png')}
-              style={styles.buttonImage}
-            />
-            <Text style={{fontWeight: 'bold'}}> 회원 생성 </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              navigation.navigate(adminNavigations.ADMIN_USER_LIST)
-            }
-          >
-            <Image
-              source={require('@/assets/image/user-list.png')}
-              style={styles.buttonImage}
-              resizeMode="contain"
-            />
-            <Text style={{fontWeight: 'bold'}}> 회원 목록 </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.buttons}>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              navigation.navigate(adminNavigations.ADMIN_WRITE_POST)
-            }
-          >
-            <Image
-              source={require('@/assets/image/write-board.png')}
-              style={styles.buttonImage}
-              resizeMode="contain"
-            />
-            <Text style={{fontWeight: 'bold'}}> 게시글 작성 </Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              navigation.navigate(adminNavigations.ADMIN_POST_LIST)
-            }
-          >
-            <Image
-              source={require('@/assets/image/search-board.png')}
-              style={styles.buttonImage}
-              resizeMode="contain"
-            />
-            <Text style={{fontWeight: 'bold'}}> 게시글 조회 </Text>
-          </TouchableOpacity>
-        </View>
-      </View>
     </View>
   );
 }
