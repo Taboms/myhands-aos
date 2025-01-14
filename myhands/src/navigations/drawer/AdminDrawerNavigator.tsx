@@ -77,7 +77,7 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
         <Drawer.Screen
           name={adminNavigations.ADMIN_HOME}
           component={AdminHomeScreen}
-          options={{drawerLabel: '메인 화면으로'}}
+          options={{drawerLabel: '메인 화면으로', title: '관리자 페이지'}}
           listeners={{
             drawerItemPress: e => {
               e.preventDefault();
