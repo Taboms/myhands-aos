@@ -29,13 +29,18 @@ export const stateMap: StateMap = {
   },
   PasswordChangeWarning: {
     title: '비밀번호 변경',
-    subtitle: '비밀번호를 변경하시겠습니까?',
+    subtitle:
+      '비밀번호를 변경하시겠습니까?\n 확인을 누르면 로그인 페이지로 이동합니다.',
     btn: [0, 1],
   },
   UserJoinFail: {
     title: '회원 생성 실패',
     subtitle: '모든 정보를 입력해주세요.',
     btn: [1],
+  },
+  ProfileEditSuccess: {
+    title: '프로필 이미지 변경 완료',
+    btn: [3],
   },
 };
 
