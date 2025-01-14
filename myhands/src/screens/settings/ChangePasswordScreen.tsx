@@ -1,5 +1,5 @@
 import React, {useState, useLayoutEffect, useCallback} from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {logout} from '@/api/auth';
 import {changePassword} from '@/api/setting';
 import CustomModal from '@/components/_modal/CustomModal';
@@ -7,6 +7,7 @@ import Condition from '@/components/changePassword/Condition';
 import ErrorMessage from '@/components/changePassword/ErrorMessage';
 import HeaderButton from '@/components/changePassword/HeaderButton';
 import PasswordInput from '@/components/changePassword/PasswordInput';
+import CustomTextMedium from '@/components/styles/CustomTextMedium';
 import {colors} from '@/constants';
 import {useAuthStore} from '@/store/authStore';
 
@@ -45,6 +46,7 @@ const ChangePasswordScreen = ({navigation}: any) => {
   const isButtonEnabled = useCallback(() => {
     return (
       currentPassword.length > 0 &&
+      currentPassword === currentPasswordFromStore &&
       checkNewPasswordConditions().lengthCondition &&
       checkNewPasswordConditions().containsAll &&
       isPasswordMatched
@@ -89,7 +91,7 @@ const ChangePasswordScreen = ({navigation}: any) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>현재 비밀번호</Text>
+      <CustomTextMedium style={styles.label}>현재 비밀번호</CustomTextMedium>
       <PasswordInput
         placeholder="현재 비밀번호를 입력하세요"
         value={currentPassword}
@@ -98,7 +100,7 @@ const ChangePasswordScreen = ({navigation}: any) => {
       />
       {errorMessage && <ErrorMessage message={errorMessage} />}
 
-      <Text style={styles.label}>새 비밀번호</Text>
+      <CustomTextMedium style={styles.label}>새 비밀번호</CustomTextMedium>
       <PasswordInput
         placeholder="새 비밀번호를 입력하세요"
         value={newPassword}
@@ -115,7 +117,7 @@ const ChangePasswordScreen = ({navigation}: any) => {
         />
       </View>
 
-      <Text style={styles.label}>새 비밀번호 확인</Text>
+      <CustomTextMedium style={styles.label}>새 비밀번호 확인</CustomTextMedium>
       <PasswordInput
         placeholder="새 비밀번호를 다시 입력하세요"
         value={confirmPassword}

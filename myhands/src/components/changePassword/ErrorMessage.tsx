@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import IconAntDesign from 'react-native-vector-icons/AntDesign';
+import CustomTextMedium from '../styles/CustomTextMedium';
 import {colors} from '@/constants';
 
 interface ErrorMessageProps {
@@ -15,7 +16,7 @@ const ErrorMessage = ({message}: ErrorMessageProps) => (
       color={colors.RED_800}
       style={styles.icon}
     />
-    <Text style={styles.errorMessage}>{message}</Text>
+    <CustomTextMedium style={styles.errorMessage}>{message}</CustomTextMedium>
   </View>
 );
 
@@ -31,7 +32,7 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   icon: {
-    top: 2,
+    top: 1,
     marginLeft: 2,
   },
 });

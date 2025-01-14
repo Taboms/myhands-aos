@@ -1,6 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import IconFeather from 'react-native-vector-icons/Feather';
+import CustomTextMedium from '../styles/CustomTextMedium';
 
 interface ConditionProps {
   isValid: boolean;
@@ -11,15 +12,15 @@ const Condition = ({isValid, text}: ConditionProps) => (
   <View style={styles.conditionWrapper}>
     <IconFeather
       name="check"
-      size={16}
+      size={17}
       color={isValid ? '#28A745' : '#A0A0A0'}
       style={styles.icon}
     />
-    <Text
+    <CustomTextMedium
       style={[styles.conditionText, {color: isValid ? '#28A745' : '#A0A0A0'}]}
     >
       {text}
-    </Text>
+    </CustomTextMedium>
   </View>
 );
 
