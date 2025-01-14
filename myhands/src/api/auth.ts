@@ -6,6 +6,7 @@ import {getAsyncData} from '@/utils/asyncStorage';
 type RequestUser = {
   id: string;
   password: string;
+  deviceToken: string;
 };
 
 type ResponseUser = {
@@ -17,10 +18,12 @@ type ResponseUser = {
 const postLogin = async ({
   id,
   password,
+  deviceToken,
 }: RequestUser): Promise<ResponseUser> => {
   const {data} = await axiosInstance.post('/user/login', {
     id,
     password,
+    deviceToken,
   });
   return data.responseDto;
 };

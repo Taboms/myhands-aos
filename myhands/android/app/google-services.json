@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "509166224112",
+    "project_id": "myhands-aos",
+    "storage_bucket": "myhands-aos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:509166224112:android:f5645716cf7d7a50723835",
+        "android_client_info": {
+          "package_name": "com.myhands"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAKY2fpCFF8ADDWi6vBaE9qNiEJ5YnhqYw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

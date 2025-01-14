@@ -11,4 +11,23 @@ const colors = {
   FAIL: '#EDEDED',
 };
 
-export {colors};
+const GRADE_COLORS = {
+  MAX: {
+    main: '#FF5B35',
+    background: '#FFF4F4',
+  },
+  MED: {
+    main: '#FFC300',
+    background: '#FFFCEB',
+  },
+  OTHER: {
+    main: '#56B9FF',
+    background: '#E9F9FF',
+  },
+  FAIL: {
+    main: '#BFBFBF',
+    background: '#F5F5F5',
+  },
+} as const;
+
+export {colors, GRADE_COLORS};

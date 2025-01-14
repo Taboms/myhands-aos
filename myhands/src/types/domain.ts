@@ -1,4 +1,4 @@
-interface Profile {
+export interface Profile {
   userId: number;
   name: string;
   id: string;
@@ -10,7 +10,7 @@ interface Profile {
   level: string;
 }
 
-interface QuestStats {
+export interface QuestStats {
   challengeCount: number;
   resultList: string[];
   questRate: number;
@@ -19,4 +19,17 @@ interface QuestStats {
   expHistory: Record<string, number>;
 }
 
-export type {Profile, QuestStats};
+export interface Quest {
+  questId: number;
+  questType: string;
+  name: string;
+  grade: string;
+  expAmount: number;
+  isCompleted: boolean;
+  completedAt: string;
+}
+
+export interface QuestCalendar {
+  weekCount: number;
+  questList: Quest[][];
+}

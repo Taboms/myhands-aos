@@ -16,6 +16,12 @@ type ResponseToken = {
   admin: boolean;
 };
 
+type RequestLogin = {
+  id: string;
+  password: string;
+  deviceToken: string;
+};
+
 type TAuthStore = {
   user: User | null;
   accessToken: string | null;
@@ -24,7 +30,7 @@ type TAuthStore = {
   isAdmin: boolean;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (id: string, password: string) => Promise<void>;
+  login: (id: string, password: string, deviceToken: string) => Promise<void>;
   logout: () => Promise<void>;
   initializeAuth: () => Promise<void>;
   setUser: (user: User) => void;
@@ -59,10 +65,10 @@ export const useAuthStore = create<TAuthStore>(set => ({
     set({accessToken, refreshToken, isAdmin: admin});
   },
 
-  login: async (id, password) => {
+  login: async (id, password, deviceToken) => {
     try {
       // 1. 로그인 요청
-      const tokens = await postLogin({id, password});
+      const tokens = await postLogin({id, password, deviceToken});
       await Promise.all([
         setAsyncData(storageKeys.ACCESS_TOKEN, tokens.accessToken),
         setAsyncData(storageKeys.REFRESH_TOKEN, tokens.refreshToken),
