@@ -30,4 +30,19 @@ const GRADE_COLORS = {
   },
 } as const;
 
-export {colors, GRADE_COLORS};
+const GRADE_COLORS_EXP = {
+  MAX: {
+    main: '#FF5B35',
+    background: '#FFE8E2',
+  },
+  MED: {
+    main: '#FFC300',
+    background: '#FFFADC',
+  },
+  OTHER: {
+    main: '#56B9FF',
+    background: '#EAF9FF',
+  },
+} as const;
+
+export {colors, GRADE_COLORS, GRADE_COLORS_EXP};
