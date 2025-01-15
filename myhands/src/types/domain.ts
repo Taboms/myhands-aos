@@ -33,3 +33,11 @@ export interface QuestCalendar {
   weekCount: number;
   questList: Quest[][];
 }
+
+export interface Alarm {
+  category: boolean;
+  createdAt: string;
+  title: string;
+  boardId: number | null;
+  exp: number;
+}

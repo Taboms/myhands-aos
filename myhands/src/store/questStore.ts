@@ -1,5 +1,6 @@
+import {addHours, format} from 'date-fns';
 import {create} from 'zustand';
-import {getQuestStats} from '@/api/quest';
+import {getQuestCalendar, getQuestStats} from '@/api/quest';
 import {QuestStats, QuestCalendar} from '@/types/domain';
 
 type TQuestStore = {
@@ -7,6 +8,7 @@ type TQuestStore = {
   questCalendar: QuestCalendar | null;
   isLoading: boolean;
   fetchQuestData: () => Promise<void>;
+  fetchQuestCalendar: (year: number, month: number) => Promise<void>;
 };
 
 export const useQuestStore = create<TQuestStore>(set => ({
@@ -15,20 +17,33 @@ export const useQuestStore = create<TQuestStore>(set => ({
   isLoading: true,
 
   fetchQuestData: async () => {
+    set({isLoading: true});
     try {
-      // Get quest stats
+      // 달성 통계
       const stats = await getQuestStats();
 
-      // Get calendar data
-      // const utcNow = new Date();
-      // const koreaTime = addHours(utcNow, 9);
-      // const year = parseInt(format(koreaTime, 'yyyy'), 10);
-      // const month = parseInt(format(koreaTime, 'M'), 10);
-      // const calendar = await getQuestCalendar(year, month);
+      // 월별 내역
+      const utcNow = new Date();
+      const koreaTime = addHours(utcNow, 9);
+      const year = parseInt(format(koreaTime, 'yyyy'), 10);
+      const month = parseInt(format(koreaTime, 'M'), 10);
+      const calendar = await getQuestCalendar(year, month);
 
       set({
         questStats: stats,
-        // questCalendar: calendar,
+        questCalendar: calendar,
+        isLoading: false,
+      });
+    } catch (error) {
+      console.error('Error fetching quest data:', error);
+      set({isLoading: false});
+    }
+  },
+  fetchQuestCalendar: async (year: number, month: number) => {
+    try {
+      const calendar = await getQuestCalendar(year, month);
+      set({
+        questCalendar: calendar,
         isLoading: false,
       });
     } catch (error) {

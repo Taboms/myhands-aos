@@ -3,6 +3,7 @@ import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
 import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import {colors} from '@/constants';
+import {useQuestStore} from '@/store/questStore';
 import calculateWeeks from '@/utils/calculateWeeks';
 
 type WeekInfo = {
@@ -17,10 +18,8 @@ interface WeekRecordProps {
   resultList?: Result[];
 }
 
-function WeeklyTimeline({
-  weekInfo = calculateWeeks(),
-  resultList = ['FAIL', 'MED', 'MAX'],
-}: WeekRecordProps) {
+function WeeklyTimeline({weekInfo = calculateWeeks()}: WeekRecordProps) {
+  const resultList = useQuestStore(state => state.questStats?.resultList ?? []);
   const getCircleStyle = (index: number) => {
     if (index >= 4) {
       return styles.futureCircle;
@@ -37,6 +36,7 @@ function WeeklyTimeline({
         return styles.medCircle;
       case 'ETC':
         return styles.etcCircle;
+      case 'MIN':
       case 'FAIL':
         return styles.failCircle;
       default:
