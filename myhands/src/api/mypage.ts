@@ -40,6 +40,18 @@ type ResponseMypageData = {
   };
 };
 
+type ResponseExpListData = {
+  status: string;
+  message: string;
+  responseDto: {
+    quests: Exp[];
+    hasMore: boolean;
+    totalPages: number;
+    totalElements: number;
+    currentPage: number;
+  };
+};
+
 const getMypageData = async (): Promise<ResponseMypageData['responseDto']> => {
   try {
     const {data} = await fetchApi.get<ResponseMypageData>('user/mypage');
@@ -53,5 +65,29 @@ const getMypageData = async (): Promise<ResponseMypageData['responseDto']> => {
   }
 };
 
-export {getMypageData};
-export type {ResponseMypageData, Fortune, LevelRate, YearExp};
+const getExpListData = async (
+  size: number,
+  page: number
+): Promise<ResponseExpListData['responseDto']> => {
+  try {
+    const {data} = await fetchApi.get<ResponseExpListData>(
+      `quest/completelist?size=${size}&page=${page}`
+    );
+    if (data.status === 'OK') {
+      return data.responseDto;
+    }
+    throw new Error(data.message || 'Failed to fetch exp list');
+  } catch (error) {
+    console.error('Error fetching exp list data:', error);
+    throw error;
+  }
+};
+
+export {getMypageData, getExpListData};
+export type {
+  ResponseMypageData,
+  Fortune,
+  LevelRate,
+  YearExp,
+  ResponseExpListData,
+};

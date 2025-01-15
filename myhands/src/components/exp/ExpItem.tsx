@@ -3,7 +3,7 @@ import {View, StyleSheet} from 'react-native';
 import CustomTextMedium from '../styles/CustomTextMedium';
 import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import {Exp} from '@/api/mypage';
-import {colors, GRADE_COLORS} from '@/constants';
+import {colors, GRADE_COLORS_EXP} from '@/constants';
 import {EXP_TYPE} from '@/constants/exp';
 
 type ExpItemProps = {
@@ -12,8 +12,8 @@ type ExpItemProps = {
 
 const ExpItem = ({quest}: ExpItemProps) => {
   const {main, background} =
-    GRADE_COLORS['quest.grade' as keyof typeof GRADE_COLORS] ||
-    GRADE_COLORS.OTHER;
+    GRADE_COLORS_EXP[quest.grade as keyof typeof GRADE_COLORS_EXP] ||
+    GRADE_COLORS_EXP.OTHER;
 
   return (
     <View style={[styles.container, {backgroundColor: background}]}>
@@ -43,7 +43,8 @@ const ExpItem = ({quest}: ExpItemProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 10,
+    paddingHorizontal: 13,
+    paddingVertical: 10,
     marginVertical: 5,
     borderRadius: 14,
     flexDirection: 'column',
