@@ -1,7 +1,13 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View, StyleSheet} from 'react-native';
+import {Text, View, StyleSheet, ScrollView} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {ResponseRankingData, getRankingData} from '@/api/ranking';
+import LoadingScreen from '@/components/LoadingScreen';
+import MyTeamInfo from '@/components/ranking/MyTeamInfo';
+import TeamRanking from '@/components/ranking/TeamRanking';
+import CustomTextRegular from '@/components/styles/CustomTextRegular';
+import CustomTextSemiBold from '@/components/styles/CustomTextSemiBold';
 import {colors} from '@/constants';
 import {LoggedInStackParamList} from '@/navigations/stack/LoggedInStackNavigator';
 
@@ -24,12 +30,16 @@ function RaceHomeScreen({navigation}: RaceHomeScreenProps) {
     seconds: 0,
   });
 
+  const [rankingData, setRankingData] = useState<
+    ResponseRankingData['responseDto'] | null
+  >(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
     const timer = setInterval(() => {
       const now = new Date();
       const nextSunday = new Date();
 
-      // 다음 일요일 자정까지
       nextSunday.setDate(now.getDate() + ((7 - now.getDay()) % 7));
       nextSunday.setHours(24, 0, 0, 0);
 
@@ -48,21 +58,68 @@ function RaceHomeScreen({navigation}: RaceHomeScreenProps) {
       setTimeLeft({days, hours, minutes, seconds});
     }, 1000);
 
-    // 컴포넌트 언마운트 시 타이머 정리
     return () => clearInterval(timer);
   }, []);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getRankingData();
+        setRankingData(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
+
+  const teams = rankingData?.rankList || [];
+  const myTeam = teams[rankingData?.myIndex || 0] || 0;
+  const myRank = myTeam.rank;
+  const myTeamId = myTeam.departmentId;
+  const needExp = rankingData?.needExp || 0;
+
+  const rank1Team = teams.find(team => team.rank === 1);
+  const rank2Team = teams.find(team => team.rank === 2);
+  const max = rank1Team?.expAvg || 0;
+  const nextExp =
+    rank1Team && rank2Team ? rank1Team.expAvg - rank2Team.expAvg : 0;
+
   return (
     <SafeAreaView style={styles.container}>
-      <View style={styles.timeWrapper}>
-        <Text style={styles.title}>이번 주 레이스 마감까지</Text>
-        <View style={styles.timerContainer}>
-          <Text style={styles.timerText}>
-            {timeLeft.days}일 {timeLeft.hours}시간 {timeLeft.minutes}분{' '}
-            {timeLeft.seconds}초
-          </Text>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <View style={styles.timeWrapper}>
+          <Text style={styles.title}>이번 주 레이스 마감까지</Text>
+          <View style={styles.timerContainer}>
+            <Text style={styles.timerText}>
+              {timeLeft.days}일 {timeLeft.hours}시간 {timeLeft.minutes}분{' '}
+              {timeLeft.seconds}초
+            </Text>
+          </View>
         </View>
-      </View>
+        <View style={styles.myTeamInfo}>
+          <MyTeamInfo myIndex={myRank} needExp={needExp} nextExp={nextExp} />
+        </View>
+        <View style={styles.rankContainer}>
+          <CustomTextSemiBold style={styles.rankingHeaderTitle}>
+            실시간 랭킹
+          </CustomTextSemiBold>
+          <View style={styles.divider} />
+          <View style={styles.info}>
+            <CustomTextRegular style={styles.infoText}>
+              ⓘ 팀별 총 획득량 / 팀원 수 기준
+            </CustomTextRegular>
+          </View>
+          <TeamRanking max={max} myTeamId={myTeamId} teams={teams} />
+        </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -70,9 +127,11 @@ function RaceHomeScreen({navigation}: RaceHomeScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: 'center',
-    // justifyContent: 'center',
     backgroundColor: '#FFEFEC',
+  },
+  scrollContainer: {
+    flexGrow: 1,
+    alignItems: 'center',
   },
   timeWrapper: {
     width: '100%',
@@ -81,24 +140,55 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     paddingVertical: '10%',
-    // paddingHorizontal: '10%',
-    borderBottomLeftRadius: 20,
-    borderBottomRightRadius: 20,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
   },
   title: {
-    fontSize: 14,
+    fontSize: 17,
     fontFamily: 'Pretendard-Medium',
     color: '#000',
   },
   timerContainer: {
-    padding: 15,
+    paddingBottom: 12,
+    paddingTop: 5,
     borderRadius: 8,
-    // backgroundColor: '#f0f0f0',
   },
   timerText: {
     fontFamily: 'Pretendard-Bold',
     fontSize: 24,
     color: colors.MAX,
+  },
+  myTeamInfo: {
+    paddingTop: 20,
+  },
+  rankContainer: {
+    marginTop: 30,
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: colors.WHITE,
+    borderTopLeftRadius: 30,
+    borderTopRightRadius: 30,
+  },
+  rankingHeaderTitle: {
+    paddingHorizontal: 14,
+    paddingTop: 10,
+    paddingBottom: 3,
+    fontSize: 18,
+    color: colors.BLACK,
+  },
+  divider: {
+    marginVertical: 8,
+    height: 1.3,
+    backgroundColor: '#E0E0E0',
+    marginHorizontal: 10,
+  },
+  info: {
+    alignItems: 'flex-end',
+  },
+  infoText: {
+    marginBottom: 5,
+    fontSize: 13,
+    marginRight: 10,
   },
 });
 
