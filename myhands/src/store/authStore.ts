@@ -194,10 +194,30 @@ export const useAuthStore = create<TAuthStore>(set => ({
           });
         }
       } else {
-        set({isLoading: false});
+        await Promise.all([
+          removeAsyncData(storageKeys.ACCESS_TOKEN),
+          removeAsyncData(storageKeys.REFRESH_TOKEN),
+          removeAsyncData(storageKeys.USER),
+        ]);
+        set({
+          isLoading: false,
+          isAuthenticated: false,
+          isAdmin: false,
+          adminId: null,
+        });
       }
     } catch (error) {
-      set({isLoading: false});
+      await Promise.all([
+        removeAsyncData(storageKeys.ACCESS_TOKEN),
+        removeAsyncData(storageKeys.REFRESH_TOKEN),
+        removeAsyncData(storageKeys.USER),
+      ]);
+      set({
+        isLoading: false,
+        isAuthenticated: false,
+        isAdmin: false,
+        adminId: null,
+      });
       console.error('Auth initialization failed:', error);
     }
   },

@@ -15,7 +15,7 @@ import {loggedInNavigations} from '@/constants/navigations';
 import BoardHomeScreen from '@/screens/board/BoardHomeScreen';
 import MypageHomeScreen from '@/screens/mypage/MypageHomeScreen';
 import QuestHomeScreen from '@/screens/quest/QuestHomeScreen';
-import RaceHomeScren from '@/screens/race/RaceHomeScren';
+import RaceHomeScren from '@/screens/race/RaceHomeScreen';
 
 interface BottomTabsNavigatorProps {
   navigation: BottomTabNavigationProp<LoggedInStackParamList>;

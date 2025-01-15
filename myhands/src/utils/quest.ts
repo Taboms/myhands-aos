@@ -17,7 +17,7 @@ export const getGradeColor = (quests: Quest[]) => {
       return GRADE_COLORS.MAX;
     case 'MED':
       return GRADE_COLORS.MED;
-    case 'FAIL':
+    case 'MIN':
       return GRADE_COLORS.FAIL;
     default:
       return GRADE_COLORS.OTHER;

@@ -2,7 +2,7 @@ import {icons} from '@/assets/icons/bottomTabsIcons';
 import BoardDetailScreen from '@/screens/board/BoardDetailScreen';
 import MypageHomeScreen from '@/screens/mypage/MypageHomeScreen';
 import QuestHomeScreen from '@/screens/quest/QuestHomeScreen';
-import RaceHomeScren from '@/screens/race/RaceHomeScren';
+import RaceHomeScren from '@/screens/race/RaceHomeScreen';
 
 export const bottomTabs = [
   {
