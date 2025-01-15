@@ -33,28 +33,34 @@ function CustomUserDrawerContent(props: DrawerContentComponentProps) {
           </View>
 
           <View style={styles.infoContainer}>
-            <Text style={styles.infoText}>
-              사{'   '}번{'  '}
+            <View style={styles.textWrapper}>
+              <Text style={styles.infoText}>
+                사{'   '}번{'  '}
+              </Text>
               <Text style={styles.boldText}>
                 {user?.employeeNum || '000000'}
               </Text>
-            </Text>
-            <Text style={styles.infoText}>
-              소{'   '}속{'  '}
+            </View>
+            <View style={styles.textWrapper}>
+              <Text style={styles.infoText}>
+                소{'   '}속{'  '}
+              </Text>
               <Text style={styles.boldText}>
                 {user?.department || '부서명'}
               </Text>
-            </Text>
-            <Text style={styles.infoText}>
-              입사일{'  '}
+            </View>
+            <View style={styles.textWrapper}>
+              <Text style={styles.infoText}>입사일{'  '}</Text>
               <Text style={styles.boldText}>
                 {user?.joinedAt || '0000.00.00'}
               </Text>
-            </Text>
-            <Text style={styles.infoText}>
-              레{'   '}벨{'   '}
+            </View>
+            <View style={styles.textWrapper}>
+              <Text style={styles.infoText}>
+                레{'   '}벨{'   '}
+              </Text>
               <Text style={styles.boldText}>{user?.level || 'F1-II'}</Text>
-            </Text>
+            </View>
           </View>
         </View>
       </LinearGradient>
@@ -68,22 +74,20 @@ function CustomUserDrawerContent(props: DrawerContentComponentProps) {
 export default CustomUserDrawerContent;
 
 const styles = StyleSheet.create({
-  gradientBackground: {
-    flex: 0.65,
-  },
+  gradientBackground: {},
   container: {
-    flex: 0.4,
-    paddingVertical: 36,
+    paddingVertical: 35,
     paddingHorizontal: 36,
-    alignItems: 'flex-start',
+    justifyContent: 'center',
   },
   avatarContainer: {
+    marginTop: 10,
     marginBottom: 12,
   },
   avatar: {
-    width: 70,
-    height: 70,
-    borderRadius: 35,
+    width: 90,
+    height: 90,
+    borderRadius: 55,
     borderWidth: 2,
     borderColor: colors.BLACK,
   },
@@ -91,22 +95,28 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'Pretendard-Bold',
     color: colors.BLACK,
-    marginBottom: 4,
   },
   infoContainer: {
     width: '100%',
   },
+  textWrapper: {
+    flexDirection: 'row',
+    alignContent: 'center',
+    alignItems: 'center',
+    marginBottom: 3,
+  },
   infoText: {
-    fontSize: 14,
-    color: colors.GRAY_700,
-    marginBottom: 6,
+    fontSize: 12,
+    color: '#676767',
     fontFamily: 'Pretendard-Medium',
+    marginRight: 5,
   },
   boldText: {
+    fontSize: 14,
     fontFamily: 'Pretendard-SemiBold',
-    color: colors.GRAY_700,
+    color: '#5f5f5f',
   },
   nameContainer: {
-    marginBottom: 16,
+    marginBottom: 20,
   },
 });

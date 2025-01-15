@@ -38,15 +38,16 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     backgroundColor: colors.GRAY_500,
-    marginVertical: 16,
+    marginVertical: 20,
   },
   avatarGrid: {
     alignItems: 'center',
   },
   avatarWrapper: {
+    marginTop: 12,
     width: 100,
     height: 100,
-    margin: 8,
+    margin: 12,
     marginBottom: 15,
     justifyContent: 'center',
     alignItems: 'center',

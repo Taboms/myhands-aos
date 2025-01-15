@@ -148,8 +148,8 @@ function BottomTabsNavigator({navigation}: BottomTabsNavigatorProps) {
         name={loggedInNavigations.RACE_HOME}
         component={RaceHomeScren}
         options={{
-          title: '팀 레이스',
-          tabBarLabel: ({focused}) => renderTabLabel(focused, '레이스'),
+          title: '팀 랭킹',
+          tabBarLabel: ({focused}) => renderTabLabel(focused, '랭킹'),
           tabBarIcon: ({focused}) => renderTabIcon('race', focused),
         }}
       />

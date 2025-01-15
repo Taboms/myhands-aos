@@ -70,6 +70,7 @@ function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
           drawerType: 'front',
           drawerStyle: {
             width: Dimensions.get('screen').width * 0.7,
+            borderTopRightRadius: 10,
           },
           headerShown: false,
           drawerIcon: ({size}) =>
@@ -80,6 +81,9 @@ function UserDrawerNavigator({navigation}: UserDrawerNavigatorProps) {
               >,
               size,
             }),
+          drawerItemStyle: {
+            paddingLeft: 8,
+          },
         })}
       >
         <Drawer.Screen

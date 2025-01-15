@@ -65,32 +65,35 @@ const BoardList = ({posts}: {posts: BoardPost[]}) => {
 const styles = StyleSheet.create({
   boardContainer: {
     position: 'absolute',
-    top: '18%',
+    top: '20%',
     left: 25,
     right: 25,
     backgroundColor: colors.WHITE,
     borderRadius: 12,
-    padding: 23,
+    paddingHorizontal: 25,
+    paddingVertical: 25,
     elevation: 5,
     zIndex: 2,
+    margin: 5,
+    justifyContent: 'center',
   },
   boardHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    marginBottom: 20,
   },
   boardTitle: {
-    fontSize: 18,
-    color: colors.BLACK,
+    fontSize: 17,
+    color: '#373737',
   },
   viewAllContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   viewAll: {
-    top: -1,
-    fontSize: 13,
+    top: -0.5,
+    fontSize: 12,
     color: colors.GRAY_700,
     marginRight: 2,
   },
@@ -98,9 +101,7 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: colors.GRAY_700,
   },
-  list: {
-    paddingBottom: 16,
-  },
+  list: {},
 });
 
 export default BoardList;

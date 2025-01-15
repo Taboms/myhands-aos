@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {getMypageData, ResponseMypageData} from '@/api/mypage';
 import LoadingScreen from '@/components/LoadingScreen';
 import ExperienceStatus from '@/components/mypage/ExperienceStatus';
@@ -32,7 +32,7 @@ function MypageHomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <ScrollView style={styles.container}>
       <View style={styles.profileContainer}>
         {mypageData && (
           <Profile
@@ -51,7 +51,7 @@ function MypageHomeScreen() {
           />
         )}
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -61,14 +61,16 @@ const styles = StyleSheet.create({
   },
   profileContainer: {
     flex: 0.45,
-    padding: 20,
+    padding: 30,
     backgroundColor: '#FFF4F4',
     justifyContent: 'center',
     alignItems: 'center',
+    paddingVertical: 35,
   },
   expContainer: {
     flex: 0.55,
-    padding: 20,
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     backgroundColor: colors.WHITE,
   },
 });

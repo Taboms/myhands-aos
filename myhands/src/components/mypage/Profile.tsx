@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, Text} from 'react-native';
 import {Fortune, LevelRate} from '@/api/mypage';
 import ProgressBar from '@/components/mypage/ProgressBar';
 import CustomTextBold from '@/components/styles/CustomTextBold';
@@ -27,19 +27,20 @@ const Profile = ({fortune, levelRate}: ProfileProps) => {
 
   return (
     <View style={styles.container}>
+      <View style={styles.line} />
       <View style={styles.profileHeader}>
         <Image
           source={characterImages[user?.avartaId || 1]}
           style={styles.avatar}
         />
         <View style={styles.textContainer}>
-          <CustomTextSemiBold style={styles.greeting}>
+          <CustomTextBold style={styles.greeting}>
             {user?.name}님, 안녕하세요!
-          </CustomTextSemiBold>
-          <View style={styles.separator} />
-          <CustomTextSemiBold style={styles.fortuneDate}>
+          </CustomTextBold>
+          {/* <View style={styles.separator} /> */}
+          <Text style={styles.fortuneDate}>
             {`${formatDate(fortune.date)} 오늘의 운세`}
-          </CustomTextSemiBold>
+          </Text>
           <CustomTextMedium style={styles.fortuneContent}>
             {fortune.contents}
           </CustomTextMedium>
@@ -47,10 +48,10 @@ const Profile = ({fortune, levelRate}: ProfileProps) => {
       </View>
 
       <View style={styles.levelInfo}>
-        <View style={styles.levelRow}>
-          <CustomTextSemiBold style={[styles.levelText, styles.alignRight]}>
+        <View style={styles.levelRowTop}>
+          <Text style={[styles.levelText, styles.alignRight]}>
             내년도 예상 레벨
-          </CustomTextSemiBold>
+          </Text>
         </View>
         <View style={styles.levelRow}>
           <CustomTextBold style={styles.currentLevel}>
@@ -60,7 +61,7 @@ const Profile = ({fortune, levelRate}: ProfileProps) => {
             {levelRate.nextLevel} 승급까지 {levelRate.leftExp}
           </CustomTextBold>
         </View>
-        <ProgressBar percentage={levelRate.percent} height={26} fontSize={19} />
+        <ProgressBar percentage={levelRate.percent} height={26} fontSize={17} />
       </View>
     </View>
   );
@@ -74,6 +75,16 @@ const styles = StyleSheet.create({
     borderRadius: 15,
     elevation: 5,
     width: '100%',
+    position: 'relative',
+  },
+  line: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    top: 70,
+    height: 1,
+    backgroundColor: '#C5C5C5',
+    zIndex: 0,
   },
   profileHeader: {
     flexDirection: 'row',
@@ -88,13 +99,15 @@ const styles = StyleSheet.create({
     paddingRight: 5,
   },
   greeting: {
-    fontSize: 19,
+    fontSize: 17,
     color: colors.BLACK,
+    marginBottom: 25,
   },
   fortuneDate: {
-    fontSize: 15,
+    fontFamily: 'Pretendard-Bold',
+    fontSize: 13,
     color: colors.BLACK,
-    marginBottom: 2,
+    marginBottom: 0,
   },
   fortuneContent: {
     fontSize: 13,
@@ -106,16 +119,18 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   currentLevel: {
-    top: 5,
-    fontSize: 20,
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 14.5,
     color: colors.RED_800,
   },
   nextYearLevel: {
-    top: 9,
-    fontSize: 16,
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 14.5,
     color: colors.RED_800,
   },
   levelText: {
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 12,
     top: 7,
     color: colors.GRAY_700,
   },
@@ -126,7 +141,7 @@ const styles = StyleSheet.create({
     height: 90,
     borderRadius: 45,
     borderWidth: 1.8,
-    borderColor: colors.BLACK,
+    borderColor: '#454545',
   },
   separator: {
     width: '100%',
@@ -134,9 +149,15 @@ const styles = StyleSheet.create({
     backgroundColor: colors.GRAY_500,
     marginVertical: 8,
   },
+  levelRowTop: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    height: 25,
+  },
   levelRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    marginBottom: 4,
   },
   alignRight: {
     textAlign: 'right',

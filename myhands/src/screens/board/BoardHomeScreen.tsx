@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, StyleSheet, Image} from 'react-native';
+import {View, StyleSheet, Image, ScrollView} from 'react-native';
 import {getBoardPosts, BoardPost} from '@/api/boardApi';
 import LoadingScreen from '@/components/LoadingScreen';
 import BoardList from '@/components/board/BoardList';
@@ -12,7 +12,7 @@ const BoardScreen = () => {
   useEffect(() => {
     const fetchPosts = async () => {
       try {
-        const data = await getBoardPosts(6);
+        const data = await getBoardPosts(5);
         setPosts(data);
       } catch (error) {
         console.error(error);

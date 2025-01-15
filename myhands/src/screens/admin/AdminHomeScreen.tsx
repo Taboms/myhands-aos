@@ -28,7 +28,7 @@ function AdminHomeScreen({navigation}: AdminHomeScreenProps) {
               source={require('@/assets/image/sing-up.png')}
               style={styles.buttonImage}
             />
-            <Text style={{fontWeight: 'bold'}}> 회원 생성 </Text>
+            <Text style={styles.menuText}> 회원 생성 </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
@@ -41,7 +41,7 @@ function AdminHomeScreen({navigation}: AdminHomeScreenProps) {
               style={styles.buttonImage}
               resizeMode="contain"
             />
-            <Text style={{fontWeight: 'bold'}}> 회원 목록 </Text>
+            <Text style={styles.menuText}> 회원 목록 </Text>
           </TouchableOpacity>
         </View>
         <View style={styles.buttons}>
@@ -56,7 +56,7 @@ function AdminHomeScreen({navigation}: AdminHomeScreenProps) {
               style={styles.buttonImage}
               resizeMode="contain"
             />
-            <Text style={{fontWeight: 'bold'}}> 게시글 작성 </Text>
+            <Text style={styles.menuText}> 게시글 작성 </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.button}
@@ -69,7 +69,7 @@ function AdminHomeScreen({navigation}: AdminHomeScreenProps) {
               style={styles.buttonImage}
               resizeMode="contain"
             />
-            <Text style={{fontWeight: 'bold'}}> 게시글 조회 </Text>
+            <Text style={styles.menuText}> 게시글 조회 </Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     zIndex: 2,
   },
   buttons: {
-    padding: 10,
+    padding: 13,
     borderRadius: 8,
     width: '100%',
     display: 'flex',
@@ -111,9 +111,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
-    marginHorizontal: 10,
-    width: 109.27,
-    height: 109.27,
+    marginHorizontal: 13,
+    width: 130,
+    height: 130,
     backgroundColor: '#FFFFFF',
     borderRadius: 12.86,
     justifyContent: 'center',
@@ -128,6 +128,11 @@ const styles = StyleSheet.create({
     width: 46,
     height: 40,
     marginBottom: 13,
+  },
+  menuText: {
+    fontSize: 15,
+    fontFamily: 'Pretendard-Bold',
+    color: '#6F6F6F',
   },
 });
 

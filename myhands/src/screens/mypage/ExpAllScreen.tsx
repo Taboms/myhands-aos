@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
   },
   listContainer: {
     backgroundColor: colors.WHITE,
-    paddingHorizontal: 20,
+    paddingHorizontal: 30,
     marginBottom: 10,
   },
 });

@@ -21,7 +21,7 @@ const ProgressBar = ({percentage, height, fontSize}: ProgressBarProps) => {
           height={height}
           color="#FF6C4A"
           unfilledColor="#FFB4A3"
-          borderRadius={5}
+          borderRadius={8}
           borderWidth={0}
           style={styles.progressBar}
         />
@@ -42,12 +42,11 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   progressBar: {
-    marginTop: 10,
     width: '100%',
   },
   percentage: {
     position: 'absolute',
-    top: 9,
+    top: -2,
     left: '46%',
     fontSize: 18,
     color: '#FFFFFF',

@@ -56,6 +56,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     borderBottomWidth: 1,
     borderBottomColor: colors.GRAY_200,
+    height: 60,
+    // borderColor: '#000',
+    // borderWidth: 1,
+    marginTop: 1,
   },
   noBorder: {
     borderBottomWidth: 0,
@@ -63,8 +67,9 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     height: 50,
-    fontSize: 16,
+    fontSize: 15,
     paddingHorizontal: 8,
+    paddingVertical: 15,
     color: colors.BLACK,
     fontFamily: 'Pretendard-Medium',
   },
