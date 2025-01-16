@@ -33,6 +33,7 @@ const LoginInput = (props: LoginInputProps) => {
         onChangeText={onChangeText}
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         editable={editable}
+        autoCapitalize="none"
       />
       {secureTextEntry && (
         <TouchableOpacity
