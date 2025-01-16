@@ -1,6 +1,5 @@
 import React from 'react';
-import {View, StyleSheet} from 'react-native';
-import CustomTextMedium from '../styles/CustomTextMedium';
+import {View, StyleSheet, Text} from 'react-native';
 import CustomTextSemiBold from '../styles/CustomTextSemiBold';
 import {Exp} from '@/api/mypage';
 import {colors, GRADE_COLORS_EXP} from '@/constants';
@@ -18,23 +17,17 @@ const ExpItem = ({quest}: ExpItemProps) => {
   return (
     <View style={[styles.container, {backgroundColor: background}]}>
       <View style={styles.questHeader}>
-        <CustomTextSemiBold style={[styles.questType]}>
+        <Text style={[styles.questType]}>
           {EXP_TYPE[quest.questType as keyof typeof EXP_TYPE]}
-        </CustomTextSemiBold>
-        <CustomTextMedium style={styles.questDetails}>
-          {quest.completedAt}
-        </CustomTextMedium>
+        </Text>
+        <Text style={styles.questDetails}>{quest.completedAt}</Text>
       </View>
 
       <View style={styles.questHeader}>
-        <CustomTextMedium style={[styles.questName]}>
-          {quest.name}
-        </CustomTextMedium>
+        <Text style={[styles.questName]}>{quest.name}</Text>
         <View style={styles.questFooter}>
           <View style={[styles.circle, {backgroundColor: main}]} />
-          <CustomTextMedium style={[styles.questExp]}>
-            {quest.expAmount} D
-          </CustomTextMedium>
+          <Text style={[styles.questExp]}>{quest.expAmount} D</Text>
         </View>
       </View>
     </View>
@@ -43,9 +36,9 @@ const ExpItem = ({quest}: ExpItemProps) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingHorizontal: 13,
-    paddingVertical: 10,
-    marginVertical: 5,
+    paddingHorizontal: 18,
+    paddingVertical: 13,
+    marginVertical: 6,
     borderRadius: 14,
     flexDirection: 'column',
     justifyContent: 'center',
@@ -55,13 +48,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     width: '100%',
-    marginBottom: 5,
+    marginBottom: 2,
   },
   questType: {
-    fontSize: 16,
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 14,
     color: colors.BLACK,
   },
   questDetails: {
+    fontFamily: 'Pretendard-Medium',
     fontSize: 12,
     color: '#8E8E8E',
   },
@@ -71,9 +66,10 @@ const styles = StyleSheet.create({
     color: colors.BLACK,
   },
   questName: {
+    fontFamily: 'Pretendard-Medium',
     top: 2,
-    fontSize: 14,
-    color: colors.BLACK,
+    fontSize: 13,
+    color: '#242424',
   },
   questFooter: {
     flexDirection: 'row',
@@ -81,15 +77,16 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
   questExp: {
-    fontSize: 14,
-    color: colors.BLACK,
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 13,
+    color: '#242424',
   },
   circle: {
     top: 1,
-    width: 12,
-    height: 12,
+    width: 10,
+    height: 10,
     borderRadius: 6,
-    marginRight: 8,
+    marginRight: 5,
   },
 });
 

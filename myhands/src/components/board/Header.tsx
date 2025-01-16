@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   header: {
-    height: '75%',
+    height: '73%',
     alignItems: 'center',
     marginBottom: 16,
   },

@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
-    height: 50,
+    height: 60,
     marginTop: 16,
     width: '100%',
   },
@@ -41,8 +41,8 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: colors.WHITE,
-    fontSize: 19,
-    fontFamily: 'Pretendard-Bold',
+    fontSize: 18,
+    fontFamily: 'Pretendard-SemiBold',
   },
 });
 

@@ -29,19 +29,20 @@ const HeaderButton = ({
 
 const styles = StyleSheet.create({
   button: {
-    marginRight: 16,
+    marginRight: 25,
     paddingVertical: 6,
     paddingHorizontal: 14,
     backgroundColor: colors.GRAY_500,
-    borderRadius: 16,
+    borderRadius: 20,
   },
   disabledButton: {
     backgroundColor: '#D3D3D3',
   },
   buttonText: {
     top: -0.5,
+    fontFamily: 'Pretendard-SemiBold',
     color: 'white',
-    fontSize: 17,
+    fontSize: 16,
   },
 });
 

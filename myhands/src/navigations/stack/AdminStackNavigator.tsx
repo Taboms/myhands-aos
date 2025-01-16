@@ -11,6 +11,7 @@ import {adminNavigations} from '@/constants/navigations';
 import AdminHomeScreen from '@/screens/admin/AdminHomeScreen';
 import AdminPostListScreen from '@/screens/admin/AdminPostListScreen';
 import AdminSignupScreen from '@/screens/admin/AdminSignupScreen';
+import AdminUserDetailScreen from '@/screens/admin/AdminUserDetailScreen';
 import AdminUserListScreen from '@/screens/admin/AdminUserListScreen';
 import AdminWritePostScreen from '@/screens/admin/AdminWritePostScreen';
 
@@ -21,6 +22,7 @@ export type AdminStackParamList = {
   [adminNavigations.ADMIN_USER_LIST]: undefined;
   [adminNavigations.ADMIN_WRITE_POST]: undefined;
   [adminNavigations.ADMIN_POST_LIST]: undefined;
+  [adminNavigations.ADMIN_USER_DETAIL]: undefined;
 };
 
 const Stack = createStackNavigator<AdminStackParamList>();
@@ -86,6 +88,13 @@ function AdminStackNavigator() {
         component={AdminPostListScreen}
         options={{
           title: '게시판',
+        }}
+      />
+      <Stack.Screen
+        name={adminNavigations.ADMIN_USER_DETAIL}
+        component={AdminUserDetailScreen}
+        options={{
+          title: '상세 정보',
         }}
       />
     </Stack.Navigator>
