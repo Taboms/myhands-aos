@@ -5,12 +5,16 @@ import {
   StyleSheet,
   TextInputProps,
   TouchableOpacity,
+  ReturnKeyType,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 import {colors} from '@/constants';
 
 interface LoginInputProps extends TextInputProps {
   secureTextEntry?: boolean;
+  onSubmitEditing?: () => void;
+  returnKeyType?: ReturnKeyType;
+  inputRef?: React.RefObject<TextInput>;
 }
 
 const LoginInput = (props: LoginInputProps) => {
@@ -20,12 +24,16 @@ const LoginInput = (props: LoginInputProps) => {
     onChangeText,
     secureTextEntry = false,
     editable = true,
+    onSubmitEditing,
+    returnKeyType,
+    inputRef,
   } = props;
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   return (
     <View style={[styles.inputContainer, secureTextEntry && styles.noBorder]}>
       <TextInput
+        ref={inputRef}
         style={styles.input}
         placeholder={placeholder}
         placeholderTextColor={colors.GRAY_500}
@@ -34,6 +42,8 @@ const LoginInput = (props: LoginInputProps) => {
         secureTextEntry={secureTextEntry && !isPasswordVisible}
         editable={editable}
         autoCapitalize="none"
+        returnKeyType={returnKeyType}
+        onSubmitEditing={onSubmitEditing}
       />
       {secureTextEntry && (
         <TouchableOpacity

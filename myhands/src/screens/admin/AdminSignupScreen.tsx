@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
 import {duplicateCheck, SignupFormData, singUp} from '@/api/auth';
 import CustomDateTimePicker from '@/components/_modal/CustomDateTimePicker';
@@ -54,11 +55,12 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
   const [showJobGroupOptions, setShowJobGroupOptions] = useState(false);
   const [showDepartmentOptions, setShowDepartmentOptions] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
+  const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
 
   const [successModalOpen, setSuccessModalOpen] = useState(false);
   const [failModalOpen, setFailModalOpen] = useState(false);
-  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
-  const [disableUserId, setDisableUserId] = useState(false);
+  // const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
+  // const [disableUserId, setDisableUserId] = useState(false);
 
   const department = [
     '음성 1센터',
@@ -119,12 +121,17 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
   };
 
   const handleDuplicate = async () => {
-    try {
-      await duplicateCheck(userId); // 비동기 처리 기다리기
-      setDuplicateModalOpen(true);
-      setDuplicateError(false);
-    } catch {
-      setDuplicateError(true);
+    if (userId.length > 0) {
+      try {
+        await duplicateCheck(userId);
+        setDuplicateError(false);
+        setIsDuplicateChecked(true);
+        // setDisableUserId(true);
+      } catch {
+        setDuplicateError(true);
+        setIsDuplicateChecked(false);
+        // setDisableUserId(false);
+      }
     }
   };
 
@@ -146,24 +153,28 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
         onClose={() => setFailModalOpen(false)}
         onButtonClick={() => setFailModalOpen(false)}
       />
-      <CustomModal
+      {/* <CustomModal
         state="DuplicateCheck"
         type="success"
         isOpen={duplicateModalOpen}
         onClose={() => setDuplicateModalOpen(false)}
         onButtonClick={() => setDisableUserId(true)}
-      />
-      <CustomTextBold style={styles.label}>아이디</CustomTextBold>
+      /> */}
+      <Text style={styles.label}>아이디</Text>
       <View
         style={[
           styles.userNameWrapper,
-          {marginBottom: duplicateError ? 0 : 20},
+          {marginBottom: duplicateError || isDuplicateChecked ? 0 : 20},
         ]}
       >
         <TextInput
           value={userId}
-          onChangeText={setUserId}
-          style={[styles.userName, disableUserId && styles.disabled]}
+          onChangeText={text => {
+            setUserId(text);
+            setIsDuplicateChecked(false);
+            setDuplicateError(false);
+          }}
+          style={styles.userName}
           autoCapitalize="none"
           placeholder="아이디를 입력하세요"
         />
@@ -175,13 +186,28 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
         </TouchableOpacity>
       </View>
       {duplicateError && (
-        <View style={styles.errorWrapper}>
-          <Image
-            source={require('@/assets/image/warning.png')}
-            style={styles.warningImage}
+        <View style={styles.errorContainer}>
+          <Icon
+            name="exclamationcircleo"
+            size={15}
+            color={colors.RED_800}
+            style={styles.errorIcon}
           />
-          <CustomTextMedium style={styles.error}>
-            이미 사용중인 아이디 입니다.
+          <CustomTextMedium style={styles.errorMessage}>
+            이미 사용중인 아이디입니다.
+          </CustomTextMedium>
+        </View>
+      )}
+      {isDuplicateChecked && !duplicateError && (
+        <View style={styles.errorContainer}>
+          <Icon
+            name="checkcircleo"
+            size={15}
+            color="#4CAF50"
+            style={styles.errorIcon}
+          />
+          <CustomTextMedium style={[styles.errorMessage, {color: '#4CAF50'}]}>
+            사용 가능한 아이디입니다.
           </CustomTextMedium>
         </View>
       )}
@@ -296,9 +322,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
     height: 52,
     justifyContent: 'center',
-  },
-  disabled: {
-    backgroundColor: '#E0E0E0',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
   error: {
     color: '#FF5B35',
@@ -322,9 +347,10 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   label: {
+    fontFamily: 'Pretendard-SemiBold',
     fontSize: 15,
     marginBottom: 13,
-    color: '#5e5e5e',
+    color: '#7A7A7A',
   },
   wrapper: {
     flexDirection: 'row',
@@ -341,6 +367,8 @@ const styles = StyleSheet.create({
   userName: {
     flex: 1,
     height: '100%',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
   userNameWrapper: {
     flexDirection: 'row',
@@ -378,6 +406,7 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
   },
   jobGroupOptions: {
     borderWidth: 1,
@@ -414,6 +443,22 @@ const styles = StyleSheet.create({
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 24,
+  },
+  errorIcon: {
+    top: 1,
+    marginLeft: 3,
+    marginRight: 8,
+  },
+  errorMessage: {
+    color: colors.RED_800,
+    fontSize: 14,
+    textAlign: 'left',
   },
 });
 

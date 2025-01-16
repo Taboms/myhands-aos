@@ -42,6 +42,11 @@ export const stateMap: StateMap = {
     title: '프로필 이미지 변경 완료',
     btn: [3],
   },
+  ProfileEditFail: {
+    title: '프로필 이미지 변경 실패',
+    subtitle: '프로필 변경에 실패했습니다. 다시 시도해주세요요.',
+    btn: [1],
+  },
   SignUpSuccess: {
     title: '회원생성에 성공하였습니다.',
     btn: [3],
