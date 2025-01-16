@@ -311,12 +311,12 @@ const AdminSignupScreen = ({navigation}: AdminHomeScreenProps) => {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    padding: 24,
+    padding: 27,
     backgroundColor: '#ffffff',
   },
   input: {
     marginBottom: 20,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: '#EAEAEA',
     borderRadius: 10,
     paddingHorizontal: 15,
@@ -375,7 +375,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 52,
     paddingHorizontal: 15,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderRadius: 10,
     borderColor: '#EAEAEA',
 
@@ -386,7 +386,7 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 52,
     paddingHorizontal: 15,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderRadius: 10,
     borderColor: '#EAEAEA',
     marginBottom: 20,
@@ -409,7 +409,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Pretendard-SemiBold',
   },
   jobGroupOptions: {
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#EAEAEA',
     borderRadius: 10,
     marginTop: -15,
@@ -420,7 +420,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 100,
     flex: 3,
-    borderWidth: 1,
+    borderWidth: 1.5,
     borderColor: '#EAEAEA',
     borderRadius: 10,
     backgroundColor: '#fff',
