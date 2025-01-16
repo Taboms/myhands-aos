@@ -15,9 +15,7 @@ import {postCreateBoard} from '@/api/auth';
 import LoadingScreen from '@/components/LoadingScreen';
 import CustomModal from '@/components/_modal/CustomModal';
 import {adminNavigations} from '@/constants';
-import AdminStackNavigator, {
-  AdminStackParamList,
-} from '@/navigations/stack/AdminStackNavigator';
+import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
 interface AdminHomeScreenProps {
   navigation: BottomTabNavigationProp<AdminStackParamList>;
 }
@@ -37,7 +35,7 @@ function AdminWritePostScreen({navigation}: AdminHomeScreenProps) {
       setLoading(true);
       const res = await postCreateBoard(title, content);
       if (res === 201) {
-        setIsSuccessModalOpen(true);
+        navigation.navigate(adminNavigations.ADMIN_POST_LIST);
       } else {
         setIsFailModalOpen(true);
       }
@@ -64,7 +62,7 @@ function AdminWritePostScreen({navigation}: AdminHomeScreenProps) {
         </TouchableOpacity>
       ),
     });
-  }, [navigation, title, content]);
+  }, [navigation, title, content, handleSave]);
 
   return (
     <>
@@ -101,12 +99,6 @@ function AdminWritePostScreen({navigation}: AdminHomeScreenProps) {
           </ScrollView>
         </KeyboardAvoidingView>
       )}
-      <CustomModal
-        state="CreateBoardSuccess"
-        type="success"
-        isOpen={isSuccessModalOpen}
-        onClose={() => navigation.navigate(adminNavigations.ADMIN_POST_LIST)}
-      />
       <CustomModal
         state="CreateBoardFail"
         type="warning"

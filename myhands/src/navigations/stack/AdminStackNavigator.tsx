@@ -22,7 +22,7 @@ export type AdminStackParamList = {
   [adminNavigations.ADMIN_USER_LIST]: undefined;
   [adminNavigations.ADMIN_WRITE_POST]: undefined;
   [adminNavigations.ADMIN_POST_LIST]: undefined;
-  [adminNavigations.ADMIN_USER_DETAIL]: undefined;
+  [adminNavigations.ADMIN_USER_DETAIL]: {userId: number};
 };
 
 const Stack = createStackNavigator<AdminStackParamList>();

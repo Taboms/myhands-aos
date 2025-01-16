@@ -1,11 +1,17 @@
 import React, {useCallback, useEffect, useState} from 'react';
 import {StyleSheet, View, ScrollView, Text} from 'react-native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import fetchApi from '@/api/axios';
 import AdminSearchBar from '@/components/admin/AdminSearchBar';
 import AdminUserList from '@/components/admin/AdminUserList';
 import {User} from '@/constants/user';
+import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
 
-function AdminUserListScreen() {
+function AdminUserListScreen({
+  navigation,
+}: {
+  navigation: StackNavigationProp<AdminStackParamList>;
+}) {
   const [users, setUsers] = useState<User[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -56,7 +62,12 @@ function AdminUserListScreen() {
         <Text style={styles.loadingText}>로딩 중...</Text>
       ) : filteredUsers.length > 0 ? (
         filteredUsers.map(user => (
-          <AdminUserList key={user.userId} user={user} keyWord={searchQuery} />
+          <AdminUserList
+            key={user.userId}
+            user={user}
+            keyWord={searchQuery}
+            navigation={navigation}
+          />
         ))
       ) : (
         <Text style={styles.emptyText}>검색 결과가 없습니다.</Text>

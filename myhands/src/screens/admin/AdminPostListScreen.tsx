@@ -35,10 +35,6 @@ const AdminPostListScreen = () => {
   const [lastId, setLastId] = useState<number | null>(null);
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetchPosts();
-  }, []);
-
   const fetchPosts = async () => {
     try {
       setLoading(true);
@@ -55,6 +51,10 @@ const AdminPostListScreen = () => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchPosts();
+  }, [fetchPosts]);
 
   const fetchMorePosts = async () => {
     if (loadingMore || (!lastId && !isSearching)) {
