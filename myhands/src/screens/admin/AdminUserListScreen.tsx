@@ -1,60 +1,50 @@
-import React, {useEffect, useState} from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-  Image,
-  ScrollView,
-} from 'react-native';
+import React, {useCallback, useEffect, useState} from 'react';
+import {StyleSheet, View, ScrollView, Text} from 'react-native';
 import fetchApi from '@/api/axios';
-import {BoardPost} from '@/api/boardApi';
 import AdminSearchBar from '@/components/admin/AdminSearchBar';
 import AdminUserList from '@/components/admin/AdminUserList';
 import {User} from '@/constants/user';
 
 function AdminUserListScreen() {
-  const [posts, setPosts] = useState<BoardPost[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(true);
-  const [lastId, setLastId] = useState<number | null>(null);
-  const [isSearching, setIsSearching] = useState<boolean>(false);
-  const [users, setUsers] = useState<User[]>([]);
 
   const fetchUsers = async () => {
     try {
       setLoading(true);
       const response = await fetchApi.get<{responseDto: User[]}>('user/list');
-      setUsers(response.data.responseDto); // API 응답에서 사용자 데이터를 설정
-    } catch (error) {
-      console.error('Error fetching user data:', error);
+      setUsers(response.data.responseDto);
+    } catch {
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchUsers(); // 컴포넌트가 마운트될 때 사용자 데이터를 가져옴
+    fetchUsers();
   }, []);
 
-  const handleSearch = async () => {
-    try {
-      setLoading(true);
-      setIsSearching(true);
-      // const data = await getBoardSearchResults(searchQuery, 15);
-      // setPosts(data);
-      // if (data.length === 15) {
-      //   setLastId(data[data.length - 1].boardId);
-      // } else {
-      //   setLastId(null);
-      // }
-    } catch (error) {
-      console.error('Error during search:', error);
-    } finally {
-      setLoading(false);
-      setIsSearching(false);
+  const handleSearch = useCallback(() => {
+    if (!searchQuery.trim()) {
+      setFilteredUsers(users); // 검색어가 비어 있으면 전체 사용자 표시
+      return;
     }
-  };
+
+    const lowerCaseQuery = searchQuery.toLowerCase();
+    const filtered = users.filter(
+      user =>
+        user.name.toLowerCase().includes(lowerCaseQuery) ||
+        user.employeeNum.toString().includes(lowerCaseQuery)
+    );
+    setFilteredUsers(filtered);
+  }, [searchQuery, users]);
+
+  useEffect(() => {
+    handleSearch();
+  }, [handleSearch, searchQuery, users]);
+
   return (
     <ScrollView style={styles.container}>
       <AdminSearchBar
@@ -62,9 +52,18 @@ function AdminUserListScreen() {
         onChangeText={setSearchQuery}
         onSearch={handleSearch}
       />
-      {users.map(user => (
-        <AdminUserList user={user} />
-      ))}
+      {loading ? (
+        <Text style={styles.loadingText}>로딩 중...</Text>
+      ) : filteredUsers.length > 0 ? (
+        filteredUsers.map(user => (
+          <AdminUserList key={user.userId} user={user} keyWord={searchQuery} />
+        ))
+      ) : (
+        <Text style={styles.emptyText}>검색 결과가 없습니다.</Text>
+      )}
+      {/* {users.map(user => (
+        <AdminUserList key={user.userId} user={user} />
+      ))} */}
       <View style={styles.emptyContainer} />
     </ScrollView>
   );
@@ -75,7 +74,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     padding: 10,
     backgroundColor: '#ffffff',
-    // borderWidth: 2,
   },
   listContainer: {
     width: '100%',
@@ -96,6 +94,16 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     height: 20,
+  },
+  loadingText: {
+    textAlign: 'center',
+    marginVertical: 20,
+    color: '#888',
+  },
+  emptyText: {
+    textAlign: 'center',
+    marginVertical: 20,
+    color: '#888',
   },
 });
 
