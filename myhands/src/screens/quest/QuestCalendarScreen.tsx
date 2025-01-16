@@ -98,14 +98,14 @@ function QuestCalendarScreen({navigation}: QuestCalendarNavigatorProps) {
           <View style={styles.header}>
             <View style={styles.headerLeft}>
               <TouchableOpacity onPress={handlePrevMonth}>
-                <AntDesign name="caretleft" size={15} color="#000" />
+                <AntDesign name="caretleft" size={20} color="#000" />
               </TouchableOpacity>
               <Text style={styles.dateText}>
                 {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
               </Text>
               {!isCurrentMonth() && (
                 <TouchableOpacity onPress={handleNextMonth}>
-                  <AntDesign name="caretright" size={15} color="#000" />
+                  <AntDesign name="caretright" size={20} color="#000" />
                 </TouchableOpacity>
               )}
             </View>

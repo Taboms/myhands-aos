@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createMaterialTopTabNavigator} from '@react-navigation/material-top-tabs';
 import QuestCalendarScreen from './QuestCalendarScreen';
 import QuestStatusScreen from './QuestStatusScreen';
+import LoadingScreen from '@/components/LoadingScreen';
 import {colors} from '@/constants';
 import {useQuestStore} from '@/store/questStore';
 
@@ -13,16 +14,25 @@ export type QuestTabParamList = {
 const Tab = createMaterialTopTabNavigator<QuestTabParamList>();
 
 function QuestHomeScreen() {
-  const {fetchQuestData, isLoading} = useQuestStore();
+  const {fetchQuestData} = useQuestStore();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchQuestData();
+    const fetchData = async () => {
+      try {
+        await fetchQuestData();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [fetchQuestData]);
 
-  if (isLoading) {
-    return null;
+  if (loading) {
+    return <LoadingScreen />;
   }
-
   return (
     <Tab.Navigator
       screenOptions={{

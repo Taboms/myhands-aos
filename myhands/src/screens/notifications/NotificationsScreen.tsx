@@ -11,6 +11,7 @@ import {SvgXml} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Feather';
 import {AlarmList, getAlarmList} from '@/api/notification';
 import {notiIcons} from '@/assets/icons/notiIcons';
+import LoadingScreen from '@/components/LoadingScreen';
 import {useNotificationStore} from '@/store/notificationStore';
 import {Alarm} from '@/types/domain';
 
@@ -84,10 +85,24 @@ const NotificationSection = ({
 
 const NotificationScreen = () => {
   const {fetchNotiList, notiList} = useNotificationStore();
+  const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    fetchNotiList();
+    const fetchData = async () => {
+      try {
+        await fetchNotiList();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, [fetchNotiList]);
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   const handleClearRecent = () => {
     // 최신 알림 전체 삭제
