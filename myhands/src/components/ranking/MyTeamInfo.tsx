@@ -21,12 +21,12 @@ const MyTeamInfo = ({myIndex, needExp, nextExp}: MyTeamInfoProps) => {
         <CustomTextMedium style={styles.textLarge}>
           이번 주 우리 팀은{' '}
           <CustomTextSemiBold style={styles.redText}>
-            {myIndex === 0 ? '1' : myIndex}등
+            {myIndex === 1 ? '1' : myIndex}등
           </CustomTextSemiBold>{' '}
           이에요.
         </CustomTextMedium>
         <CustomTextMedium style={styles.text}>
-          {myIndex === 0 ? (
+          {myIndex === 1 ? (
             <>
               <CustomTextSemiBold style={styles.redText}>
                 {myIndex + 1}등
