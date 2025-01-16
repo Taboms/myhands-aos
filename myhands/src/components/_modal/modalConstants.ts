@@ -44,7 +44,7 @@ export const stateMap: StateMap = {
   },
   ProfileEditFail: {
     title: '프로필 이미지 변경 실패',
-    subtitle: '프로필 변경에 실패했습니다. 다시 시도해주세요요.',
+    subtitle: '프로필 변경에 실패했습니다. 다시 시도해주세요.',
     btn: [1],
   },
   SignUpSuccess: {
@@ -59,6 +59,16 @@ export const stateMap: StateMap = {
     title: '아이디 사용 가능',
     subtitle: '이 아이디를 사용하시겠습니까?',
     btn: [0, 3],
+  },
+  CreateBoardSuccess: {
+    title: '게시글 생성 완료',
+    subtitle: '게시글이 생성되었습니다.',
+    btn: [3],
+  },
+  CreateBoardFail: {
+    title: '게시글 생성 실패패',
+    subtitle: '게시글 생성에 실패하였습니다.',
+    btn: [1],
   },
 };
 

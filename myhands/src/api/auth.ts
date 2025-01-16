@@ -66,10 +66,15 @@ type ResponseAdmin = {
 };
 
 const duplicateCheck = async (id: string) => {
-  const response = await fetchApi.get<ResponseAdmin>(
-    `/user/duplicate?id=${id}`
-  );
-  return response.data;
+  try {
+    const response = await fetchApi.get<ResponseAdmin>(
+      `/user/duplicate?id=${id}`
+    );
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };
 
 export interface SignupFormData {
@@ -82,17 +87,49 @@ export interface SignupFormData {
   group: string;
 }
 
-const singUp = async (data: SignupFormData): Promise<ResponseAdmin> => {
-  const response = await fetchApi.post<ResponseAdmin>('user/join', {
-    name: data.name,
-    id: data.id,
-    password: data.password,
-    joinedAt: data.joinedAt,
-    departmentId: data.departmentId,
-    jobGroup: data.jobGroup,
-    group: data.group,
-  });
-  return response.data;
+interface RequestCreateBoard {
+  title: string;
+  content: string;
+}
+
+const postCreateBoard = async (title: string, content: string) => {
+  try {
+    const response = await fetchApi.post('board/create', {
+      title: title,
+      content: content,
+    });
+    return response.status;
+  } catch (error) {
+    console.error('Error sign up', error);
+    throw error;
+  }
 };
-export {postLogin, getProfile, getAccessToken, logout, duplicateCheck, singUp};
+
+const singUp = async (data: SignupFormData): Promise<ResponseAdmin> => {
+  try {
+    const response = await fetchApi.post<ResponseAdmin>('user/join', {
+      name: data.name,
+      id: data.id,
+      password: data.password,
+      joinedAt: data.joinedAt,
+      departmentId: data.departmentId,
+      jobGroup: data.jobGroup,
+      group: data.group,
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error sign up', error);
+    throw error;
+  }
+};
+
+export {
+  postLogin,
+  getProfile,
+  getAccessToken,
+  logout,
+  duplicateCheck,
+  singUp,
+  postCreateBoard,
+};
 export type {RequestUser, ResponseToken, ResponseProfile};
