@@ -21,6 +21,7 @@ const adminNavigations = {
   ADMIN_USER_LIST: 'AdminUserList',
   ADMIN_WRITE_POST: 'AdminWritePost',
   ADMIN_POST_LIST: 'AdminPostList',
+  ADMIN_USER_DETAIL: 'AdminUserDetail',
 } as const;
 
 export {loggedOutNavigations, loggedInNavigations, adminNavigations};

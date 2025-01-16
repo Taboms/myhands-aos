@@ -159,7 +159,7 @@ const styles = StyleSheet.create({
     color: colors.MAX,
   },
   myTeamInfo: {
-    paddingTop: 20,
+    paddingTop: 25,
   },
   rankContainer: {
     marginTop: 30,
