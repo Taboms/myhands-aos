@@ -49,9 +49,9 @@ function ExpHistory() {
       <Text style={styles.title}>과거 경험치 획득 동향</Text>
       <View style={styles.chart}>
         <BarChart
-          formatYLabel={(value: string) =>
-            String(Math.floor(Number(value) / 100) * 100)
-          }
+          // formatYLabel={(value: string) =>
+          //   String(Math.floor(Number(value) / 100) * 100)
+          // }
           data={data}
           disablePress={false}
           spacing={23}

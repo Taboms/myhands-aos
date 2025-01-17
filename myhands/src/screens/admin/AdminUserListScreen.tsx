@@ -42,7 +42,8 @@ function AdminUserListScreen({
     const filtered = users.filter(
       user =>
         user.name.toLowerCase().includes(lowerCaseQuery) ||
-        user.employeeNum.toString().includes(lowerCaseQuery)
+        user.employeeNum.toString().includes(lowerCaseQuery) ||
+        user.department.toString().includes(lowerCaseQuery)
     );
     setFilteredUsers(filtered);
   }, [searchQuery, users]);

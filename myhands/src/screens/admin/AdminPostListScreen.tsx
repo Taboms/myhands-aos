@@ -39,7 +39,13 @@ const AdminPostListScreen = () => {
     try {
       setLoading(true);
       const data = await getBoardPostAll(15, lastId || undefined);
-      setPosts(prevPosts => [...prevPosts, ...data]);
+      setPosts(prevPosts => {
+        const uniquePosts = [...prevPosts, ...data].filter(
+          (post, index, self) =>
+            index === self.findIndex(p => p.boardId === post.boardId)
+        );
+        return uniquePosts;
+      });
       if (data.length > 0) {
         setLastId(data[data.length - 1].boardId);
       } else {
@@ -62,11 +68,16 @@ const AdminPostListScreen = () => {
     }
     try {
       setLoadingMore(true);
-      setLastId(null);
       const data = isSearching
         ? await getBoardSearchResults(searchQuery, 15, lastId || undefined)
         : await getBoardPostAll(15, lastId || undefined);
-      setPosts(prevPosts => [...prevPosts, ...data]);
+      setPosts(prevPosts => {
+        const uniquePosts = [...prevPosts, ...data].filter(
+          (post, index, self) =>
+            index === self.findIndex(p => p.boardId === post.boardId)
+        );
+        return uniquePosts;
+      });
       if (data.length === 15) {
         setLastId(data[data.length - 1].boardId);
       } else {
@@ -84,7 +95,13 @@ const AdminPostListScreen = () => {
       setLoading(true);
       setIsSearching(true);
       const data = await getBoardSearchResults(searchQuery, 15);
-      setPosts(data);
+      setPosts(prevPosts => {
+        const uniquePosts = [...prevPosts, ...data].filter(
+          (post, index, self) =>
+            index === self.findIndex(p => p.boardId === post.boardId)
+        );
+        return uniquePosts;
+      });
       if (data.length === 15) {
         setLastId(data[data.length - 1].boardId);
       } else {
@@ -141,7 +158,8 @@ const AdminPostListScreen = () => {
         showsVerticalScrollIndicator={false}
       />
       <TouchableOpacity style={styles.fabButton}>
-        <Text style={styles.fabIcon}>+</Text>
+        {/* <Svgxml xml={assets} /> */}
+        {/* <Text style={styles.fabIcon}>+</Text> */}
       </TouchableOpacity>
     </View>
   );
