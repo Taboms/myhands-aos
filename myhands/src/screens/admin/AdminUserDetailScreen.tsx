@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useLayoutEffect} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -14,12 +14,18 @@ import {RouteProp, useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
-import {duplicateCheck, SignupFormData, singUp} from '@/api/auth';
+import {
+  duplicateCheck,
+  duplicateCheckEmplyeenum,
+  SignupFormData,
+  singUp,
+} from '@/api/auth';
 import CustomModal from '@/components/_modal/CustomModal';
 import CustomTextMedium from '@/components/styles/CustomTextMedium';
 import {adminNavigations, colors} from '@/constants';
 import {departments} from '@/constants/department';
 import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
+import {useAdminStore} from '@/store/adminStore';
 import {useSignupStore} from '@/store/signupStore';
 
 // Calendar Locale 설정
@@ -102,6 +108,9 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
     useNavigation<BottomTabNavigationProp<AdminStackParamList>>();
 
   const {userId} = route.params;
+  const {fetchUserInfo, userInfo, setEmployeeNum, setDuplicateCheck} =
+    useAdminStore();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const {
     // userIdd,
@@ -128,22 +137,9 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
     setJobGroup,
     setGroup,
     setSelectedDepartment,
-    setDuplicateCheck,
     setMarkedDates,
     setModals,
   } = useSignupStore();
-
-  const handleDuplicate = async () => {
-    // if (userId.length > 0) {
-    //   try {
-    //     const data = await duplicateCheck(userId);
-    //     console.log(data);
-    //     setDuplicateCheck(true, false);
-    //   } catch {
-    //     setDuplicateCheck(false, true);
-    //   }
-    // }
-  };
 
   const handleDepartmentSelect = (departmentName: string) => {
     setDepartmentId(departments[departmentName as keyof typeof departments]);
@@ -167,6 +163,31 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
         selectedColor: colors.RED_800,
       },
     });
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await fetchUserInfo(userId);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [fetchUserInfo, userId]);
+
+  const handleDuplicate = async () => {
+    if (userInfo?.employeeNum && userInfo.employeeNum > 0) {
+      try {
+        const data = await duplicateCheckEmplyeenum(userInfo.employeeNum);
+        console.log(data);
+        setDuplicateCheck(true, false);
+      } catch {
+        setDuplicateCheck(false, true);
+      }
+    }
   };
 
   // const handleSave = useCallback(async () => {
@@ -229,13 +250,7 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
           {marginBottom: duplicateError || isDuplicateChecked ? 0 : 20},
         ]}
       >
-        <TextInput
-          // value={userId}
-          onChangeText={setUserId}
-          style={styles.userName}
-          autoCapitalize="none"
-          placeholder="아이디를 입력하세요"
-        />
+        <Text style={styles.disabledText}>{userInfo?.id}</Text>
       </View>
 
       {/* ID Validation Messages */}
@@ -248,7 +263,7 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
             style={styles.errorIcon}
           />
           <CustomTextMedium style={styles.errorMessage}>
-            이미 사용중인 아이디입니다.
+            이미 사용중인 사번입니다.
           </CustomTextMedium>
         </View>
       )}
@@ -261,13 +276,13 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
             style={styles.errorIcon}
           />
           <CustomTextMedium style={[styles.errorMessage, {color: '#4CAF50'}]}>
-            사용 가능한 아이디입니다.
+            사용 가능한 사번입니다.
           </CustomTextMedium>
         </View>
       )}
 
       {/* Password Input */}
-      <Text style={styles.label}>기본 패스워드</Text>
+      <Text style={styles.label}>패스워드</Text>
       <TextInput
         value={password}
         onChangeText={setPassword}
@@ -337,6 +352,34 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
         </View>
       </View>
 
+      {/* 사번 */}
+      <Text style={styles.label}>사번</Text>
+      <View
+        style={[
+          styles.employeeNumWrapper,
+          {marginBottom: duplicateError || isDuplicateChecked ? 0 : 20},
+        ]}
+      >
+        <TextInput
+          value={(userInfo?.employeeNum ?? '').toString()}
+          onChangeText={text => {
+            const numValue = parseInt(text) || 0; // 문자열을 숫자로 변환
+            setEmployeeNum(numValue);
+          }}
+          style={styles.userName}
+          autoCapitalize="none"
+          placeholder="사번을 입력하세요"
+          keyboardType="number-pad"
+          maxLength={10}
+        />
+        <TouchableOpacity
+          onPress={handleDuplicate}
+          style={styles.duplicateButton}
+        >
+          <Text style={styles.duplicateButtonText}>중복확인</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* Name Input */}
       <Text style={styles.label}>이름</Text>
       <TextInput
@@ -378,63 +421,29 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
           </TouchableOpacity>
         </View>
       )}
-
-      {/* Job Group Section */}
-      <Text style={styles.label}>직군</Text>
-      <TouchableOpacity
-        style={styles.groupWrapper}
-        onPress={() => setModals('jobGroup', true)}
-      >
-        <Text>{group || '직군을 선택하세요'}</Text>
-        <FontAwesomeIcon name="caret-down" size={24} color="#6E6E6E" />
-      </TouchableOpacity>
-      <Modal
-        isVisible={isJobGroupModalVisible}
-        onBackdropPress={() => setModals('jobGroup', false)}
-        style={styles.modal}
-        backdropTransitionOutTiming={0}
-        useNativeDriver={true}
-        propagateSwipe={true}
-      >
-        <View style={styles.modalContent}>
-          <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>직군 선택</Text>
-            <TouchableOpacity
-              onPress={() => setModals('jobGroup', false)}
-              style={styles.closeModalButton}
-            >
-              <Icon name="close" size={24} color="#666" />
-            </TouchableOpacity>
-          </View>
-          <ScrollView bounces={false}>
-            {JOB_GROUPS.map((jobGroupItem, index) => (
-              <TouchableOpacity
-                key={index}
-                style={styles.modalOption}
-                onPress={() => handleGroupSelect(jobGroupItem)}
-              >
-                <Text
-                  style={[
-                    styles.modalOptionText,
-                    group === jobGroupItem && styles.selectedOption,
-                  ]}
-                >
-                  {jobGroupItem}
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </View>
-      </Modal>
     </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
+  disabledText: {
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
+  },
   container: {
     flexGrow: 1,
     padding: 27,
     backgroundColor: '#ffffff',
+  },
+  employeeNumWrapper: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 52,
+    paddingHorizontal: 15,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    borderColor: '#EAEAEA',
+    alignItems: 'center',
   },
   input: {
     marginBottom: 20,
@@ -465,6 +474,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderColor: '#EAEAEA',
     alignItems: 'center',
+    backgroundColor: '#e5e5e5',
   },
   userName: {
     flex: 1,

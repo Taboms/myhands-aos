@@ -123,6 +123,50 @@ const singUp = async (data: SignupFormData): Promise<ResponseAdmin> => {
   }
 };
 
+interface ResponseUserInfo {
+  status: string;
+  message: string;
+  responseDto: UserInfo;
+}
+
+export type UserInfo = {
+  userId: number;
+  name: string;
+  id: string;
+  password: string;
+  employeeNum: number;
+  joinedAt: string;
+  department: string;
+  jobGroup: number;
+};
+
+const getUserProfile = async (userId: number): Promise<UserInfo> => {
+  try {
+    const {data} = await fetchApi.get(`/user/detail?userId=${userId}`);
+    if (data.status === 'OK') {
+      return data.responseDto;
+    }
+    throw new Error(data.message || 'Failed to get user info');
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+const duplicateCheckEmplyeenum = async (employeeNum: number) => {
+  console.log(employeeNum);
+  try {
+    const response = await fetchApi.get<ResponseAdmin>(
+      `/user/employeenum?num=${employeeNum}`
+    );
+    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 export {
   postLogin,
   getProfile,
@@ -131,5 +175,8 @@ export {
   duplicateCheck,
   singUp,
   postCreateBoard,
+  getUserProfile,
+  duplicateCheckEmplyeenum,
 };
+
 export type {RequestUser, ResponseToken, ResponseProfile};
