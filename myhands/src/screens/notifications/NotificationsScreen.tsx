@@ -9,7 +9,6 @@ import {
 } from 'react-native';
 import {SvgXml} from 'react-native-svg';
 import Icon from 'react-native-vector-icons/Feather';
-import {AlarmList, getAlarmList} from '@/api/notification';
 import {notiIcons} from '@/assets/icons/notiIcons';
 import LoadingScreen from '@/components/LoadingScreen';
 import {useNotificationStore} from '@/store/notificationStore';

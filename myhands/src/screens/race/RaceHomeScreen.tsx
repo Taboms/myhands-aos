@@ -15,6 +15,11 @@ interface RaceHomeScreenProps {
   navigation: BottomTabNavigationProp<LoggedInStackParamList>;
 }
 
+interface LoadingState {
+  time: boolean;
+  ranking: boolean;
+}
+
 interface TimeLeft {
   days: number;
   hours: number;
@@ -33,7 +38,13 @@ function RaceHomeScreen({navigation}: RaceHomeScreenProps) {
   const [rankingData, setRankingData] = useState<
     ResponseRankingData['responseDto'] | null
   >(null);
+
   const [loading, setLoading] = useState<boolean>(true);
+
+  const [loadingState, setLoadingState] = useState<LoadingState>({
+    time: true,
+    ranking: true,
+  });
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -56,6 +67,7 @@ function RaceHomeScreen({navigation}: RaceHomeScreenProps) {
       const seconds = Math.floor((difference / 1000) % 60);
 
       setTimeLeft({days, hours, minutes, seconds});
+      setLoadingState(prev => ({...prev, time: false}));
     }, 1000);
 
     return () => clearInterval(timer);
@@ -69,14 +81,14 @@ function RaceHomeScreen({navigation}: RaceHomeScreenProps) {
       } catch (error) {
         console.error(error);
       } finally {
-        setLoading(false);
+        setLoadingState(prev => ({...prev, ranking: false}));
       }
     };
 
     fetchData();
   }, []);
 
-  if (loading) {
+  if (loadingState.time || loadingState.ranking) {
     return <LoadingScreen />;
   }
 
