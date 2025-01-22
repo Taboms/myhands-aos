@@ -66,9 +66,14 @@ export const stateMap: StateMap = {
     btn: [3],
   },
   CreateBoardFail: {
-    title: '게시글 생성 실패패',
+    title: '게시글 생성 실패',
     subtitle: '게시글 생성에 실패하였습니다.',
     btn: [1],
+  },
+  DeleteRecentAlarm: {
+    title: '최근 알림 삭제',
+    subtitle: '최근 알림을 모두 삭제하시겠습니까?',
+    btn: [0, 1],
   },
 };
 

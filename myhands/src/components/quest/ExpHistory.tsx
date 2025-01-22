@@ -66,10 +66,11 @@ function ExpHistory() {
           yAxisThickness={0}
           noOfSections={3}
           isAnimated={true}
-          width={240}
+          width={260}
           showGradient={true}
           gradientColor={'#FF8B71'}
           disableScroll={true}
+          xAxisLength={5}
         />
       </View>
     </View>

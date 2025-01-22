@@ -13,6 +13,9 @@ import {notiIcons} from '@/assets/icons/notiIcons';
 import LoadingScreen from '@/components/LoadingScreen';
 import {useNotificationStore} from '@/store/notificationStore';
 import {Alarm} from '@/types/domain';
+import {alertIcons} from '@/assets/icons/alertIcons';
+import {deleteRecentAlarm} from '@/api/notification';
+import CustomModal from '@/components/_modal/CustomModal';
 
 interface NotificationSectionProps {
   title: string;
@@ -50,6 +53,17 @@ const NotificationCard = ({item}: {item: Alarm}) => {
   );
 };
 
+const deleteRecentAlarms = async () => {
+  try {
+    await deleteRecentAlarm();
+  } catch (error) {
+    // 실패 처리 (예: 에러 메시지 표시)
+    if (error instanceof Error) {
+      console.error(error.message);
+    }
+  }
+};
+
 const NotificationSection = ({
   title,
   data,
@@ -59,20 +73,10 @@ const NotificationSection = ({
     <View style={styles.section}>
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
-        <TouchableOpacity
-          onPress={() => {
-            Alert.alert(
-              '알림 삭제',
-              '모든 알림을 삭제하시겠습니까?',
-              [
-                {text: '취소', style: 'cancel'},
-                {text: '삭제', onPress: onClearAll},
-              ],
-              {cancelable: true}
-            );
-          }}
-        >
-          <Icon name="more-vertical" size={24} color="#666" />
+        <TouchableOpacity onPress={onClearAll} style={styles.deleteBtn}>
+          <SvgXml xml={alertIcons.add} style={{marginRight: 4}}></SvgXml>
+          <Text style={styles.deleteText}>삭제</Text>
+          {/* <Icon name="more-vertical" size={24} color="#666" /> */}
         </TouchableOpacity>
       </View>
       {data.map((item, index) => (
@@ -85,6 +89,7 @@ const NotificationSection = ({
 const NotificationScreen = () => {
   const {fetchNotiList, notiList} = useNotificationStore();
   const [loading, setLoading] = useState<boolean>(true);
+  const [isRecentModalOpen, setIsRecentModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -103,8 +108,16 @@ const NotificationScreen = () => {
     return <LoadingScreen />;
   }
 
-  const handleClearRecent = () => {
-    // 최신 알림 전체 삭제
+  const handleClearRecent = async (index: number) => {
+    if (index === 1) {
+      try {
+        await deleteRecentAlarm();
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    }
   };
 
   const handleClearOld = () => {
@@ -112,27 +125,51 @@ const NotificationScreen = () => {
   };
 
   return (
-    <ScrollView style={styles.container}>
-      <NotificationSection
-        title="최근 알림"
-        data={notiList.recentAlarmList}
-        onClearAll={handleClearRecent}
+    <>
+      <ScrollView style={styles.container}>
+        <NotificationSection
+          title="최근 알림"
+          data={notiList.recentAlarmList}
+          onClearAll={() => setIsRecentModalOpen(true)}
+        />
+        <NotificationSection
+          title="이전 알림"
+          data={notiList.oldAlarmList}
+          onClearAll={() => setIsRecentModalOpen(true)}
+        />
+      </ScrollView>
+      <CustomModal
+        state="DeleteRecentAlarm"
+        type="warning"
+        isOpen={isRecentModalOpen}
+        onClose={() => setIsRecentModalOpen(false)}
+        onButtonClick={handleClearRecent}
       />
-      <NotificationSection
-        title="이전 알림"
-        data={notiList.oldAlarmList}
-        onClearAll={handleClearOld}
-      />
-    </ScrollView>
+    </>
   );
 };
 
 const styles = StyleSheet.create({
+  deleteBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderWidth: 1,
+    borderColor: '#EBEBEB',
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+  },
+  deleteText: {
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 13,
+    color: '#303030',
+  },
   container: {
     flex: 1,
     backgroundColor: '#fff',
     paddingHorizontal: 30,
     paddingVertical: 30,
+    // marginBottom: 30,
   },
   section: {},
   sectionHeader: {

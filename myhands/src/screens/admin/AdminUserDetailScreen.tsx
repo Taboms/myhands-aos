@@ -383,7 +383,7 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
       {/* Name Input */}
       <Text style={styles.label}>이름</Text>
       <TextInput
-        value={userName}
+        value={userInfo?.name}
         onChangeText={setUserName}
         style={styles.input}
         placeholder="이름을 입력하세요"
