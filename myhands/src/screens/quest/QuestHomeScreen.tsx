@@ -33,6 +33,7 @@ function QuestHomeScreen() {
   if (loading) {
     return <LoadingScreen />;
   }
+
   return (
     <Tab.Navigator
       screenOptions={{

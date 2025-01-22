@@ -24,6 +24,7 @@ interface QuestCalendarNavigatorProps {
 function QuestCalendarScreen({navigation}: QuestCalendarNavigatorProps) {
   const [currentDate, setCurrentDate] = useState(new Date());
   const {fetchQuestCalendar, isLoading} = useQuestStore();
+  const [loading, setLoading] = useState<boolean>(false);
 
   const questList = useQuestStore(
     state => state.questCalendar?.questList ?? []
@@ -39,8 +40,9 @@ function QuestCalendarScreen({navigation}: QuestCalendarNavigatorProps) {
   );
 
   const getKoreanDate = (date: Date = new Date()) => {
-    return new Date(date.toLocaleString('en-US', {timeZone: 'Asia/Seoul'}));
+    return new Date(date.getTime() + 9 * 60 * 60 * 1000); // UTC+9
   };
+
   const today = getKoreanDate();
 
   const isCurrentMonth = () => {
@@ -50,30 +52,37 @@ function QuestCalendarScreen({navigation}: QuestCalendarNavigatorProps) {
     );
   };
 
+  useEffect(() => {
+    fetchDataForDate(currentDate);
+  }, [fetchDataForDate, currentDate]);
   // console.log('Quest List:', JSON.stringify(questList, null, 2));
 
   const handlePrevMonth = async () => {
-    const newDate = new Date(currentDate);
-    newDate.setMonth(newDate.getMonth() - 1);
-    setCurrentDate(newDate);
-    await fetchDataForDate(newDate);
+    setLoading(true);
+    try {
+      const newDate = new Date(currentDate);
+      newDate.setMonth(newDate.getMonth() - 1);
+      setCurrentDate(newDate);
+      await fetchDataForDate(newDate);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleNextMonth = async () => {
-    const nextDate = new Date(currentDate);
-    nextDate.setMonth(nextDate.getMonth() + 1);
-
-    // 다음 달이 현재 월보다 미래인 경우 이동하지 않음
-    if (
-      nextDate.getFullYear() > today.getFullYear() ||
-      (nextDate.getFullYear() === today.getFullYear() &&
-        nextDate.getMonth() > today.getMonth())
-    ) {
-      return;
+    setLoading(true);
+    try {
+      const nextDate = new Date(currentDate);
+      nextDate.setMonth(nextDate.getMonth() + 1);
+      setCurrentDate(nextDate);
+      await fetchDataForDate(nextDate);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
-
-    setCurrentDate(nextDate);
-    await fetchDataForDate(nextDate);
   };
   const handleDetailExp = () => {
     navigation.navigate(loggedInNavigations.EXP_ALL);
@@ -83,175 +92,159 @@ function QuestCalendarScreen({navigation}: QuestCalendarNavigatorProps) {
     throw new Error('Function not implemented.');
   }
 
-  useEffect(() => {
-    fetchDataForDate(currentDate);
-  }, [fetchDataForDate, currentDate]);
-
   return (
     <ScrollView style={styles.container}>
-      {isLoading ? (
+      <View style={styles.header}>
+        <View style={styles.headerLeft}>
+          <TouchableOpacity onPress={handlePrevMonth}>
+            <AntDesign name="caretleft" size={20} color="#000" />
+          </TouchableOpacity>
+          <Text style={styles.dateText}>
+            {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
+          </Text>
+          {!isCurrentMonth() && (
+            <TouchableOpacity onPress={handleNextMonth}>
+              <AntDesign name="caretright" size={20} color="#000" />
+            </TouchableOpacity>
+          )}
+        </View>
+        <Pressable style={styles.headerRight} onPress={handleDetailExp}>
+          <Text style={styles.detailText}>상세내역</Text>
+          <TouchableOpacity style={styles.detailButton} onPress={onDetailPress}>
+            <FontAwesome name="angle-right" size={18} color="#626262" />
+          </TouchableOpacity>
+        </Pressable>
+      </View>
+
+      <View style={styles.legend}>
+        <View style={styles.legendItem}>
+          <View
+            style={[styles.legendDot, {backgroundColor: GRADE_COLORS.MAX.main}]}
+          />
+          <Text style={styles.legendText}>MAX</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View
+            style={[styles.legendDot, {backgroundColor: GRADE_COLORS.MED.main}]}
+          />
+          <Text style={styles.legendText}>MED</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendDot,
+              {backgroundColor: GRADE_COLORS.OTHER.main},
+            ]}
+          />
+          <Text style={styles.legendText}>기타</Text>
+        </View>
+        <View style={styles.legendItem}>
+          <View
+            style={[
+              styles.legendDot,
+              {backgroundColor: GRADE_COLORS.FAIL.main},
+            ]}
+          />
+          <Text style={styles.legendText}>실패</Text>
+        </View>
+      </View>
+
+      {loading ? (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#000" />
+          <ActivityIndicator size="large" color="#FF8366" />
         </View>
       ) : (
-        <>
-          <View style={styles.header}>
-            <View style={styles.headerLeft}>
-              <TouchableOpacity onPress={handlePrevMonth}>
-                <AntDesign name="caretleft" size={20} color="#000" />
-              </TouchableOpacity>
-              <Text style={styles.dateText}>
-                {currentDate.getFullYear()}년 {currentDate.getMonth() + 1}월
-              </Text>
-              {!isCurrentMonth() && (
-                <TouchableOpacity onPress={handleNextMonth}>
-                  <AntDesign name="caretright" size={20} color="#000" />
-                </TouchableOpacity>
-              )}
-            </View>
-            <Pressable style={styles.headerRight} onPress={handleDetailExp}>
-              <Text style={styles.detailText}>상세내역</Text>
-              <TouchableOpacity
-                style={styles.detailButton}
-                onPress={onDetailPress}
-              >
-                <FontAwesome name="angle-right" size={18} color="#626262" />
-              </TouchableOpacity>
-            </Pressable>
-          </View>
+        <View>
+          <View style={styles.timeline}>
+            <View style={styles.timelineLine} />
+            {questList.map((weekQuests, index) => {
+              const gradeColor = getGradeColor(weekQuests);
+              const totalExp = calculateTotalExp(weekQuests);
 
-          <View style={styles.legend}>
-            <View style={styles.legendItem}>
-              <View
-                style={[
-                  styles.legendDot,
-                  {backgroundColor: GRADE_COLORS.MAX.main},
-                ]}
-              />
-              <Text style={styles.legendText}>MAX</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View
-                style={[
-                  styles.legendDot,
-                  {backgroundColor: GRADE_COLORS.MED.main},
-                ]}
-              />
-              <Text style={styles.legendText}>MED</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View
-                style={[
-                  styles.legendDot,
-                  {backgroundColor: GRADE_COLORS.OTHER.main},
-                ]}
-              />
-              <Text style={styles.legendText}>기타</Text>
-            </View>
-            <View style={styles.legendItem}>
-              <View
-                style={[
-                  styles.legendDot,
-                  {backgroundColor: GRADE_COLORS.FAIL.main},
-                ]}
-              />
-              <Text style={styles.legendText}>실패</Text>
-            </View>
-          </View>
+              return (
+                <View key={index} style={styles.weekContainer}>
+                  <View style={styles.weekLeft}>
+                    <View style={styles.weekLeftWrapper}>
+                      <Text style={styles.weekText}>{index + 1}주차</Text>
+                      <View
+                        style={[
+                          styles.expCircle,
+                          {
+                            borderColor: gradeColor.main,
+                            backgroundColor: gradeColor.background,
+                          },
+                        ]}
+                      >
+                        <Text
+                          style={[styles.expText, {color: gradeColor.main}]}
+                        >
+                          {totalExp} D
+                        </Text>
+                      </View>
+                    </View>
+                  </View>
 
-          <View>
-            <View style={styles.timeline}>
-              <View style={styles.timelineLine} />
-              {questList.map((weekQuests, index) => {
-                const gradeColor = getGradeColor(weekQuests);
-                const totalExp = calculateTotalExp(weekQuests);
+                  <View style={styles.timelineDot}>
+                    <View
+                      style={[styles.dot, {backgroundColor: gradeColor.main}]}
+                    />
+                  </View>
 
-                return (
-                  <View key={index} style={styles.weekContainer}>
-                    <View style={styles.weekLeft}>
-                      <View style={styles.weekLeftWrapper}>
-                        <Text style={styles.weekText}>{index + 1}주차</Text>
+                  <View
+                    style={[
+                      styles.questContainer,
+                      {backgroundColor: gradeColor.background},
+                    ]}
+                  >
+                    {weekQuests.length === 0 ? (
+                      <Text style={styles.emptyText}>
+                        퀘스트 내역이 존재하지 않습니다.
+                      </Text>
+                    ) : (
+                      weekQuests.map((quest, questIndex) => (
                         <View
+                          key={quest.questId}
                           style={[
-                            styles.expCircle,
-                            {
-                              borderColor: gradeColor.main,
-                              backgroundColor: gradeColor.background,
-                            },
+                            questIndex === weekQuests.length - 1
+                              ? styles.lastQuestItem
+                              : styles.questItem,
                           ]}
                         >
                           <Text
-                            style={[styles.expText, {color: gradeColor.main}]}
+                            style={styles.questName}
+                            numberOfLines={1}
+                            ellipsizeMode="tail"
                           >
-                            {totalExp} D
+                            {quest.name}
                           </Text>
-                        </View>
-                      </View>
-                    </View>
-
-                    <View style={styles.timelineDot}>
-                      <View
-                        style={[styles.dot, {backgroundColor: gradeColor.main}]}
-                      />
-                    </View>
-
-                    <View
-                      style={[
-                        styles.questContainer,
-                        {backgroundColor: gradeColor.background},
-                      ]}
-                    >
-                      {weekQuests.length === 0 ? (
-                        <Text style={styles.emptyText}>
-                          퀘스트 내역이 존재하지 않습니다.
-                        </Text>
-                      ) : (
-                        weekQuests.map((quest, questIndex) => (
-                          <View
-                            key={quest.questId}
-                            style={[
-                              questIndex === weekQuests.length - 1
-                                ? styles.lastQuestItem
-                                : styles.questItem,
-                            ]}
-                          >
+                          <View style={styles.questExp}>
+                            <View
+                              style={[
+                                styles.gradeCircle,
+                                {
+                                  backgroundColor: getGradeColor([quest]).main,
+                                },
+                              ]}
+                            />
                             <Text
-                              style={styles.questName}
-                              numberOfLines={1}
-                              ellipsizeMode="tail"
+                              style={{
+                                color: '#000',
+                                fontSize: 11.5,
+                                fontFamily: 'Pretendard-Medium',
+                              }}
                             >
-                              {quest.name}
+                              {quest.expAmount} D
                             </Text>
-                            <View style={styles.questExp}>
-                              <View
-                                style={[
-                                  styles.gradeCircle,
-                                  {
-                                    backgroundColor: getGradeColor([quest])
-                                      .main,
-                                  },
-                                ]}
-                              />
-                              <Text
-                                style={{
-                                  color: '#000',
-                                  fontSize: 11.5,
-                                  fontFamily: 'Pretendard-Medium',
-                                }}
-                              >
-                                {quest.expAmount} D
-                              </Text>
-                            </View>
                           </View>
-                        ))
-                      )}
-                    </View>
+                        </View>
+                      ))
+                    )}
                   </View>
-                );
-              })}
-            </View>
+                </View>
+              );
+            })}
           </View>
-        </>
+        </View>
       )}
     </ScrollView>
   );
@@ -262,7 +255,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    minHeight: 200,
+    minHeight: 300,
   },
   container: {
     flex: 1,
