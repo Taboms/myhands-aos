@@ -11,8 +11,11 @@ import {
 } from 'react-native';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
 import {useNavigation} from '@react-navigation/native';
+import {postCreateBoard} from '@/api/auth';
+import LoadingScreen from '@/components/LoadingScreen';
+import CustomModal from '@/components/_modal/CustomModal';
+import {adminNavigations} from '@/constants';
 import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
-
 interface AdminHomeScreenProps {
   navigation: BottomTabNavigationProp<AdminStackParamList>;
 }
@@ -20,12 +23,32 @@ interface AdminHomeScreenProps {
 function AdminWritePostScreen({navigation}: AdminHomeScreenProps) {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
+  const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigate =
     useNavigation<BottomTabNavigationProp<AdminStackParamList>>();
 
+  const handleSave = async () => {
+    try {
+      setLoading(true);
+      const res = await postCreateBoard(title, content);
+      if (res === 201) {
+        navigation.navigate(adminNavigations.ADMIN_POST_LIST);
+      } else {
+        setIsFailModalOpen(true);
+      }
+    } catch (error: any) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useLayoutEffect(() => {
     navigation.setOptions({
+      // eslint-disable-next-line react/no-unstable-nested-components
       headerRight: () => (
         <TouchableOpacity
           style={[
@@ -33,43 +56,56 @@ function AdminWritePostScreen({navigation}: AdminHomeScreenProps) {
             (!title || !content) && styles.disabledButton,
           ]}
           disabled={!title || !content}
+          onPress={handleSave}
         >
           <Text style={styles.btnText}>완료</Text>
         </TouchableOpacity>
       ),
     });
-  }, [navigation, title, content]);
+  }, [navigation, title, content, handleSave]);
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      style={styles.container}
-    >
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.inputContainer}>
-          <View style={styles.titleContainer}>
-            <TextInput
-              style={styles.titleInput}
-              placeholder="제목을 입력해주세요."
-              placeholderTextColor="#999"
-              value={title}
-              onChangeText={setTitle}
-              maxLength={100}
-            />
-          </View>
-          <View style={styles.divider} />
-          <TextInput
-            style={styles.contentInput}
-            placeholder="내용을 입력해주세요."
-            placeholderTextColor="#999"
-            value={content}
-            onChangeText={setContent}
-            multiline={true}
-            textAlignVertical="top"
-          />
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+    <>
+      {loading ? (
+        <LoadingScreen />
+      ) : (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+          style={styles.container}
+        >
+          <ScrollView style={styles.scrollView}>
+            <View style={styles.inputContainer}>
+              <View style={styles.titleContainer}>
+                <TextInput
+                  style={styles.titleInput}
+                  placeholder="제목을 입력해주세요."
+                  placeholderTextColor="#999"
+                  value={title}
+                  onChangeText={setTitle}
+                  maxLength={100}
+                />
+              </View>
+              <View style={styles.divider} />
+              <TextInput
+                style={styles.contentInput}
+                placeholder="내용을 입력해주세요."
+                placeholderTextColor="#999"
+                value={content}
+                onChangeText={setContent}
+                multiline={true}
+                textAlignVertical="top"
+              />
+            </View>
+          </ScrollView>
+        </KeyboardAvoidingView>
+      )}
+      <CustomModal
+        state="CreateBoardFail"
+        type="warning"
+        isOpen={isFailModalOpen}
+        onClose={() => setIsFailModalOpen(false)}
+      />
+    </>
   );
 }
 

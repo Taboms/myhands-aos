@@ -1,9 +1,12 @@
-import {Image, StyleSheet, Text, View} from 'react-native';
+import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
+import {StackNavigationProp} from '@react-navigation/stack';
 import CustomTextBold from '../styles/CustomTextBold';
 import CustomTextMedium from '../styles/CustomTextMedium';
-import {colors} from '@/constants';
+import {adminNavigations, colors} from '@/constants';
 import {characterImages} from '@/constants/character';
 import {User} from '@/constants/user';
+import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
 
 interface AdminUserListProps {
   user: User;
@@ -39,15 +42,30 @@ const HighlightedText = ({
   );
 };
 
-export default function AdminUserList({user, keyWord}: AdminUserListProps) {
+interface AdminUserListNavigationProps {
+  navigation: StackNavigationProp<AdminStackParamList>;
+}
+
+export default function AdminUserList({
+  user,
+  keyWord,
+  navigation,
+}: AdminUserListProps & AdminUserListNavigationProps) {
   return (
-    <View style={styles.listContainer}>
+    <TouchableOpacity
+      style={styles.listContainer}
+      onPress={() =>
+        navigation.navigate(adminNavigations.ADMIN_USER_DETAIL, {
+          userId: user.userId,
+        })
+      }
+    >
       <Image
         source={characterImages[user?.avartaId || 1]}
         style={styles.profile}
       />
       <View style={styles.nameSpace}>
-        <CustomTextBold>
+        <CustomTextBold style={{marginBottom: 1}}>
           <HighlightedText text={user.name} highlight={keyWord} /> [
           <HighlightedText
             text={user.employeeNum.toString()}
@@ -60,7 +78,7 @@ export default function AdminUserList({user, keyWord}: AdminUserListProps) {
           {user.level}
         </CustomTextMedium>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -76,7 +94,7 @@ const styles = StyleSheet.create({
   profile: {
     width: 56,
     height: 56,
-    marginRight: 7,
+    marginRight: 12,
     borderWidth: 1,
     borderColor: 'black',
     borderRadius: 100,

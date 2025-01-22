@@ -18,7 +18,7 @@ interface CustomModalProps {
   type: ModalType;
   isOpen: boolean;
   onClose: () => void;
-  onButtonClick?: () => void;
+  onButtonClick?: (index: number) => void;
   nickname?: string;
 }
 
@@ -51,8 +51,8 @@ const CustomModal = ({
   };
 
   const handleBtnClick = (index: number) => {
-    if (index !== 0 && onButtonClick) {
-      onButtonClick();
+    if (onButtonClick) {
+      onButtonClick(index);
     }
     onClose();
   };

@@ -8,6 +8,7 @@ import AdminDrawerNavigator, {
 } from '../drawer/AdminDrawerNavigator';
 import {headerIcons} from '@/assets/icons/headerIcons';
 import {adminNavigations} from '@/constants/navigations';
+import AdminBoardDetailScreen from '@/screens/admin/AdminBoardDetailScreen';
 import AdminHomeScreen from '@/screens/admin/AdminHomeScreen';
 import AdminPostListScreen from '@/screens/admin/AdminPostListScreen';
 import AdminSignupScreen from '@/screens/admin/AdminSignupScreen';
@@ -22,7 +23,9 @@ export type AdminStackParamList = {
   [adminNavigations.ADMIN_USER_LIST]: undefined;
   [adminNavigations.ADMIN_WRITE_POST]: undefined;
   [adminNavigations.ADMIN_POST_LIST]: undefined;
-  [adminNavigations.ADMIN_USER_DETAIL]: undefined;
+  [adminNavigations.ADMIN_USER_DETAIL]: {userId: number};
+  [adminNavigations.ADMIN_BOARD_DETAIL]: {postId: number};
+  AdminBoardDetail: {postId: number};
 };
 
 const Stack = createStackNavigator<AdminStackParamList>();
@@ -88,6 +91,13 @@ function AdminStackNavigator() {
         component={AdminPostListScreen}
         options={{
           title: '게시판',
+        }}
+      />
+      <Stack.Screen
+        name={adminNavigations.ADMIN_BOARD_DETAIL}
+        component={AdminBoardDetailScreen}
+        options={{
+          title: '게시글 상세세',
         }}
       />
       <Stack.Screen

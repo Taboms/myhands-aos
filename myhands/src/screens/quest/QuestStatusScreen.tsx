@@ -1,8 +1,8 @@
 import React from 'react';
 import * as St from './QuestStatusScreen.style';
-import ExpHistory from '@/components/quest/ExpHistory';
-import QuestChallenge from '@/components/quest/QuestChallenge';
-import QuestRecord from '@/components/quest/QuestRecord';
+import ExpHistory from '@/components/quest/questStatus/ExpHistory';
+import QuestChallenge from '@/components/quest/questStatus/QuestChallenge';
+import QuestRecord from '@/components/quest/questStatus/QuestRecord';
 
 function QuestStatusScreen() {
   return (

@@ -6,7 +6,7 @@ import HeaderButton from '@/components/changePassword/HeaderButton';
 import AvatarGrid from '@/components/changeProfile/AvatarGrid';
 import ProfileInfo from '@/components/changeProfile/ProfileInfo';
 import styles from '@/components/changeProfile/styles';
-import {colors} from '@/constants';
+import {colors, loggedInNavigations} from '@/constants';
 import {useAuthStore} from '@/store/authStore';
 
 const ChangeProfileScreen = ({navigation}: any) => {
@@ -17,6 +17,7 @@ const ChangeProfileScreen = ({navigation}: any) => {
     currentAvatarId || 1
   );
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFailModalOpen, setIsFailModalOpen] = useState(false);
   let tempSelectedAvatarId = currentAvatarId || 1;
 
   const avatars = Array.from({length: 9}, (_, index) => index + 1); // 1부터 9까지의 아바타 ID 배열
@@ -32,7 +33,13 @@ const ChangeProfileScreen = ({navigation}: any) => {
       updateAvatarId(tempSelectedAvatarId);
       setIsModalOpen(true);
     } catch (error: any) {
-      console.error('API 호출 실패:', error.response?.data || error.message);
+      setIsFailModalOpen(true);
+    }
+  };
+
+  const handleAfterChange = (index: number) => {
+    if (index === 0) {
+      navigation.navigate('UserDrawer');
     }
   };
 
@@ -63,6 +70,13 @@ const ChangeProfileScreen = ({navigation}: any) => {
         type="success"
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onButtonClick={handleAfterChange}
+      />
+      <CustomModal
+        state="ProfileEditFail"
+        type="warning"
+        isOpen={isFailModalOpen}
+        onClose={() => setIsFailModalOpen(false)}
       />
     </View>
   );

@@ -42,6 +42,11 @@ export const stateMap: StateMap = {
     title: '프로필 이미지 변경 완료',
     btn: [3],
   },
+  ProfileEditFail: {
+    title: '프로필 이미지 변경 실패',
+    subtitle: '프로필 변경에 실패했습니다. 다시 시도해주세요.',
+    btn: [1],
+  },
   SignUpSuccess: {
     title: '회원생성에 성공하였습니다.',
     btn: [3],
@@ -50,10 +55,40 @@ export const stateMap: StateMap = {
     title: '회원생성에 실패하였습니다.',
     btn: [1],
   },
+  UserUpdateSuccess: {
+    title: '회원정보 수정 성공',
+    subtitle: '회원정보 수정에 성공하였습니다.',
+    btn: [3],
+  },
+  UserUpdateFail: {
+    title: '회원정보 수정 실패',
+    subtitle: '회원정보 수정에 실패패하였습니다.',
+    btn: [2],
+  },
   DuplicateCheck: {
     title: '아이디 사용 가능',
     subtitle: '이 아이디를 사용하시겠습니까?',
     btn: [0, 3],
+  },
+  CreateBoardSuccess: {
+    title: '게시글 생성 완료',
+    subtitle: '게시글이 생성되었습니다.',
+    btn: [3],
+  },
+  CreateBoardFail: {
+    title: '게시글 생성 실패',
+    subtitle: '게시글 생성에 실패하였습니다.',
+    btn: [1],
+  },
+  DeleteRecentAlarm: {
+    title: '최근 알림 삭제',
+    subtitle: '최근 알림을 모두 삭제하시겠습니까?',
+    btn: [0, 1],
+  },
+  DeleteOldAlarm: {
+    title: '이전 알림 삭제',
+    subtitle: '이전 알림을 모두 삭제하시겠습니까?',
+    btn: [0, 1],
   },
 };
 

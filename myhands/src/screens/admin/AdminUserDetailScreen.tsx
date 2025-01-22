@@ -1,6 +1,5 @@
-import React, {useLayoutEffect, useState} from 'react';
+import React, {useCallback, useEffect, useLayoutEffect, useState} from 'react';
 import {
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -8,246 +7,347 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import {Calendar, LocaleConfig} from 'react-native-calendars';
+import Modal from 'react-native-modal';
 import {BottomTabNavigationProp} from '@react-navigation/bottom-tabs';
-import {useNavigation} from '@react-navigation/native';
+import {RouteProp, useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
+import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
-import {duplicateCheck, SignupFormData, singUp} from '@/api/auth';
-import CustomDateTimePicker from '@/components/_modal/CustomDateTimePicker';
+import {
+  duplicateCheckEmplyeenum,
+  getUserProfile,
+  RequestUpdateUser,
+  updateUser,
+} from '@/api/auth';
+import LoadingScreen from '@/components/LoadingScreen';
 import CustomModal from '@/components/_modal/CustomModal';
-import CustomTextBold from '@/components/styles/CustomTextBold';
 import CustomTextMedium from '@/components/styles/CustomTextMedium';
-import CustomTextSemiBold from '@/components/styles/CustomTextSemiBold';
-import {colors} from '@/constants';
+import {adminNavigations, colors} from '@/constants';
 import {departments} from '@/constants/department';
-import {adminNavigations} from '@/constants/navigations';
 import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
+import {useAdminStore} from '@/store/adminStore';
+import {useSignupStore} from '@/store/signupStore';
 
-interface AdminHomeScreenProps {
-  navigation: BottomTabNavigationProp<AdminStackParamList>;
+// Calendar Locale 설정
+LocaleConfig.locales.ko = {
+  monthNames: [
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월',
+  ],
+  monthNamesShort: [
+    '1월',
+    '2월',
+    '3월',
+    '4월',
+    '5월',
+    '6월',
+    '7월',
+    '8월',
+    '9월',
+    '10월',
+    '11월',
+    '12월',
+  ],
+  dayNames: [
+    '일요일',
+    '월요일',
+    '화요일',
+    '수요일',
+    '목요일',
+    '금요일',
+    '토요일',
+  ],
+  dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+  today: '오늘',
+};
+LocaleConfig.defaultLocale = 'ko';
+
+const DEPARTMENTS = [
+  '음성 1센터',
+  '음성 2센터',
+  '용인백암센터',
+  '남양주센터',
+  '파주센터',
+  '사업기획팀',
+  '그로스팀',
+  'CX팀',
+] as const;
+
+const JOB_GROUPS = [
+  'F 현장 직군',
+  'B 관리 직군',
+  'G 성장 전략',
+  'T 기술 직군',
+] as const;
+
+type AdminUserDetailRouteProps = RouteProp<
+  AdminStackParamList,
+  typeof adminNavigations.ADMIN_USER_DETAIL
+>;
+
+interface AdminUserDetailProps {
+  route: AdminUserDetailRouteProps;
+  navigation: StackNavigationProp<AdminStackParamList>;
 }
 
-const AdminUserDetailScreen = ({navigation}: AdminHomeScreenProps) => {
+const AdminUserDetailScreen = ({route, navigation}: AdminUserDetailProps) => {
   const navigate =
     useNavigation<BottomTabNavigationProp<AdminStackParamList>>();
-  useLayoutEffect(() => {
-    navigation.setOptions({
-      // eslint-disable-next-line react/no-unstable-nested-components
-      headerRight: () => (
-        <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-          <Text style={{color: '#FFFFFF', fontSize: 14, fontWeight: '600'}}>
-            수정
-          </Text>
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation]);
+  const {userId} = route.params;
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
+  const [failModalOpen, setFailModalOpen] = useState<boolean>(false);
 
-  const [userId, setUserId] = useState('');
-  const [userName, setUserName] = useState('');
-  const [password, setPassword] = useState('1111');
-  const [joinedAt, setJoinedAt] = useState('');
-  const [departmentId, setDepartmentId] = useState(0);
-  const [jobGroup, setJobGroup] = useState(1);
-  const [group, setGroup] = useState<string>('');
+  const [userInfo, setUserInfo] = useState({
+    id: '',
+    password: '',
+    name: '',
+    departmentId: '',
+    jobGroup: 0,
+    employeeNum: 0,
+    joinedAt: '',
+  });
 
-  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
-  const [selectedDepartment, setSelectedDepartment] = useState<string>('');
-  const [showJobGroupOptions, setShowJobGroupOptions] = useState(false);
-  const [showDepartmentOptions, setShowDepartmentOptions] = useState(false);
+  const [selectedDepartment, setSelectedDepartment] = useState(
+    userInfo?.departmentId
+  );
+
+  const handleDepartmentSelect = (dept: string) => {
+    setUserInfo(prev => ({...prev, departmentId: dept}));
+    setSelectedDepartment(dept);
+    handleModal('department', false);
+  };
+
+  const [markedDates, setMarkedDates] = useState({});
+  const [loading, setLoading] = useState(true);
+
+  const [modals, setModals] = useState({
+    success: false,
+    fail: false,
+    department: false,
+    calendar: false,
+  });
+
+  const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
   const [duplicateError, setDuplicateError] = useState(false);
 
-  const [successModalOpen, setSuccessModalOpen] = useState(false);
-  const [failModalOpen, setFailModalOpen] = useState(false);
-  const [duplicateModalOpen, setDuplicateModalOpen] = useState(false);
-  const [disableUserId, setDisableUserId] = useState(false);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getUserProfile(userId);
+        setUserInfo({
+          id: data.id,
+          password: data.password,
+          name: data.name,
+          departmentId: data.department,
+          jobGroup: data.jobGroup,
+          employeeNum: data.employeeNum,
+          joinedAt: data.joinedAt.replace(/\./g, '-'),
+        });
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [userId]);
 
-  const department = [
-    '음성 1센터',
-    '음성 2센터',
-    '용인백암센터',
-    '남양주센터',
-    '파주센터',
-    '사업기획팀',
-    '그로스팀',
-    'CX팀',
-  ];
-
-  const groups = ['F 현장 직군', 'B 관리 직군', 'G 성장 전략', 'T 기술 직군'];
-
-  const showDatePicker = () => {
-    setDatePickerVisibility(true);
-  };
-
-  const hideDatePicker = () => {
-    setDatePickerVisibility(false);
-  };
-
-  const handleJoinedAt = (date: Date) => {
-    const formattedDate = date.toISOString().split('T')[0];
-    setJoinedAt(formattedDate);
-  };
-
-  const handleDepartmentSelect = (departmentName: string) => {
-    setDepartmentId(departments[departmentName as keyof typeof departments]);
-    setSelectedDepartment(departmentName);
-    setShowDepartmentOptions(false);
-  };
-
-  const handleSave = async () => {
-    try {
-      const formData: SignupFormData = {
-        id: userId,
-        name: userName,
-        password: password,
-        joinedAt: joinedAt,
-        departmentId: departmentId,
-        jobGroup: jobGroup,
-        group: group,
-      };
-
-      console.log('Saving data:', formData);
-      await singUp(formData);
-      setSuccessModalOpen(true);
-    } catch (error) {
-      console.log(error);
-      setFailModalOpen(true);
-    }
-  };
-
-  const handleGroupSelect = (selectedGroup: string) => {
-    setGroup(selectedGroup);
-    setShowJobGroupOptions(false);
+  const handleChange = (key: string, value: string | number) => {
+    setUserInfo(prev => ({...prev, [key]: value}));
   };
 
   const handleDuplicate = async () => {
-    try {
-      await duplicateCheck(userId); // 비동기 처리 기다리기
-      setDuplicateModalOpen(true);
-      setDuplicateError(false);
-    } catch {
-      setDuplicateError(true);
+    if (userInfo?.employeeNum && userInfo.employeeNum > 0) {
+      console.log(userInfo.employeeNum);
+      try {
+        const data = await duplicateCheckEmplyeenum(userInfo.employeeNum);
+        setIsDuplicateChecked(true);
+        setDuplicateError(false);
+      } catch {
+        setIsDuplicateChecked(false);
+        setDuplicateError(true);
+      }
     }
   };
 
-  const today = new Date();
+  const handleModal = (modalType: keyof typeof modals, isOpen: boolean) => {
+    setModals(prev => ({...prev, [modalType]: isOpen}));
+  };
+
+  const handleJoinedAt = (date: any) => {
+    const selectedDate = new Date(date.timestamp);
+    const formattedDate = selectedDate.toISOString().split('T')[0];
+
+    setUserInfo(prev => ({...prev, joinedAt: formattedDate}));
+    setMarkedDates({
+      [date.dateString]: {
+        selected: true,
+        selectedColor: colors.RED_800,
+      },
+    });
+
+    handleModal('calendar', false);
+  };
+
+  const handleSave = useCallback(async () => {
+    setLoading(true);
+    try {
+      const updateData: RequestUpdateUser = {
+        userId: userId,
+        name: userInfo.name,
+        employeeNum: userInfo.employeeNum,
+        departmentId:
+          departments[userInfo.departmentId as keyof typeof departments],
+        jobGroup: String(userInfo.jobGroup),
+        joinedAt: userInfo.joinedAt,
+      };
+      await updateUser(updateData);
+      setSuccessModalOpen(true);
+    } catch (error) {
+      console.error(error);
+      setFailModalOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [userInfo, userId]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <SaveButton onPress={handleSave} />,
+    });
+  }, [navigation, handleSave]);
+
+  const SaveButton = ({onPress}: {onPress: () => void}) => (
+    <TouchableOpacity onPress={onPress} style={styles.saveButton}>
+      <Text style={styles.saveButtonText}>수정</Text>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {/* Success/Fail Modals */}
       <CustomModal
-        state="SignUpSuccess"
+        state="UserUpdateSuccess"
         type="success"
         isOpen={successModalOpen}
-        onClose={() => navigate.navigate(adminNavigations.ADMIN_HOME)}
-        onButtonClick={() => navigate.navigate(adminNavigations.ADMIN_HOME)}
+        onClose={() => navigation.navigate(adminNavigations.ADMIN_USER_LIST)}
+        onButtonClick={() =>
+          navigation.navigate(adminNavigations.ADMIN_USER_LIST)
+        }
       />
       <CustomModal
-        state="SignUpFail"
+        state="UserUpdateFail"
         type="warning"
         isOpen={failModalOpen}
         onClose={() => setFailModalOpen(false)}
-        onButtonClick={() => setFailModalOpen(false)}
       />
-      <CustomModal
-        state="DuplicateCheck"
-        type="success"
-        isOpen={duplicateModalOpen}
-        onClose={() => setDuplicateModalOpen(false)}
-        onButtonClick={() => setDisableUserId(true)}
-      />
-      <CustomTextBold style={styles.label}>아이디</CustomTextBold>
-      <View
-        style={[
-          styles.userNameWrapper,
-          {marginBottom: duplicateError ? 0 : 20, backgroundColor: '#F9F9F9'},
-        ]}
-      >
-        <Text>dohandsuser</Text>
+
+      <Text style={styles.label}>아이디</Text>
+      <View style={[styles.userNameWrapper, {marginBottom: 20}]}>
+        <Text style={styles.disabledText}>{userInfo?.id}</Text>
       </View>
-      {duplicateError && (
-        <View style={styles.errorWrapper}>
-          <Image
-            source={require('@/assets/image/warning.png')}
-            style={styles.warningImage}
-          />
-          <CustomTextMedium style={styles.error}>
-            이미 사용중인 아이디 입니다.
-          </CustomTextMedium>
-        </View>
-      )}
+
       <Text style={styles.label}>패스워드</Text>
-      <TextInput
-        value="myhands"
-        onChangeText={setPassword}
-        style={
-          (styles.input,
-          {
-            color: '#797979',
-            flexDirection: 'row',
-            width: '100%',
-            height: 52,
-            paddingHorizontal: 15,
-            borderWidth: 2,
-            borderRadius: 10,
-            borderColor: '#EAEAEA',
-            backgroundColor: '#F9F9F9',
-            alignItems: 'center',
-            marginBottom: 15,
-          })
-        }
-        placeholder="패스워드를 입력하세요"
-      />
+      <View style={[styles.userNameWrapper, {marginBottom: 20}]}>
+        <Text style={styles.disabledText}>{userInfo?.password}</Text>
+      </View>
+
       <View style={styles.wrapper}>
         <View style={styles.departmentWrapper}>
           <Text style={styles.label}>소속</Text>
           <TouchableOpacity
             style={styles.groupWrapper}
-            onPress={() => setShowDepartmentOptions(!showDepartmentOptions)}
+            onPress={() => handleModal('department', true)}
           >
-            <Text>{'남양주센터'}</Text>
-            <FontAwesomeIcon
-              name={showDepartmentOptions ? 'caret-up' : 'caret-down'}
-              size={24}
-              color="#6E6E6E"
-            />
+            <Text style={styles.dateText}>
+              {userInfo.departmentId || '소속을 선택하세요'}
+            </Text>
+            <FontAwesomeIcon name="caret-down" size={24} color="#6E6E6E" />
           </TouchableOpacity>
-          {showDepartmentOptions && (
-            <ScrollView style={styles.departmentOptions}>
-              {department.map((select, index) => (
+          <Modal
+            isVisible={modals.department}
+            onBackdropPress={() => handleModal('department', false)}
+            style={styles.modal}
+            backdropTransitionOutTiming={0}
+            useNativeDriver={true}
+            propagateSwipe={true}
+          >
+            <View style={styles.modalContent}>
+              <View style={styles.modalHeader}>
+                <Text style={styles.modalTitle}>소속 선택</Text>
                 <TouchableOpacity
-                  key={index}
-                  style={styles.jobGroupOption}
-                  onPress={() => handleDepartmentSelect(select)}
+                  onPress={() => handleModal('department', false)}
+                  style={styles.closeModalButton}
                 >
-                  <Text>{select}</Text>
+                  <Icon name="close" size={24} color="#666" />
                 </TouchableOpacity>
-              ))}
-            </ScrollView>
-          )}
+              </View>
+              <ScrollView bounces={false}>
+                {DEPARTMENTS.map((dept, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={styles.modalOption}
+                    onPress={() => handleDepartmentSelect(dept)}
+                  >
+                    <Text
+                      style={[
+                        styles.modalOptionText,
+                        selectedDepartment === dept && styles.selectedOption,
+                      ]}
+                    >
+                      {dept}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </ScrollView>
+            </View>
+          </Modal>
         </View>
         <View style={styles.jobGroupWrapper}>
           <Text style={styles.label}>직무그룹</Text>
           <TextInput
-            value={String(jobGroup)}
-            onChangeText={text => setJobGroup(Number(text))}
+            value={String(userInfo.jobGroup)}
+            onChangeText={text => handleChange('jobGroup', Number(text))}
             style={styles.input}
             placeholder="직무그룹"
+            keyboardType="number-pad"
           />
         </View>
       </View>
-      <CustomTextSemiBold style={styles.label}>사번</CustomTextSemiBold>
+
+      <Text style={styles.label}>사번</Text>
       <View
         style={[
-          styles.userNameWrapper,
-          {marginBottom: duplicateError ? 0 : 20},
+          styles.employeeNumWrapper,
+          {marginBottom: duplicateError || isDuplicateChecked ? 0 : 20},
         ]}
       >
         <TextInput
-          value={userId}
-          onChangeText={setUserId}
-          style={[styles.userName, disableUserId && styles.disabled]}
+          value={(userInfo?.employeeNum ?? '').toString()}
+          onChangeText={text => {
+            const numValue = parseInt(text) || 0; // 문자열을 숫자로 변환
+            handleChange('employeeNum', numValue);
+          }}
+          style={styles.userName}
           autoCapitalize="none"
-          placeholder="2024090101"
-          placeholderTextColor={'#000'}
+          placeholder="사번을 입력하세요"
+          keyboardType="number-pad"
+          maxLength={10}
         />
         <TouchableOpacity
           onPress={handleDuplicate}
@@ -256,41 +356,73 @@ const AdminUserDetailScreen = ({navigation}: AdminHomeScreenProps) => {
           <Text style={styles.duplicateButtonText}>중복확인</Text>
         </TouchableOpacity>
       </View>
+
+      {duplicateError && (
+        <View style={styles.errorContainer}>
+          <Icon
+            name="exclamationcircleo"
+            size={15}
+            color={colors.RED_800}
+            style={styles.errorIcon}
+          />
+          <CustomTextMedium style={styles.errorMessage}>
+            이미 사용중인 아이디입니다.
+          </CustomTextMedium>
+        </View>
+      )}
+      {isDuplicateChecked && !duplicateError && (
+        <View style={styles.errorContainer}>
+          <Icon
+            name="checkcircleo"
+            size={15}
+            color="#4CAF50"
+            style={styles.errorIcon}
+          />
+          <CustomTextMedium style={[styles.errorMessage, {color: '#4CAF50'}]}>
+            사용 가능한 아이디입니다.
+          </CustomTextMedium>
+        </View>
+      )}
+
       <Text style={styles.label}>이름</Text>
       <TextInput
-        value={userName}
-        onChangeText={setUserName}
+        value={userInfo?.name}
+        onChangeText={text => handleChange('name', text)}
         style={styles.input}
-        placeholder="고나령"
-        placeholderTextColor={'#000'}
+        placeholder="이름을 입력하세요"
       />
+
       <Text style={styles.label}>입사일</Text>
-      <TouchableOpacity onPress={showDatePicker} style={styles.input}>
+      <TouchableOpacity
+        onPress={() => handleModal('calendar', true)}
+        style={styles.input}
+      >
         <Text style={styles.dateText}>
-          {String(joinedAt) || '입사일을 선택하세요'}
+          {userInfo.joinedAt || '입사일을 선택하세요'}
         </Text>
       </TouchableOpacity>
-      {isDatePickerVisible && (
-        <CustomDateTimePicker
-          isVisible={isDatePickerVisible}
-          mode="date"
-          onConfirm={handleJoinedAt}
-          onCancel={hideDatePicker}
-          display="calendar"
-          maximumDate={today}
-        />
-      )}
-      {showJobGroupOptions && (
-        <View style={styles.jobGroupOptions}>
-          {groups.map((select, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.jobGroupOption}
-              onPress={() => handleGroupSelect(select)}
-            >
-              <Text>{select}</Text>
-            </TouchableOpacity>
-          ))}
+      {modals.calendar && (
+        <View style={styles.calendarContainer}>
+          <Calendar
+            onDayPress={handleJoinedAt}
+            markedDates={markedDates}
+            maxDate={new Date().toISOString().split('T')[0]}
+            monthFormat={'yyyy년 MM월'}
+            theme={{
+              selectedDayBackgroundColor: colors.RED_800,
+              todayTextColor: colors.RED_800,
+              arrowColor: colors.RED_800,
+              textDayFontFamily: 'Pretendard-Medium',
+              textMonthFontFamily: 'Pretendard-SemiBold',
+              textDayHeaderFontFamily: 'Pretendard-Medium',
+            }}
+          />
+          <TouchableOpacity
+            style={styles.closeButton}
+            onPress={() => handleModal('calendar', false)}
+          >
+            <Text style={styles.closeButtonText}>닫기</Text>
+          </TouchableOpacity>
         </View>
       )}
     </ScrollView>
@@ -298,87 +430,63 @@ const AdminUserDetailScreen = ({navigation}: AdminHomeScreenProps) => {
 };
 
 const styles = StyleSheet.create({
+  disabledText: {
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
+  },
   container: {
     flexGrow: 1,
-    padding: 24,
+    padding: 27,
     backgroundColor: '#ffffff',
+  },
+  employeeNumWrapper: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 52,
+    paddingHorizontal: 15,
+    borderWidth: 1.5,
+    borderRadius: 10,
+    borderColor: '#EAEAEA',
+    alignItems: 'center',
   },
   input: {
     marginBottom: 20,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderColor: '#EAEAEA',
     borderRadius: 10,
     paddingHorizontal: 15,
     height: 52,
     justifyContent: 'center',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
-  disabled: {
-    backgroundColor: '#E0E0E0',
-  },
-  error: {
-    color: '#FF5B35',
-  },
-  errorWrapper: {
-    paddingLeft: 3,
-    width: '100%',
-    height: 25,
-    alignItems: 'center',
-    display: 'flex',
-    flexDirection: 'row',
-    marginBottom: 20,
-    marginTop: 5,
-  },
-  warningImage: {
-    width: 16,
-    height: 16,
-    marginRight: 3,
+  label: {
+    fontFamily: 'Pretendard-SemiBold',
+    fontSize: 15,
+    marginBottom: 13,
+    color: '#7A7A7A',
   },
   dateText: {
     color: '#000',
-  },
-  label: {
-    fontSize: 15,
-    marginBottom: 13,
-    color: '#5e5e5e',
-  },
-  wrapper: {
-    flexDirection: 'row',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  departmentWrapper: {
-    flex: 3,
-    marginRight: 10,
-  },
-  jobGroupWrapper: {
-    flex: 2,
-  },
-  userName: {
-    flex: 1,
-    height: '100%',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
   userNameWrapper: {
     flexDirection: 'row',
     width: '100%',
     height: 52,
     paddingHorizontal: 15,
-    borderWidth: 2,
+    borderWidth: 1.5,
     borderRadius: 10,
     borderColor: '#EAEAEA',
-
     alignItems: 'center',
+    backgroundColor: '#e5e5e5',
   },
-  groupWrapper: {
-    flexDirection: 'row',
-    width: '100%',
-    height: 52,
-    paddingHorizontal: 15,
-    borderWidth: 2,
-    borderRadius: 10,
-    borderColor: '#EAEAEA',
-    marginBottom: 20,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+  userName: {
+    flex: 1,
+    height: '100%',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
   duplicateButton: {
     width: 76,
@@ -393,31 +501,70 @@ const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontSize: 14,
     fontWeight: '600',
+    fontFamily: 'Pretendard-SemiBold',
   },
-  jobGroupOptions: {
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
+  errorContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+    marginBottom: 24,
+  },
+  errorIcon: {
+    top: 1,
+    marginLeft: 3,
+    marginRight: 8,
+  },
+  errorMessage: {
+    color: colors.RED_800,
+    fontSize: 14,
+    textAlign: 'left',
+  },
+  wrapper: {
+    flexDirection: 'row',
+    width: '100%',
+    justifyContent: 'space-between',
+    zIndex: 2,
+  },
+  departmentWrapper: {
+    flex: 3,
+    marginRight: 10,
+    zIndex: 2,
+  },
+  jobGroupWrapper: {
+    flex: 2,
+  },
+  groupWrapper: {
+    flexDirection: 'row',
+    width: '100%',
+    height: 52,
+    paddingHorizontal: 15,
+    borderWidth: 1.5,
     borderRadius: 10,
+    borderColor: '#EAEAEA',
+    marginBottom: 20,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  calendarContainer: {
     marginTop: -15,
     marginBottom: 20,
     backgroundColor: '#fff',
-  },
-  departmentOptions: {
-    position: 'absolute',
-    top: 100,
-    flex: 3,
-    borderWidth: 1,
-    borderColor: '#EAEAEA',
     borderRadius: 10,
-    backgroundColor: '#fff',
-    zIndex: 10,
-    maxHeight: 200,
-    width: '100%',
+    borderWidth: 1.5,
+    borderColor: '#EAEAEA',
+    padding: 10,
   },
-  jobGroupOption: {
-    padding: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#EAEAEA',
+  closeButton: {
+    alignItems: 'center',
+    padding: 10,
+    marginTop: 10,
+    backgroundColor: colors.RED_800,
+    borderRadius: 5,
+  },
+  closeButtonText: {
+    color: '#fff',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
   saveButton: {
     marginRight: 16,
@@ -429,6 +576,56 @@ const styles = StyleSheet.create({
     height: 35,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  saveButtonText: {
+    color: '#FFFFFF',
+    fontSize: 14,
+    fontWeight: '600',
+  },
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingVertical: 20,
+    maxHeight: '70%',
+  },
+  modalHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
+    paddingBottom: 15,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EAEAEA',
+    position: 'relative',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontFamily: 'Pretendard-SemiBold',
+    color: '#000',
+  },
+  closeModalButton: {
+    position: 'absolute',
+    right: 20,
+  },
+  modalOption: {
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: '#EAEAEA',
+  },
+  modalOptionText: {
+    fontSize: 16,
+    fontFamily: 'Pretendard-Medium',
+    color: '#333',
+  },
+  selectedOption: {
+    color: colors.RED_800,
+    fontFamily: 'Pretendard-SemiBold',
   },
 });
 

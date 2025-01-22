@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   Text,
 } from 'react-native';
+import {SvgXml} from 'react-native-svg';
 import {useNavigation} from '@react-navigation/native';
 import {StackNavigationProp} from '@react-navigation/stack';
 import {
@@ -14,17 +15,16 @@ import {
   getBoardPostAll,
   getBoardSearchResults,
 } from '@/api/boardApi';
+import {adminIcons} from '@/assets/icons/adminIcons';
 import LoadingScreen from '@/components/LoadingScreen';
 import BoardItem from '@/components/board/BoardItem';
 import SearchBar from '@/components/board/SearchBar';
 import {colors} from '@/constants';
-import {loggedInNavigations} from '@/constants/navigations';
+import {adminNavigations, loggedInNavigations} from '@/constants/navigations';
+import {AdminStackParamList} from '@/navigations/stack/AdminStackNavigator';
 import {LoggedInStackParamList} from '@/navigations/stack/LoggedInStackNavigator';
 
-type NavigationProp = StackNavigationProp<
-  LoggedInStackParamList,
-  'BoardDetail'
->;
+type NavigationProp = StackNavigationProp<AdminStackParamList>;
 
 const AdminPostListScreen = () => {
   const navigation = useNavigation<NavigationProp>();
@@ -36,25 +36,34 @@ const AdminPostListScreen = () => {
   const [isSearching, setIsSearching] = useState<boolean>(false);
 
   useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true);
+        const data = await getBoardPostAll(15, lastId || undefined);
+        setPosts(prevPosts => {
+          const uniquePosts = [...prevPosts, ...data].filter(
+            (post, index, self) =>
+              index === self.findIndex(p => p.boardId === post.boardId)
+          );
+          return uniquePosts;
+        });
+        if (data.length > 0) {
+          setLastId(data[data.length - 1].boardId);
+        } else {
+          setLastId(null);
+        }
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchPosts();
   }, []);
-
-  const fetchPosts = async () => {
-    try {
-      setLoading(true);
-      const data = await getBoardPostAll(15, lastId || undefined);
-      setPosts(prevPosts => [...prevPosts, ...data]);
-      if (data.length > 0) {
-        setLastId(data[data.length - 1].boardId);
-      } else {
-        setLastId(null);
-      }
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+  // useEffect(() => {
+  //   fetchPosts();
+  // }, [fetchPosts]);
 
   const fetchMorePosts = async () => {
     if (loadingMore || (!lastId && !isSearching)) {
@@ -62,11 +71,16 @@ const AdminPostListScreen = () => {
     }
     try {
       setLoadingMore(true);
-      setLastId(null);
       const data = isSearching
         ? await getBoardSearchResults(searchQuery, 15, lastId || undefined)
         : await getBoardPostAll(15, lastId || undefined);
-      setPosts(prevPosts => [...prevPosts, ...data]);
+      setPosts(prevPosts => {
+        const uniquePosts = [...prevPosts, ...data].filter(
+          (post, index, self) =>
+            index === self.findIndex(p => p.boardId === post.boardId)
+        );
+        return uniquePosts;
+      });
       if (data.length === 15) {
         setLastId(data[data.length - 1].boardId);
       } else {
@@ -103,7 +117,7 @@ const AdminPostListScreen = () => {
       item={item}
       isLastItem={false}
       onPress={() =>
-        navigation.navigate(loggedInNavigations.BOARD_DETAIL, {
+        navigation.navigate(adminNavigations.ADMIN_BOARD_DETAIL, {
           postId: item.boardId,
         })
       }
@@ -140,8 +154,12 @@ const AdminPostListScreen = () => {
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
       />
-      <TouchableOpacity style={styles.fabButton}>
-        <Text style={styles.fabIcon}>+</Text>
+      <TouchableOpacity
+        style={styles.fabButton}
+        onPress={() => navigation.navigate(adminNavigations.ADMIN_WRITE_POST)}
+      >
+        <SvgXml xml={adminIcons.add} />
+        {/* <Text style={styles.fabIcon}>+</Text> */}
       </TouchableOpacity>
     </View>
   );
@@ -150,8 +168,8 @@ const AdminPostListScreen = () => {
 const styles = StyleSheet.create({
   fabButton: {
     position: 'absolute',
-    right: 20,
-    bottom: 20,
+    right: 30,
+    bottom: 40,
     width: 56,
     height: 56,
     borderRadius: 28,

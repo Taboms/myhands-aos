@@ -49,7 +49,8 @@ const styles = StyleSheet.create({
     marginBottom: 4,
   },
   boldText: {
+    fontSize: 14,
     fontFamily: 'Pretendard-SemiBold',
-    color: colors.GRAY_700,
+    color: '#5f5f5f',
   },
 });

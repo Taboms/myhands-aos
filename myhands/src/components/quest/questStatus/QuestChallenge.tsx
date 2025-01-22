@@ -1,7 +1,7 @@
 import {StyleSheet, SafeAreaView, View} from 'react-native';
-import CustomTextBold from '../styles/CustomTextBold';
-import CustomTextMedium from '../styles/CustomTextMedium';
-import CustomTextSemiBold from '../styles/CustomTextSemiBold';
+import CustomTextBold from '../../styles/CustomTextBold';
+import CustomTextMedium from '../../styles/CustomTextMedium';
+import CustomTextSemiBold from '../../styles/CustomTextSemiBold';
 import WeeklyTimeline from './WeeklyTimeline';
 import {colors} from '@/constants';
 import {useAuthStore} from '@/store/authStore';

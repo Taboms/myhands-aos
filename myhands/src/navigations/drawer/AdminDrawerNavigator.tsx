@@ -96,6 +96,9 @@ function AdminDrawerNavigator({navigation}: AdminDrawerNavigatorProps) {
             fontFamily: 'Pretendard-Medium',
             fontSize: 17,
           },
+          drawerActiveBackgroundColor: 'transparent',
+          drawerActiveTintColor: '#515151',
+          drawerInactiveTintColor: '#515151',
         })}
       >
         <Drawer.Screen

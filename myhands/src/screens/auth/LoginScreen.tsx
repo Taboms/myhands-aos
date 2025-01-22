@@ -1,5 +1,12 @@
-import React, {useState} from 'react';
-import {SafeAreaView, View, StyleSheet, Image, Text} from 'react-native';
+import React, {useRef, useState} from 'react';
+import {
+  SafeAreaView,
+  View,
+  StyleSheet,
+  Image,
+  Text,
+  TextInput,
+} from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import Icon from 'react-native-vector-icons/AntDesign';
 import Header from '@/components/login/Header';
@@ -15,6 +22,7 @@ const LoginScreen = () => {
   const [id, setId] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const passwordInputRef = useRef<TextInput>(null);
 
   const handleLogin = async () => {
     try {
@@ -44,6 +52,15 @@ const LoginScreen = () => {
     }
   };
 
+  const handleIdSubmit = () => {
+    passwordInputRef.current?.focus();
+  };
+
+  // 비밀번호 입력 완료 시 처리
+  const handlePasswordSubmit = () => {
+    handleSubmit();
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <Header />
@@ -59,13 +76,18 @@ const LoginScreen = () => {
             value={id}
             onChangeText={setId}
             editable={!isLoading}
+            returnKeyType="next"
+            onSubmitEditing={handleIdSubmit}
           />
           <LoginInput
+            inputRef={passwordInputRef}
             placeholder="비밀번호"
             value={password}
             onChangeText={setPassword}
             secureTextEntry={true}
             editable={!isLoading}
+            returnKeyType="done"
+            onSubmitEditing={handlePasswordSubmit}
           />
         </View>
         {errorMessage && (

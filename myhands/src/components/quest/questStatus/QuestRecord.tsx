@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
-import CustomTextBold from '../styles/CustomTextBold';
-import CustomTextSemiBold from '../styles/CustomTextSemiBold';
+import CustomTextBold from '../../styles/CustomTextBold';
+import CustomTextSemiBold from '../../styles/CustomTextSemiBold';
 import {useQuestStore} from '@/store/questStore';
 
 function QuestRecord() {

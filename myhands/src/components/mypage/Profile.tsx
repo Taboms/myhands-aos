@@ -97,6 +97,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'flex-end',
     paddingRight: 5,
+    paddingLeft: 15,
   },
   greeting: {
     fontSize: 17,
@@ -112,6 +113,7 @@ const styles = StyleSheet.create({
   fortuneContent: {
     fontSize: 13,
     color: '#777777',
+    textAlign: 'right',
   },
   levelInfo: {
     marginTop: -5,
