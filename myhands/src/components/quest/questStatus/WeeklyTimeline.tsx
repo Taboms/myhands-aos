@@ -1,7 +1,7 @@
 import React from 'react';
 import {View, Text, StyleSheet} from 'react-native';
 import Icon from 'react-native-vector-icons/Feather';
-import CustomTextSemiBold from '../styles/CustomTextSemiBold';
+import CustomTextSemiBold from '../../styles/CustomTextSemiBold';
 import {colors} from '@/constants';
 import {useQuestStore} from '@/store/questStore';
 import calculateWeeks from '@/utils/calculateWeeks';
