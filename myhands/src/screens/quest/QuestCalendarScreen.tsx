@@ -63,6 +63,10 @@ const QuestCalendarScreen = ({navigation}: QuestCalendarNavigatorProps) => {
     [currentDate, fetchDataForDate]
   );
 
+  const handleDateSelect = () => {
+    console.log('select!');
+  };
+
   return (
     <ScrollView style={styles.container}>
       <QuestCalendarHeader
@@ -71,6 +75,7 @@ const QuestCalendarScreen = ({navigation}: QuestCalendarNavigatorProps) => {
         onPrevMonth={() => handleMonthChange(-1)}
         onNextMonth={() => handleMonthChange(1)}
         onDetailPress={() => navigation.navigate(loggedInNavigations.EXP_ALL)}
+        onSelect={handleDateSelect}
       />
       <QuestLegend />
 

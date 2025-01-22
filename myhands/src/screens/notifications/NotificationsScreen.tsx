@@ -1,21 +1,19 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   View,
   Text,
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Alert,
 } from 'react-native';
 import {SvgXml} from 'react-native-svg';
-import Icon from 'react-native-vector-icons/Feather';
+import {deleteOldAlarm, deleteRecentAlarm} from '@/api/notification';
+import {alertIcons} from '@/assets/icons/alertIcons';
 import {notiIcons} from '@/assets/icons/notiIcons';
 import LoadingScreen from '@/components/LoadingScreen';
+import CustomModal from '@/components/_modal/CustomModal';
 import {useNotificationStore} from '@/store/notificationStore';
 import {Alarm} from '@/types/domain';
-import {alertIcons} from '@/assets/icons/alertIcons';
-import {deleteRecentAlarm} from '@/api/notification';
-import CustomModal from '@/components/_modal/CustomModal';
 
 interface NotificationSectionProps {
   title: string;
@@ -74,7 +72,7 @@ const NotificationSection = ({
       <View style={styles.sectionHeader}>
         <Text style={styles.sectionTitle}>{title}</Text>
         <TouchableOpacity onPress={onClearAll} style={styles.deleteBtn}>
-          <SvgXml xml={alertIcons.add} style={{marginRight: 4}}></SvgXml>
+          <SvgXml xml={alertIcons.add} style={{marginRight: 4}} />
           <Text style={styles.deleteText}>삭제</Text>
           {/* <Icon name="more-vertical" size={24} color="#666" /> */}
         </TouchableOpacity>
@@ -90,19 +88,21 @@ const NotificationScreen = () => {
   const {fetchNotiList, notiList} = useNotificationStore();
   const [loading, setLoading] = useState<boolean>(true);
   const [isRecentModalOpen, setIsRecentModalOpen] = useState(false);
+  const [isOldModalOpen, setIsOldModalOpen] = useState(false);
+
+  const fetchData = useCallback(async () => {
+    try {
+      await fetchNotiList();
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  }, [fetchNotiList]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        await fetchNotiList();
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchData();
-  }, [fetchNotiList]);
+  }, [fetchData]);
 
   if (loading) {
     return <LoadingScreen />;
@@ -112,6 +112,8 @@ const NotificationScreen = () => {
     if (index === 1) {
       try {
         await deleteRecentAlarm();
+        setIsRecentModalOpen(false);
+        fetchData();
       } catch (error) {
         if (error instanceof Error) {
           console.error(error.message);
@@ -120,8 +122,18 @@ const NotificationScreen = () => {
     }
   };
 
-  const handleClearOld = () => {
-    // 이전 알림 전체 삭제
+  const handleClearOld = async (index: number) => {
+    if (index === 1) {
+      try {
+        await deleteOldAlarm();
+        setIsOldModalOpen(false);
+        fetchData();
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        }
+      }
+    }
   };
 
   return (
@@ -135,7 +147,7 @@ const NotificationScreen = () => {
         <NotificationSection
           title="이전 알림"
           data={notiList.oldAlarmList}
-          onClearAll={() => setIsRecentModalOpen(true)}
+          onClearAll={() => setIsOldModalOpen(true)}
         />
       </ScrollView>
       <CustomModal
@@ -144,6 +156,13 @@ const NotificationScreen = () => {
         isOpen={isRecentModalOpen}
         onClose={() => setIsRecentModalOpen(false)}
         onButtonClick={handleClearRecent}
+      />
+      <CustomModal
+        state="DeleteOldAlarm"
+        type="warning"
+        isOpen={isOldModalOpen}
+        onClose={() => setIsOldModalOpen(false)}
+        onButtonClick={handleClearOld}
       />
     </>
   );

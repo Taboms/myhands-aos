@@ -154,12 +154,30 @@ const getUserProfile = async (userId: number): Promise<UserInfo> => {
 };
 
 const duplicateCheckEmplyeenum = async (employeeNum: number) => {
-  console.log(employeeNum);
   try {
     const response = await fetchApi.get<ResponseAdmin>(
       `/user/employeenum?num=${employeeNum}`
     );
-    console.log(response);
+    return response;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export interface RequestUpdateUser {
+  userId: number;
+  name: string;
+  employeeNum: number;
+  departmentId: number;
+  jobGroup: string;
+  joinedAt: string;
+}
+
+const updateUser = async (user: RequestUpdateUser) => {
+  try {
+    console.log(user);
+    const response = await fetchApi.patch('/user/update', user);
     return response;
   } catch (error) {
     console.error(error);
@@ -177,6 +195,7 @@ export {
   postCreateBoard,
   getUserProfile,
   duplicateCheckEmplyeenum,
+  updateUser,
 };
 
 export type {RequestUser, ResponseToken, ResponseProfile};

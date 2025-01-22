@@ -55,6 +55,16 @@ export const stateMap: StateMap = {
     title: '회원생성에 실패하였습니다.',
     btn: [1],
   },
+  UserUpdateSuccess: {
+    title: '회원정보 수정 성공',
+    subtitle: '회원정보 수정에 성공하였습니다.',
+    btn: [3],
+  },
+  UserUpdateFail: {
+    title: '회원정보 수정 실패',
+    subtitle: '회원정보 수정에 실패패하였습니다.',
+    btn: [2],
+  },
   DuplicateCheck: {
     title: '아이디 사용 가능',
     subtitle: '이 아이디를 사용하시겠습니까?',
@@ -73,6 +83,11 @@ export const stateMap: StateMap = {
   DeleteRecentAlarm: {
     title: '최근 알림 삭제',
     subtitle: '최근 알림을 모두 삭제하시겠습니까?',
+    btn: [0, 1],
+  },
+  DeleteOldAlarm: {
+    title: '이전 알림 삭제',
+    subtitle: '이전 알림을 모두 삭제하시겠습니까?',
     btn: [0, 1],
   },
 };

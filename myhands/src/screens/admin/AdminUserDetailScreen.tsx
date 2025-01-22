@@ -15,11 +15,12 @@ import {StackNavigationProp} from '@react-navigation/stack';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome6';
 import {
-  duplicateCheck,
   duplicateCheckEmplyeenum,
-  SignupFormData,
-  singUp,
+  getUserProfile,
+  RequestUpdateUser,
+  updateUser,
 } from '@/api/auth';
+import LoadingScreen from '@/components/LoadingScreen';
 import CustomModal from '@/components/_modal/CustomModal';
 import CustomTextMedium from '@/components/styles/CustomTextMedium';
 import {adminNavigations, colors} from '@/constants';
@@ -72,10 +73,6 @@ LocaleConfig.locales.ko = {
 };
 LocaleConfig.defaultLocale = 'ko';
 
-interface AdminHomeScreenProps {
-  navigation: BottomTabNavigationProp<AdminStackParamList>;
-}
-
 const DEPARTMENTS = [
   '음성 1센터',
   '음성 2센터',
@@ -101,74 +98,62 @@ type AdminUserDetailRouteProps = RouteProp<
 
 interface AdminUserDetailProps {
   route: AdminUserDetailRouteProps;
+  navigation: StackNavigationProp<AdminStackParamList>;
 }
 
-const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
+const AdminUserDetailScreen = ({route, navigation}: AdminUserDetailProps) => {
   const navigate =
     useNavigation<BottomTabNavigationProp<AdminStackParamList>>();
-
   const {userId} = route.params;
-  const {fetchUserInfo, userInfo, setEmployeeNum, setDuplicateCheck} =
-    useAdminStore();
-  const [loading, setLoading] = useState<boolean>(true);
+  const [successModalOpen, setSuccessModalOpen] = useState<boolean>(false);
+  const [failModalOpen, setFailModalOpen] = useState<boolean>(false);
 
-  const {
-    // userIdd,
-    userName,
-    password,
-    joinedAt,
-    departmentId,
-    jobGroup,
-    group,
-    selectedDepartment,
-    isDuplicateChecked,
-    duplicateError,
-    markedDates,
-    successModalOpen,
-    failModalOpen,
-    isDepartmentModalVisible,
-    isJobGroupModalVisible,
-    isDatePickerVisible,
-    setUserId,
-    setUserName,
-    setPassword,
-    setJoinedAt,
-    setDepartmentId,
-    setJobGroup,
-    setGroup,
-    setSelectedDepartment,
-    setMarkedDates,
-    setModals,
-  } = useSignupStore();
+  const [userInfo, setUserInfo] = useState({
+    id: '',
+    password: '',
+    name: '',
+    departmentId: '',
+    jobGroup: 0,
+    employeeNum: 0,
+    joinedAt: '',
+  });
 
-  const handleDepartmentSelect = (departmentName: string) => {
-    setDepartmentId(departments[departmentName as keyof typeof departments]);
-    setSelectedDepartment(departmentName);
-    setModals('department', false);
+  const [selectedDepartment, setSelectedDepartment] = useState(
+    userInfo?.departmentId
+  );
+
+  const handleDepartmentSelect = (dept: string) => {
+    setUserInfo(prev => ({...prev, departmentId: dept}));
+    setSelectedDepartment(dept);
+    handleModal('department', false);
   };
 
-  const handleGroupSelect = (selectedGroup: string) => {
-    setGroup(selectedGroup);
-    setModals('jobGroup', false);
-  };
+  const [markedDates, setMarkedDates] = useState({});
+  const [loading, setLoading] = useState(true);
 
-  const handleJoinedAt = (date: any) => {
-    const selectedDate = new Date(date.timestamp);
-    const formattedDate = selectedDate.toISOString().split('T')[0];
+  const [modals, setModals] = useState({
+    success: false,
+    fail: false,
+    department: false,
+    calendar: false,
+  });
 
-    setJoinedAt(formattedDate);
-    setMarkedDates({
-      [date.dateString]: {
-        selected: true,
-        selectedColor: colors.RED_800,
-      },
-    });
-  };
+  const [isDuplicateChecked, setIsDuplicateChecked] = useState(false);
+  const [duplicateError, setDuplicateError] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        await fetchUserInfo(userId);
+        const data = await getUserProfile(userId);
+        setUserInfo({
+          id: data.id,
+          password: data.password,
+          name: data.name,
+          departmentId: data.department,
+          jobGroup: data.jobGroup,
+          employeeNum: data.employeeNum,
+          joinedAt: data.joinedAt.replace(/\./g, '-'),
+        });
       } catch (error) {
         console.error(error);
       } finally {
@@ -176,134 +161,127 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
       }
     };
     fetchData();
-  }, [fetchUserInfo, userId]);
+  }, [userId]);
+
+  const handleChange = (key: string, value: string | number) => {
+    setUserInfo(prev => ({...prev, [key]: value}));
+  };
 
   const handleDuplicate = async () => {
     if (userInfo?.employeeNum && userInfo.employeeNum > 0) {
+      console.log(userInfo.employeeNum);
       try {
         const data = await duplicateCheckEmplyeenum(userInfo.employeeNum);
-        console.log(data);
-        setDuplicateCheck(true, false);
+        setIsDuplicateChecked(true);
+        setDuplicateError(false);
       } catch {
-        setDuplicateCheck(false, true);
+        setIsDuplicateChecked(false);
+        setDuplicateError(true);
       }
     }
   };
 
-  // const handleSave = useCallback(async () => {
-  //   try {
-  //     const formData: SignupFormData = {
-  //       id: userId,
-  //       name: userName,
-  //       password,
-  //       joinedAt,
-  //       departmentId,
-  //       jobGroup,
-  //       group,
-  //     };
+  const handleModal = (modalType: keyof typeof modals, isOpen: boolean) => {
+    setModals(prev => ({...prev, [modalType]: isOpen}));
+  };
 
-  //     await singUp(formData);
-  //     setModals('success', true);
-  //   } catch (error) {
-  //     console.error('Save Error:', error);
-  //     setModals('fail', true);
-  //   }
-  // }, [userId, userName, password, joinedAt, departmentId, jobGroup, group]);
+  const handleJoinedAt = (date: any) => {
+    const selectedDate = new Date(date.timestamp);
+    const formattedDate = selectedDate.toISOString().split('T')[0];
 
-  // useLayoutEffect(() => {
-  //   navigation.setOptions({
-  //     headerRight: () => (
-  //       <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-  //         <Text style={styles.saveButtonText}>완료</Text>
-  //       </TouchableOpacity>
-  //     ),
-  //   });
-  // }, [navigation, handleSave]);
+    setUserInfo(prev => ({...prev, joinedAt: formattedDate}));
+    setMarkedDates({
+      [date.dateString]: {
+        selected: true,
+        selectedColor: colors.RED_800,
+      },
+    });
 
-  // useEffect(() => {
-  //   console.log(userIdd);
-  // }, []);
+    handleModal('calendar', false);
+  };
+
+  const handleSave = useCallback(async () => {
+    setLoading(true);
+    try {
+      const updateData: RequestUpdateUser = {
+        userId: userId,
+        name: userInfo.name,
+        employeeNum: userInfo.employeeNum,
+        departmentId:
+          departments[userInfo.departmentId as keyof typeof departments],
+        jobGroup: String(userInfo.jobGroup),
+        joinedAt: userInfo.joinedAt,
+      };
+      await updateUser(updateData);
+      setSuccessModalOpen(true);
+    } catch (error) {
+      console.error(error);
+      setFailModalOpen(true);
+    } finally {
+      setLoading(false);
+    }
+  }, [userInfo, userId]);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => <SaveButton onPress={handleSave} />,
+    });
+  }, [navigation, handleSave]);
+
+  const SaveButton = ({onPress}: {onPress: () => void}) => (
+    <TouchableOpacity onPress={onPress} style={styles.saveButton}>
+      <Text style={styles.saveButtonText}>수정</Text>
+    </TouchableOpacity>
+  );
+
+  if (loading) {
+    return <LoadingScreen />;
+  }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Success/Fail Modals */}
       <CustomModal
-        state="SignUpSuccess"
+        state="UserUpdateSuccess"
         type="success"
         isOpen={successModalOpen}
-        onClose={() => navigate.navigate(adminNavigations.ADMIN_HOME)}
-        onButtonClick={() => navigate.navigate(adminNavigations.ADMIN_HOME)}
+        onClose={() => navigation.navigate(adminNavigations.ADMIN_USER_LIST)}
+        onButtonClick={() =>
+          navigation.navigate(adminNavigations.ADMIN_USER_LIST)
+        }
       />
       <CustomModal
-        state="SignUpFail"
+        state="UserUpdateFail"
         type="warning"
         isOpen={failModalOpen}
-        onClose={() => setModals('fail', false)}
-        onButtonClick={() => setModals('fail', false)}
+        onClose={() => setFailModalOpen(false)}
       />
 
-      {/* ID Input Section */}
       <Text style={styles.label}>아이디</Text>
-      <View
-        style={[
-          styles.userNameWrapper,
-          {marginBottom: duplicateError || isDuplicateChecked ? 0 : 20},
-        ]}
-      >
+      <View style={[styles.userNameWrapper, {marginBottom: 20}]}>
         <Text style={styles.disabledText}>{userInfo?.id}</Text>
       </View>
 
-      {/* ID Validation Messages */}
-      {duplicateError && (
-        <View style={styles.errorContainer}>
-          <Icon
-            name="exclamationcircleo"
-            size={15}
-            color={colors.RED_800}
-            style={styles.errorIcon}
-          />
-          <CustomTextMedium style={styles.errorMessage}>
-            이미 사용중인 사번입니다.
-          </CustomTextMedium>
-        </View>
-      )}
-      {isDuplicateChecked && !duplicateError && (
-        <View style={styles.errorContainer}>
-          <Icon
-            name="checkcircleo"
-            size={15}
-            color="#4CAF50"
-            style={styles.errorIcon}
-          />
-          <CustomTextMedium style={[styles.errorMessage, {color: '#4CAF50'}]}>
-            사용 가능한 사번입니다.
-          </CustomTextMedium>
-        </View>
-      )}
-
-      {/* Password Input */}
       <Text style={styles.label}>패스워드</Text>
-      <TextInput
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        placeholder="패스워드를 입력하세요"
-      />
+      <View style={[styles.userNameWrapper, {marginBottom: 20}]}>
+        <Text style={styles.disabledText}>{userInfo?.password}</Text>
+      </View>
 
-      {/* Department and Job Group Section */}
       <View style={styles.wrapper}>
         <View style={styles.departmentWrapper}>
           <Text style={styles.label}>소속</Text>
           <TouchableOpacity
             style={styles.groupWrapper}
-            onPress={() => setModals('department', true)}
+            onPress={() => handleModal('department', true)}
           >
-            <Text>{selectedDepartment || '소속을 선택하세요'}</Text>
+            <Text style={styles.dateText}>
+              {userInfo.departmentId || '소속을 선택하세요'}
+            </Text>
             <FontAwesomeIcon name="caret-down" size={24} color="#6E6E6E" />
           </TouchableOpacity>
           <Modal
-            isVisible={isDepartmentModalVisible}
-            onBackdropPress={() => setModals('department', false)}
+            isVisible={modals.department}
+            onBackdropPress={() => handleModal('department', false)}
             style={styles.modal}
             backdropTransitionOutTiming={0}
             useNativeDriver={true}
@@ -313,7 +291,7 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
               <View style={styles.modalHeader}>
                 <Text style={styles.modalTitle}>소속 선택</Text>
                 <TouchableOpacity
-                  onPress={() => setModals('department', false)}
+                  onPress={() => handleModal('department', false)}
                   style={styles.closeModalButton}
                 >
                   <Icon name="close" size={24} color="#666" />
@@ -343,8 +321,8 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
         <View style={styles.jobGroupWrapper}>
           <Text style={styles.label}>직무그룹</Text>
           <TextInput
-            value={String(jobGroup)}
-            onChangeText={text => setJobGroup(Number(text))}
+            value={String(userInfo.jobGroup)}
+            onChangeText={text => handleChange('jobGroup', Number(text))}
             style={styles.input}
             placeholder="직무그룹"
             keyboardType="number-pad"
@@ -352,7 +330,6 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
         </View>
       </View>
 
-      {/* 사번 */}
       <Text style={styles.label}>사번</Text>
       <View
         style={[
@@ -364,7 +341,7 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
           value={(userInfo?.employeeNum ?? '').toString()}
           onChangeText={text => {
             const numValue = parseInt(text) || 0; // 문자열을 숫자로 변환
-            setEmployeeNum(numValue);
+            handleChange('employeeNum', numValue);
           }}
           style={styles.userName}
           autoCapitalize="none"
@@ -380,24 +357,51 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
         </TouchableOpacity>
       </View>
 
-      {/* Name Input */}
+      {duplicateError && (
+        <View style={styles.errorContainer}>
+          <Icon
+            name="exclamationcircleo"
+            size={15}
+            color={colors.RED_800}
+            style={styles.errorIcon}
+          />
+          <CustomTextMedium style={styles.errorMessage}>
+            이미 사용중인 아이디입니다.
+          </CustomTextMedium>
+        </View>
+      )}
+      {isDuplicateChecked && !duplicateError && (
+        <View style={styles.errorContainer}>
+          <Icon
+            name="checkcircleo"
+            size={15}
+            color="#4CAF50"
+            style={styles.errorIcon}
+          />
+          <CustomTextMedium style={[styles.errorMessage, {color: '#4CAF50'}]}>
+            사용 가능한 아이디입니다.
+          </CustomTextMedium>
+        </View>
+      )}
+
       <Text style={styles.label}>이름</Text>
       <TextInput
         value={userInfo?.name}
-        onChangeText={setUserName}
+        onChangeText={text => handleChange('name', text)}
         style={styles.input}
         placeholder="이름을 입력하세요"
       />
 
-      {/* Join Date Section */}
       <Text style={styles.label}>입사일</Text>
       <TouchableOpacity
-        onPress={() => setModals('calendar', true)}
+        onPress={() => handleModal('calendar', true)}
         style={styles.input}
       >
-        <Text style={styles.dateText}>{joinedAt || '입사일을 선택하세요'}</Text>
+        <Text style={styles.dateText}>
+          {userInfo.joinedAt || '입사일을 선택하세요'}
+        </Text>
       </TouchableOpacity>
-      {isDatePickerVisible && (
+      {modals.calendar && (
         <View style={styles.calendarContainer}>
           <Calendar
             onDayPress={handleJoinedAt}
@@ -415,7 +419,7 @@ const AdminUserDetailScreen = ({route}: AdminUserDetailProps) => {
           />
           <TouchableOpacity
             style={styles.closeButton}
-            onPress={() => setModals('calendar', false)}
+            onPress={() => handleModal('calendar', false)}
           >
             <Text style={styles.closeButtonText}>닫기</Text>
           </TouchableOpacity>
@@ -464,6 +468,8 @@ const styles = StyleSheet.create({
   },
   dateText: {
     color: '#000',
+    fontFamily: 'Pretendard-Medium',
+    fontSize: 14,
   },
   userNameWrapper: {
     flexDirection: 'row',
