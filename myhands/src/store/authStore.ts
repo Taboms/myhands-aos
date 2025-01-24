@@ -67,7 +67,6 @@ export const useAuthStore = create<TAuthStore>(set => ({
         setAsyncData(storageKeys.ACCESS_TOKEN, tokens.accessToken),
         setAsyncData(storageKeys.REFRESH_TOKEN, tokens.refreshToken),
         setAsyncData(storageKeys.IS_ADMIN, tokens.admin),
-        setAsyncData(storageKeys.PASSWORD, password),
       ]);
 
       if (tokens.admin === true) {
@@ -79,19 +78,15 @@ export const useAuthStore = create<TAuthStore>(set => ({
           isLoading: false,
           adminId: id,
         });
-        setAsyncData(storageKeys.ADMINID, id);
         return;
       }
 
       // 2. 일반 유저 정보 요청
       const userInfo = await getProfile();
-      await setAsyncData(storageKeys.USER, userInfo);
-
       set({
         user: userInfo,
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
-        password: userInfo.password,
         isAdmin: tokens.admin,
         isAuthenticated: true,
         isLoading: false,
@@ -127,96 +122,71 @@ export const useAuthStore = create<TAuthStore>(set => ({
 
   initializeAuth: async () => {
     try {
-      const [
-        accessToken,
-        refreshToken,
-        isAdmin,
-        savedUser,
-        savedPassword,
-        adminId,
-      ] = await Promise.all([
+      const [accessToken, refreshToken, isAdmin] = await Promise.all([
         getAsyncData(storageKeys.ACCESS_TOKEN),
         getAsyncData(storageKeys.REFRESH_TOKEN),
         getAsyncData(storageKeys.IS_ADMIN),
-        getAsyncData(storageKeys.USER),
-        getAsyncData(storageKeys.PASSWORD),
-        getAsyncData(storageKeys.ADMINID),
       ]);
 
       if (accessToken && refreshToken) {
+        // 관리자인 경우
+        if (isAdmin) {
+          set({
+            isAuthenticated: true,
+            isAdmin: true,
+            isLoading: false,
+          });
+          return;
+        }
+
+        // 일반 유저
         try {
-          if (isAdmin) {
-            set({
-              accessToken,
-              refreshToken,
-              isAuthenticated: true,
-              isAdmin: true,
-              isLoading: false,
-              adminId,
-            });
-            return;
-          }
-
-          // 저장된 유저 정보가 있으면 그걸 먼저 사용
-          if (savedUser) {
-            set({
-              user: savedUser,
-              isAuthenticated: true,
-              isLoading: false,
-            });
-          }
-
           // 최신 유저 정보 가져오기
           const userInfo = await getProfile();
-          await setAsyncData(storageKeys.USER, userInfo);
-
           set({
-            user: userInfo,
-            accessToken,
-            password: savedPassword || null,
-            refreshToken,
-            isAuthenticated: true,
+            user: userInfo, // 유저 정보
+            isAuthenticated: true, // 인증 여부
+            isAdmin: false,
             isLoading: false,
-            adminId: null,
           });
         } catch (error) {
           // 프로필 조회 실패 시 로그아웃 처리
           await Promise.all([
             removeAsyncData(storageKeys.ACCESS_TOKEN),
             removeAsyncData(storageKeys.REFRESH_TOKEN),
-            removeAsyncData(storageKeys.USER),
+            removeAsyncData(storageKeys.IS_ADMIN),
           ]);
           set({
-            isLoading: false,
+            user: null,
             isAuthenticated: false,
             isAdmin: false,
-            adminId: null,
+            isLoading: false,
           });
         }
       } else {
         await Promise.all([
           removeAsyncData(storageKeys.ACCESS_TOKEN),
           removeAsyncData(storageKeys.REFRESH_TOKEN),
-          removeAsyncData(storageKeys.USER),
+          removeAsyncData(storageKeys.IS_ADMIN),
         ]);
         set({
-          isLoading: false,
+          user: null,
           isAuthenticated: false,
           isAdmin: false,
-          adminId: null,
+          isLoading: false,
         });
       }
     } catch (error) {
       await Promise.all([
         removeAsyncData(storageKeys.ACCESS_TOKEN),
         removeAsyncData(storageKeys.REFRESH_TOKEN),
-        removeAsyncData(storageKeys.USER),
+        removeAsyncData(storageKeys.IS_ADMIN),
       ]);
       set({
-        isLoading: false,
+        user: null,
         isAuthenticated: false,
         isAdmin: false,
-        adminId: null,
+        isLoading: false,
       });
       console.error('Auth initialization failed:', error);
     }
