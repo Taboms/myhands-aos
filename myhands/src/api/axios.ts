@@ -4,6 +4,7 @@ import axios, {
   AxiosRequestConfig,
   AxiosRequestHeaders,
 } from 'axios';
+import {storageKeys} from '@/constants';
 import {useAuthStore} from '@/store/authStore';
 import {getAsyncData, setAsyncData} from '@/utils/asyncStorage';
 
@@ -19,7 +20,7 @@ export const fetchApi: AxiosInstance = axios.create({
 
 fetchApi.interceptors.request.use(
   async (config): Promise<AdaptAxiosRequestConfig> => {
-    const accessToken = await getAsyncData('accessToken');
+    const accessToken = await getAsyncData(storageKeys.ACCESS_TOKEN);
 
     if (accessToken) {
       config.headers = config.headers || {};
@@ -32,6 +33,15 @@ fetchApi.interceptors.request.use(
   }
 );
 
+interface RetokenResponse {
+  status: string;
+  message: string;
+  responseDto: {
+    accessToken: string;
+    refreshToken: string;
+  };
+}
+
 fetchApi.interceptors.response.use(
   response => response,
   async (error: AxiosError) => {
@@ -41,13 +51,28 @@ fetchApi.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = await getAsyncData('refreshToken');
-        const response = await fetchApi.post('/auth/refresh', {
-          refreshToken,
-        });
+        const refreshToken = await getAsyncData(storageKeys.REFRESH_TOKEN);
+        const response = await axios.post(
+          'https://myhands.store/auth/retoken',
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${refreshToken}`,
+            },
+          }
+        );
 
-        const {accessToken: newAccessToken} = response.data;
-        await setAsyncData('accessToken', newAccessToken);
+        const {
+          responseDto: {
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+          },
+        } = response.data as RetokenResponse;
+
+        await Promise.all([
+          setAsyncData(storageKeys.ACCESS_TOKEN, newAccessToken),
+          setAsyncData(storageKeys.REFRESH_TOKEN, newRefreshToken),
+        ]);
 
         fetchApi.defaults.headers.common.Authorization = `Bearer ${newAccessToken}`;
         originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
@@ -58,8 +83,9 @@ fetchApi.interceptors.response.use(
         await useAuthStore.getState().logout();
         return Promise.reject(refreshError);
       }
+    } else if (error.response?.status === 403) {
+      await useAuthStore.getState().logout();
     }
-
     return Promise.reject(error);
   }
 );
